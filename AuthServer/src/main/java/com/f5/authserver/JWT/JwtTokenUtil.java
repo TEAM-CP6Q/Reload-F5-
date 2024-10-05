@@ -13,7 +13,7 @@ import java.util.Map;
 @Component
 public class JwtTokenUtil {
 
-    private SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512); // 안전한 서명 키 생성
+    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512); // 안전한 서명 키 생성
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
