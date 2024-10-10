@@ -29,17 +29,21 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         if (path.startsWith("/api/auth/login") ||
                 path.startsWith("/api/auth/register") ||
                 path.startsWith("/api/auth/register/exist-username") ||
-                path.startsWith("/api/auth/admin/login")) {
+                path.startsWith("/api/auth/admin/login") ||
+                path.startsWith("/api/account/dormant-accounts") ||
+                path.startsWith("/api/auth/dormant-accounts")) {
             return chain.filter(exchange);  // 위의 경로는 JWT 검증 생략
         }
 
         String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("Invalid JWT Token for path 1: " + path); // 로그 추가
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "JWT Token is missing");
         }
 
         String token = authHeader.substring(7);
         if (!jwtUtil.isTokenValid(token)) {
+            System.out.println("Invalid JWT Token for path 2: " + path); // 로그 추가
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT Token");
         }
 
@@ -51,7 +55,7 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         return -1; // 필터 우선순위 설정
     }
 
-    // 이거 밑에는 도메인 단에서 아예 제한 거는 코드 포스트맨도 안먹힘
+//    이거 밑에는 도메인 단에서 아예 제한 거는 코드 포스트맨도 안먹힘
 //    private final JwtUtil jwtUtil;
 //    private static final List<String> ALLOWED_ORIGINS = Arrays.asList("http://121.182.42.161", "http://allowed-domain2.com");
 //

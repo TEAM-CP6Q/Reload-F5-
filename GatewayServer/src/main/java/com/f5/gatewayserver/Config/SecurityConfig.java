@@ -20,8 +20,25 @@ public class SecurityConfig {
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers(HttpMethod.GET, "/api/auth/login", "/api/auth/register/exist-username/**").permitAll() // GET 요청 허용
-                        .pathMatchers(HttpMethod.POST, "/api/auth/register").permitAll() // POST 요청 허용
+                        // GET 요청 허용
+                        .pathMatchers(HttpMethod.GET,
+                                "/api/auth/register/exist-username/**",
+                                "/api/account/search-account/**",
+                                "/api/auth/user-info/**",
+                                "/api/account/dormant-accounts",
+                                "/api/auth/dormant-accounts").permitAll()
+
+                        // POST 요청 허용
+                        .pathMatchers(HttpMethod.POST,
+                                "/api/auth/login",
+                                "/api/auth/register",
+                                "/api/auth/admin/login").permitAll()
+
+                        // PATCH 요청 허용
+                        .pathMatchers(HttpMethod.PATCH,
+                                "/api/account/update-account",
+                                "/api/auth/withdraw").permitAll()
+
                         .anyExchange().authenticated() // 그 외의 요청은 인증 필요
                 )
                 .csrf(ServerHttpSecurity.CsrfSpec::disable); // CSRF 비활성화
@@ -33,16 +50,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // 허용할 도메인 설정
-        configuration.setAllowedOrigins(Arrays.asList("http://allowed-domain1.com", "http://allowed-domain2.com"));
-        // 허용할 HTTP 메서드 설정
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        // 허용할 헤더 설정
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
-        // 자격 증명 포함 (쿠키 등)
+        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3000"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedOriginPattern("*");
         configuration.setAllowCredentials(true);
-
-        // 모든 경로에 대해 CORS 설정 적용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
