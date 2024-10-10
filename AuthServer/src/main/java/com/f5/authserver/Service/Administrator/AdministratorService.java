@@ -4,6 +4,6 @@ import com.f5.authserver.DTO.AdministratorDTO;
 import com.f5.authserver.Entity.AdministratorEntity;
 
 public interface AdministratorService {
-    AdministratorEntity getLoggedInAdministratorEntity(String adminCode);
+    AdministratorEntity getLoggedInAdministratorEntity(String adminName);
     AdministratorDTO addAdministrator(AdministratorDTO administratorDTO);
 }

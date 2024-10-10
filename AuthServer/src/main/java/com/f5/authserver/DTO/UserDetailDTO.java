@@ -9,6 +9,7 @@ import lombok.*;
 @Getter
 @Setter
 public class UserDetailDTO {
+    private Long id;
     private String name;
     private String postalCode;
     private String roadNameAddress;

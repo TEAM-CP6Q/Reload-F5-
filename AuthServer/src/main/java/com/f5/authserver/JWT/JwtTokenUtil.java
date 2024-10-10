@@ -1,8 +1,6 @@
 package com.f5.authserver.JWT;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -13,7 +11,11 @@ import java.util.Map;
 @Component
 public class JwtTokenUtil {
 
-    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512); // 안전한 서명 키 생성
+    private final SecretKey secretKey;
+
+    public JwtTokenUtil(SecretKey secretKey) {
+        this.secretKey = secretKey;
+    }
 
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
@@ -26,7 +28,7 @@ public class JwtTokenUtil {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(secretKey) // 안전한 서명 키로 서명
+                .signWith(secretKey) // 주입받은 SecretKey로 서명
                 .compact();
     }
 

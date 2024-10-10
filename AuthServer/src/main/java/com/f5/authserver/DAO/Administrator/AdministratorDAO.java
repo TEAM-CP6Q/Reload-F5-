@@ -6,7 +6,7 @@ import com.f5.authserver.Entity.AdministratorEntity;
 import java.util.Optional;
 
 public interface AdministratorDAO {
-    Optional<AdministratorEntity> findByAdminCode(String adminCode);
+    Optional<AdministratorEntity> findByAdminName(String adminName);
     Boolean existsByAdminCode(String adminCode);
     AdministratorDTO addAdministrator(AdministratorDTO administratorDTO);
 }

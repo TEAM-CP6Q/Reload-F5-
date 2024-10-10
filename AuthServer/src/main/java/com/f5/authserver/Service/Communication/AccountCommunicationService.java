@@ -4,4 +4,5 @@ import com.f5.authserver.DTO.UserDetailDTO;
 
 public interface AccountCommunicationService {
     void registerAccount(UserDetailDTO userDetailDTO);
+    void dormantAccount(Long id);
 }
