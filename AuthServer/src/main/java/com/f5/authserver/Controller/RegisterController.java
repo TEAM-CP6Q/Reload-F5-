@@ -32,5 +32,4 @@ public class RegisterController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복된 아이디");
         } else return ResponseEntity.ok("사용 가능한 아이디");
     }
-
 }
