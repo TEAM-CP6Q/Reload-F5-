@@ -9,7 +9,6 @@ import lombok.*;
 @Getter
 @Setter
 public class DesignerDTO {
-    private Long id;
     private String name;
     private String image;
 }

@@ -24,14 +24,28 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 // POST 요청만 허용
-                                .requestMatchers(HttpMethod.POST, "/api/account/add-details").permitAll()
+                                .requestMatchers(HttpMethod.POST,
+                                        "/api/account/add-details",
+                                        "/api/account/designer/add-designer")
+                                .permitAll()
+
                                 // GET 요청만 허용
-                                .requestMatchers(HttpMethod.GET, "/api/account/search-account/**",
-                                        "/api/account/dormant-accounts").permitAll()
+                                .requestMatchers(HttpMethod.GET,
+                                        "/api/account/search-account/**",
+                                        "/api/account/dormant-accounts")
+                                .permitAll()
+
                                 // PATCH 요청만 허용
-                                .requestMatchers(HttpMethod.PATCH, "/api/account/update-account").permitAll()
+                                .requestMatchers(HttpMethod.PATCH,
+                                        "/api/account/update-account")
+                                .permitAll()
+
                                 // DELETE 요청만 허용
-                                .requestMatchers(HttpMethod.DELETE, "/api/account/withdraw/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE,
+                                        "/api/account/withdraw/**",
+                                        "/api/account/designer/remove-designer/**")
+                                .permitAll()
+
                                 // 그 외의 요청은 인증 필요
                                 .anyRequest().authenticated()
                 )
