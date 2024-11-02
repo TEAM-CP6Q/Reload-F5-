@@ -40,7 +40,7 @@ public class SecurityConfig {
                                     Authentication authentication = authenticationSupplier.get();
                                     String ipAddress = object.getRequest().getRemoteAddr();
 
-                                    if (ipAddress.equals("3.37.122.192")) {
+                                    if (ipAddress.equals("3.37.122.192") || ipAddress.equals("121.182.42.114")) {
                                         return new AuthorizationDecision(true); // 허용
                                     } else if (authentication != null && authentication.isAuthenticated()) {
                                         return new AuthorizationDecision(true); // 인증된 경우 허용
@@ -53,7 +53,8 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET,
                                         "/api/auth/register/exist-username/**",
                                         "/api/auth/user-info/**",
-                                        "/api/auth/dormant-accounts")
+                                        "/api/auth/dormant-accounts",
+                                        "/api/auth/key")
                                 .permitAll()
 
                                 // POST 요청 허용
@@ -61,7 +62,8 @@ public class SecurityConfig {
                                         "/api/auth/login",
                                         "/api/auth/register",
                                         "/api/auth/admin/register",
-                                        "/api/auth/admin/login")
+                                        "/api/auth/admin/login",
+                                        "/api/auth/login/kakao/token")
                                 .permitAll()
 
                                 // PATCH 요청 허용

@@ -13,4 +13,5 @@ public interface UserDAO {
     Optional<UserEntity> findByUsername(String username);
     void moveToDormantAccount(UserDTO userDTO);
     void removeDormantAccount();
+    Long getId(String username);
 }

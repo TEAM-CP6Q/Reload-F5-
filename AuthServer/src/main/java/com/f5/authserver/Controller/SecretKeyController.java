@@ -1,5 +1,6 @@
 package com.f5.authserver.Controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,7 @@ public class SecretKeyController {
     }
 
     @GetMapping("/key")
-    public String getSecretKey() {
-        return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+    public ResponseEntity<String> getSecretKey() {
+        return ResponseEntity.ok(Base64.getEncoder().encodeToString(secretKey.getEncoded()));
     }
 }

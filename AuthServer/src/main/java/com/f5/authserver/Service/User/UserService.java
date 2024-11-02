@@ -9,4 +9,5 @@ public interface UserService {
     UserDTO getByUsername(String username);
     UserEntity getLoggedInUserEntity(String username);
     void dormantAccount(UserDTO user);
+    Long getIdByUsername(String username);
 }

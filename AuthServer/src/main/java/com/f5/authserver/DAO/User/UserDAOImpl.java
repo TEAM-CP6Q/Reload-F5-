@@ -112,4 +112,9 @@ public class UserDAOImpl implements UserDAO {
             dormantRepository.delete(dormant);
         }
     }
+
+    @Override
+    public Long getId(String username){
+        return userRepository.getByUsername(username).getId();
+    }
 }

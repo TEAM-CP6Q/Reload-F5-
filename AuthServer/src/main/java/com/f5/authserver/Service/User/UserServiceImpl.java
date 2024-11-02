@@ -27,6 +27,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long getIdByUsername(String username) {
+        return userDAO.getId(username);
+    }
+
+    @Override
     public UserEntity getLoggedInUserEntity(String username) {
         return userDAO.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자 이름을 찾을 수 없습니다."));

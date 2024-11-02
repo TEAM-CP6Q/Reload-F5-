@@ -5,6 +5,7 @@ import com.f5.authserver.Entity.DormantEntity;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.JWT.JwtTokenUtil;
 import com.f5.authserver.Repository.DormantRepository;
+import com.f5.authserver.Service.Communication.AccountCommunicationService;
 import com.f5.authserver.Service.User.CustomUserDetailsService;
 import com.f5.authserver.Service.User.UserService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class LoginController {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
     private final DormantRepository dormantRepository;
+    private final AccountCommunicationService accountCommunicationService;
 
 
     @PostMapping("/login")
@@ -46,6 +48,7 @@ public class LoginController {
         Map<String, Object> response = new HashMap<>();
         response.put("token", token);
         response.put("user", loggedInUser);
+        response.put("email", accountCommunicationService.getAccountEmail(userService.getIdByUsername(user.getUsername())));
 
         return ResponseEntity.ok(response);
     }
@@ -87,6 +90,13 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+//    @GetMapping("/get-all-users")
+//    public ResponseEntity<?> getAll() {
+//        try{
+//
+//        }
+//    }
 
 //    @DeleteMapping("/withdraw/{username}")
 //    public ResponseEntity<?> withdraw(@PathVariable String username) {

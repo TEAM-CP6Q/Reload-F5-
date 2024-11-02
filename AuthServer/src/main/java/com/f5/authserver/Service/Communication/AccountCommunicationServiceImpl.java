@@ -87,4 +87,35 @@ public class AccountCommunicationServiceImpl implements AccountCommunicationServ
             throw new IllegalStateException("Failed to send request to Account-Server", e);
         }
     }
+
+    public String getAccountEmail(Long id) {
+        List<ServiceInstance> instances = discoveryClient.getInstances("ACCOUNT-SERVER");
+        if (instances == null || instances.isEmpty()) {
+            throw new IllegalStateException("No Account-Server instances available");
+        }
+        ServiceInstance accountService = instances.get(new Random().nextInt(instances.size()));
+
+        // URI 생성
+        URI uri = UriComponentsBuilder.fromUri(accountService.getUri())
+                .path("/api/account/email/{id}")
+                .buildAndExpand(id)
+                .toUri();
+        // HTTP 헤더 및 본문 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+        // REST 요청 보내기
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, httpEntity, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Request to get account email successfully.");
+                return response.getBody();
+            } else {
+                throw new IllegalStateException("Failed to send request to get account email.");
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to send request to Account-Server", e);
+        }
+    }
 }

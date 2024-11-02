@@ -19,4 +19,6 @@ public class UserEntity {
     private String username;
     @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
+    private Boolean kakao = false;
 }
