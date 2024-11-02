@@ -31,7 +31,7 @@ public class DormantEntity {
     private String email;
 
     @Column(nullable = false)
-    private Long phoneNumber;
+    private String phoneNumber;
 
     @Column(nullable = false)
     private LocalDate dormantDate;

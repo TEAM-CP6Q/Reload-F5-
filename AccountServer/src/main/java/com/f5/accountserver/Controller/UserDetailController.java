@@ -65,4 +65,13 @@ public class UserDetailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @GetMapping("/email/{id}")
+    public ResponseEntity<String> getEmail(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(userDetailsService.getUserEmail(id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 }

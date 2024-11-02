@@ -42,8 +42,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
     }
 
+    // 자동 삭제 스케쥴러
     @Scheduled(cron = "0 0 0 * * ?")
     public void scheduledTaskToRemoveDormantAccount() {
         userDetailsDAO.removeDormantAccount();
+    }
+
+    @Override
+    public String getUserEmail(Long id){
+        return userDetailsDAO.findById(id).getEmail();
     }
 }

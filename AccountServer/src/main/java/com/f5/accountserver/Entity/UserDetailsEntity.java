@@ -30,5 +30,5 @@ public class UserDetailsEntity {
     private String email;
 
     @Column(nullable = false)
-    private Long phoneNumber;
+    private String phoneNumber;
 }

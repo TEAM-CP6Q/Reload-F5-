@@ -7,4 +7,5 @@ public interface UserDetailsService {
     UserDetailDTO getUserDetails(Long id);
     void updateUserDetails(UserDetailDTO userDetails);
     void dormantAccount(Long id);
+    String getUserEmail(Long id);
 }

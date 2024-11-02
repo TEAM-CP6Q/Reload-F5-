@@ -15,5 +15,5 @@ public class UserDetailDTO {
     private String roadNameAddress;
     private String detailedAddress;
     private String email;
-    private Long phoneNumber;
+    private String phoneNumber;
 }
