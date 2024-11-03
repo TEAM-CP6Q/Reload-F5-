@@ -22,7 +22,7 @@ public class CommunicationServiceImpl implements CommunicationService {
         this.restTemplate = restTemplate;
     }
 
-    public Long searchInfo(String username) {
+    public Long searchInfo(String email) {
         List<ServiceInstance> instances = discoveryClient.getInstances("AUTH-SERVER");
         if (instances == null || instances.isEmpty()) {
             throw new IllegalStateException("No Auth-Server instances available");
@@ -31,8 +31,8 @@ public class CommunicationServiceImpl implements CommunicationService {
         ServiceInstance accountService = instances.get(new Random().nextInt(instances.size()));
 
         URI uri = UriComponentsBuilder.fromUri(accountService.getUri())
-                .path("/api/auth/user-info/{username}")
-                .buildAndExpand(username)
+                .path("/api/auth/user-info/{email}")
+                .buildAndExpand(email)
                 .toUri();
 
         HttpHeaders headers = new HttpHeaders();

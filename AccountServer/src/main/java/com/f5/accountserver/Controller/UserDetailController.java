@@ -24,10 +24,10 @@ public class UserDetailController {
         this.dormantRepository = dormantRepository;
     }
 
-    @GetMapping("/search-account/{username}")
-    public ResponseEntity<?> findByEmail(@PathVariable String username) {
+    @GetMapping("/search-account/{email}")
+    public ResponseEntity<?> getUserDetail(@PathVariable String email) {
         try{
-            UserDetailDTO user = userDetailsService.getUserDetails(communicationService.searchInfo(username));
+            UserDetailDTO user = userDetailsService.getUserDetails(communicationService.searchInfo(email));
             return ResponseEntity.ok(user);
         } catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -63,15 +63,6 @@ public class UserDetailController {
             return ResponseEntity.ok(dormantEntities);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/email/{id}")
-    public ResponseEntity<String> getEmail(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(userDetailsService.getUserEmail(id));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

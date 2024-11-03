@@ -27,7 +27,6 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
                     .postalCode(userDetails.getPostalCode())
                     .roadNameAddress(userDetails.getRoadNameAddress())
                     .detailedAddress(userDetails.getDetailedAddress())
-                    .email(userDetails.getEmail())
                     .phoneNumber(userDetails.getPhoneNumber())
                     .build();
             userDetailsRepository.save(userDetailsEntity);
@@ -45,7 +44,6 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
                 .postalCode(user.getPostalCode())
                 .roadNameAddress(user.getRoadNameAddress())
                 .detailedAddress(user.getDetailedAddress())
-                .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .build();
     }
@@ -55,12 +53,10 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
         try {
             UserDetailsEntity existingUser = userDetailsRepository.findById(userDetails.getId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저를 찾을 수 없습니다."));
-
             existingUser.setName(userDetails.getName());
             existingUser.setPostalCode(userDetails.getPostalCode());
             existingUser.setRoadNameAddress(userDetails.getRoadNameAddress());
             existingUser.setDetailedAddress(userDetails.getDetailedAddress());
-            existingUser.setEmail(userDetails.getEmail());
             existingUser.setPhoneNumber(userDetails.getPhoneNumber());
 
             userDetailsRepository.save(existingUser);
@@ -79,7 +75,6 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
                 .postalCode(user.getPostalCode())
                 .roadNameAddress(user.getRoadNameAddress())
                 .detailedAddress(user.getDetailedAddress())
-                .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .dormantDate(LocalDate.now())
                 .build();
@@ -92,7 +87,7 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
         LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
         List<DormantEntity> expiredDormantAccounts = dormantRepository.findByDormantDateBefore(threeMonthsAgo);
         for (DormantEntity dormant : expiredDormantAccounts) {
-            System.out.println(LocalDate.now()+ " " + dormant.getEmail() + " 계정 정보가 삭제됨");
+            System.out.println(LocalDate.now()+ " " + dormant.getName() + " 계정 정보가 삭제됨");
             dormantRepository.delete(dormant);
         }
     }

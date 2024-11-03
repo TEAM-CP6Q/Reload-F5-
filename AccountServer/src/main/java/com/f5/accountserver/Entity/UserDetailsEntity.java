@@ -27,8 +27,5 @@ public class UserDetailsEntity {
     private String detailedAddress;
 
     @Column(nullable = false)
-    private String email;
-
-    @Column(nullable = false)
     private String phoneNumber;
 }

@@ -32,8 +32,7 @@ public class SecurityConfig {
                                 // GET 요청만 허용
                                 .requestMatchers(HttpMethod.GET,
                                         "/api/account/search-account/**",
-                                        "/api/account/dormant-accounts",
-                                        "/api/account/email/*")
+                                        "/api/account/dormant-accounts")
                                 .permitAll()
 
                                 // PATCH 요청만 허용

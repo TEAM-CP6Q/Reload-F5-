@@ -2,7 +2,6 @@ package com.f5.accountserver.Service.UserDetails;
 
 import com.f5.accountserver.DAO.UserDetails.UserDetailsDAO;
 import com.f5.accountserver.DTO.UserDetailDTO;
-import org.springframework.aop.scope.ScopedProxyUtils;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +47,4 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userDetailsDAO.removeDormantAccount();
     }
 
-    @Override
-    public String getUserEmail(Long id){
-        return userDetailsDAO.findById(id).getEmail();
-    }
 }

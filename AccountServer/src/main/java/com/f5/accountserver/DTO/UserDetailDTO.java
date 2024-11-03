@@ -14,6 +14,5 @@ public class UserDetailDTO {
     private Long postalCode;
     private String roadNameAddress;
     private String detailedAddress;
-    private String email;
     private String phoneNumber;
 }
