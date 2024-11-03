@@ -3,10 +3,12 @@ package com.f5.authserver.DTO;
 import lombok.*;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+@NoArgsConstructor
+@Builder
+@Getter
+@Setter
+public class TestDTO {
     private String email;
-    private String password;
+    private String userId;
 }

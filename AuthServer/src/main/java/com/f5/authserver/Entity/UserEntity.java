@@ -16,9 +16,11 @@ public class UserEntity {
     @Column(unique = true, nullable = false)
     private Long Id;
     @Column(unique = true, nullable = false)
-    private String username;
+    private String email;
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
     private Boolean kakao = false;
+    @Column(nullable = true)
+    private String userId;
 }

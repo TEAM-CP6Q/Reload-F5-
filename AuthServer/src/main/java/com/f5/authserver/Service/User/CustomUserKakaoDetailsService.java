@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserKakaoDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     private final AdministratorRepository administratorRepository;
 
@@ -27,20 +27,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (user != null) {
             return new org.springframework.security.core.userdetails.User(
                     user.getEmail(),
-                    user.getPassword(),
+                    user.getUserId(),
                     new ArrayList<>()
             );
-        }
-
-        // 사용자를 찾지 못했을 경우, 어드민 검색
-        AdministratorEntity admin = administratorRepository.findByAdminName(email)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 사용자 또는 어드민을 찾을 수 없습니다."));
-
-        return new org.springframework.security.core.userdetails.User(
-                admin.getAdminName(),
-                admin.getAdminCode(),
-                new ArrayList<>()
-        );
+        } else throw new UsernameNotFoundException(email);
     }
-
 }

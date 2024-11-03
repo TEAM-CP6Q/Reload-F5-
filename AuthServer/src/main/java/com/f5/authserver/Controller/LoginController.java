@@ -37,26 +37,28 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDTO user) throws AuthenticationException {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
-        final UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getUsername());
+        final UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
         final String token = jwtTokenUtil.generateToken(userDetails.getUsername());
 
         // UserEntity를 서비스 메서드를 통해 가져옴
-        UserEntity loggedInUser = userService.getLoggedInUserEntity(user.getUsername());
+        UserEntity loggedInUser = userService.getLoggedInUserEntity(user.getEmail());
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", loggedInUser);
-        response.put("email", accountCommunicationService.getAccountEmail(userService.getIdByUsername(user.getUsername())));
-
-        return ResponseEntity.ok(response);
+        if(loggedInUser.getUserId() == null) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("token", token);
+            response.put("user", loggedInUser);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(403).body("카카오 계정으로 로그인 해주세요.");
+        }
     }
 
     // 원래 이렇게 하면 안돼지만 귀찮으므로 걍 함
-    @GetMapping("/user-info/{username}")
-    public ResponseEntity<?> userInfo(@PathVariable String username) {
-        UserEntity user = userService.getLoggedInUserEntity(username);
+    @GetMapping("/user-info/{email}")
+    public ResponseEntity<?> userInfo(@PathVariable String email) {
+        UserEntity user = userService.getLoggedInUserEntity(email);
         return ResponseEntity.ok(user);
     }
 
@@ -65,7 +67,7 @@ public class LoginController {
         try {
             // 아이디와 비밀번호 인증
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                    new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword())
             );
 
             // 인증 성공 시 탈퇴 로직 진행

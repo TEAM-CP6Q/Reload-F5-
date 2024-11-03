@@ -3,12 +3,12 @@ package com.f5.authserver.DAO.User;
 import com.f5.authserver.DTO.RegisterDTO;
 import com.f5.authserver.DTO.UserDTO;
 import com.f5.authserver.DTO.UserDetailDTO;
+import com.f5.authserver.DTO.UserKakaoDTO;
 import com.f5.authserver.Entity.DormantEntity;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.Repository.DormantRepository;
 import com.f5.authserver.Repository.UserRepository;
 import com.f5.authserver.Service.Communication.AccountCommunicationService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ public class UserDAOImpl implements UserDAO {
 
     private UserDTO entityToDTO(UserEntity userEntity) {
         return UserDTO.builder()
-                .username(userEntity.getUsername())
+                .email(userEntity.getEmail())
                 .password(passwordEncoder.encode(userEntity.getPassword()))
                 .build();
     }
@@ -36,8 +36,10 @@ public class UserDAOImpl implements UserDAO {
     public UserDTO save(RegisterDTO registerDTO) {
         try {
             UserEntity userEntity = UserEntity.builder()
-                    .username(registerDTO.getUsername())
+                    .email(registerDTO.getEmail())
                     .password(passwordEncoder.encode(registerDTO.getPassword()))
+                    .kakao(false)
+                    .userId(null)
                     .build();
             userRepository.save(userEntity);
             UserDetailDTO userDetailDTO = UserDetailDTO.builder()
@@ -46,7 +48,6 @@ public class UserDAOImpl implements UserDAO {
                     .postalCode(registerDTO.getPostalCode())
                     .roadNameAddress(registerDTO.getRoadNameAddress())
                     .detailedAddress(registerDTO.getDetailedAddress())
-                    .email(registerDTO.getEmail())
                     .phoneNumber(registerDTO.getPhoneNumber())
                     .build();
             accountCommunicationService.registerAccount(userDetailDTO);
@@ -57,16 +58,16 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public Boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username) || dormantRepository.existsByUsername(username);
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email) || dormantRepository.existsByEmail(email);
     }
 
     @Override
-    public UserDTO getByUsername(String username) {
+    public UserDTO getByEmail(String email) {
         try {
-            UserEntity user = userRepository.getByUsername(username);
+            UserEntity user = userRepository.getByEmail(email);
             return UserDTO.builder()
-                    .username(user.getUsername())
+                    .email(user.getEmail())
                     .password(user.getPassword())
                     .build();
         } catch (Exception e){
@@ -74,28 +75,44 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    public UserKakaoDTO getKakaoByEmail(String email) {
+        try{
+            UserEntity user = userRepository.getByEmail(email);
+            return UserKakaoDTO.builder()
+                    .email(user.getEmail())
+                    .password(user.getPassword())
+                    .kakao(user.getKakao())
+                    .userId(user.getUserId())
+                    .build();
+        } catch (Exception e){
+            throw new IllegalStateException("해당 사용자를 찾을 수 없습니다.");
+        }
+    }
+
     @Override
-    public Optional<UserEntity> findByUsername(String username) {
-        return userRepository.findByUsername(username);  // Optional로 엔티티 반환
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);  // Optional로 엔티티 반환
     }
 
 
     @Override
     public void moveToDormantAccount(UserDTO userDTO) {
         try {
-            if (userRepository.existsByUsername(userDTO.getUsername())) {
-                UserEntity user = userRepository.getByUsername(userDTO.getUsername());
+            if (userRepository.existsByEmail(userDTO.getEmail())) {
+                UserEntity user = userRepository.getByEmail(userDTO.getEmail());
                 DormantEntity dormant = DormantEntity.builder()
                         .Id(user.getId())
-                        .username(user.getUsername())
+                        .email(user.getEmail())
                         .password(user.getPassword())
+                        .kakao(user.getKakao())
+                        .userId(user.getUserId())
                         .dormantDate(LocalDate.now())
                         .build();
                 dormantRepository.save(dormant);
                 accountCommunicationService.dormantAccount(dormant.getId()); // 중첩 예외 제거
                 userRepository.delete(user); // 실제 삭제 로직 확인 필요
             } else {
-                throw new IllegalArgumentException("해당 아이디가 없음");
+                throw new IllegalArgumentException("해당 이메일이 없음");
             }
         } catch (Exception e) {
             throw new IllegalStateException("삭제에 실패 하였습니다.", e);
@@ -108,13 +125,13 @@ public class UserDAOImpl implements UserDAO {
         List<DormantEntity> expiredDormantAccounts = dormantRepository.findByDormantDateBefore(threeMonthsAgo);
 
         for (DormantEntity dormant : expiredDormantAccounts) {
-            System.out.println(LocalDate.now()+ " " + dormant.getUsername() + " 계정이 삭제됨");
+            System.out.println(LocalDate.now()+ " " + dormant.getEmail() + " 계정이 삭제됨");
             dormantRepository.delete(dormant);
         }
     }
 
     @Override
-    public Long getId(String username){
-        return userRepository.getByUsername(username).getId();
+    public Long getId(String email){
+        return userRepository.getByEmail(email).getId();
     }
 }

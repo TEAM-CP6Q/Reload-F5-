@@ -6,8 +6,8 @@ import com.f5.authserver.Entity.UserEntity;
 
 public interface UserService {
     UserDTO registerUser(RegisterDTO registerDTO);
-    UserDTO getByUsername(String username);
-    UserEntity getLoggedInUserEntity(String username);
+    Long getIdByEmail(String email);
+    UserEntity getLoggedInUserEntity(String email);
     void dormantAccount(UserDTO user);
-    Long getIdByUsername(String username);
+    UserDTO getByEmail(String email);
 }

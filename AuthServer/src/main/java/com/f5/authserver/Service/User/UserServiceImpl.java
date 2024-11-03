@@ -15,26 +15,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO registerUser(RegisterDTO registerDTO) {
-        if(userDAO.existsByUsername(registerDTO.getUsername())) {
-            throw new IllegalArgumentException("이미 존재하는 사용자 이름입니다.");
+        if(userDAO.existsByEmail(registerDTO.getEmail())) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
         return userDAO.save(registerDTO);
     }
 
     @Override
-    public UserDTO getByUsername(String username) {
-        return userDAO.getByUsername(username);
+    public UserDTO getByEmail(String email) {
+        return userDAO.getByEmail(email);
     }
 
     @Override
-    public Long getIdByUsername(String username) {
-        return userDAO.getId(username);
+    public Long getIdByEmail(String email) {
+        return userDAO.getId(email);
     }
 
     @Override
-    public UserEntity getLoggedInUserEntity(String username) {
-        return userDAO.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("해당 사용자 이름을 찾을 수 없습니다."));
+    public UserEntity getLoggedInUserEntity(String email) {
+        return userDAO.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 찾을 수 없습니다."));
     }
 
     @Override

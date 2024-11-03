@@ -63,7 +63,10 @@ public class SecurityConfig {
                                         "/api/auth/register",
                                         "/api/auth/admin/register",
                                         "/api/auth/admin/login",
-                                        "/api/auth/login/kakao/token")
+                                        "/api/auth/login/kakao/token",
+                                        "/api/auth/kakao/login",
+                                        "/api/auth/kakao/register",
+                                        "/api/auth/kakao/test")
                                 .permitAll()
 
                                 // PATCH 요청 허용

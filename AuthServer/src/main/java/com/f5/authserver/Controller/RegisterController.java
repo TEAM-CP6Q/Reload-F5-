@@ -26,10 +26,10 @@ public class RegisterController {
         }
     }
 
-    @GetMapping("/exist-username/{username}")
-    public ResponseEntity<?> existUsername(@PathVariable String username) {
-        if(userDAO.existsByUsername(username)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("중복된 아이디");
-        } else return ResponseEntity.ok("사용 가능한 아이디");
+    @GetMapping("/exist-email/{email}")
+    public ResponseEntity<?> existEmail(@PathVariable String email) {
+        if(userDAO.existsByEmail(email)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 존재하는 이메일");
+        } else return ResponseEntity.ok("사용 가능한 이메일");
     }
 }

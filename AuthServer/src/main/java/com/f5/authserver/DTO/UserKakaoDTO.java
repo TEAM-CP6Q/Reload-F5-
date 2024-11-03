@@ -6,7 +6,11 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDTO {
+@Setter
+@Getter
+public class UserKakaoDTO {
     private String email;
     private String password;
+    private Boolean kakao;
+    private String userId;
 }

@@ -9,12 +9,11 @@ import lombok.*;
 @Setter
 @Getter
 public class RegisterDTO {
-    private String username;
+    private String email;
     private String password;
     private String name;
     private String postalCode;
     private String roadNameAddress;
     private String detailedAddress;
-    private String email;
     private String phoneNumber;
 }

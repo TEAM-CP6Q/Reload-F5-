@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface DormantRepository extends JpaRepository<DormantEntity, Long> {
-    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
     List<DormantEntity> findAll();
     List<DormantEntity> findByDormantDateBefore(LocalDate date);
 }

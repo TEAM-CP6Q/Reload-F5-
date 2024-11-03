@@ -1,6 +1,7 @@
 package com.f5.authserver.Service.Kakao;
 
-import com.f5.authserver.DTO.KakaoAuthResponseDTO;
+import com.f5.authserver.DAO.User.UserDAO;
+import com.f5.authserver.DTO.UserKakaoDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import java.util.LinkedHashMap;
 @Service
 public class KakaoAuthServiceImpl implements KakaoAuthService {
 
+    private final UserDAO userDAO;
+
     @Value("${kakao.client-id}") // application.properties에서 클라이언트 ID 가져오기
     private String clientId;
 
@@ -26,7 +29,8 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     //private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public KakaoAuthServiceImpl(ObjectMapper objectMapper) {
+    public KakaoAuthServiceImpl(UserDAO userDAO, ObjectMapper objectMapper) {
+        this.userDAO = userDAO;
         //this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
     }
@@ -61,7 +65,18 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
             String phoneNumber = (String) value.get("phone_number");
             String name = value.get("name").toString();
 
-            System.out.printf("email: " + email + ", id: " + id + ", phoneNumber: " + phoneNumber + ", name: " + name + "\n");
+            System.out.printf("email: " + email + ", id: " +
+                    id + ", phoneNumber: " + phoneNumber +
+                    ", name: " + name + "\n");
+
+            if(!userDAO.existsByEmail(email))
+                return "회원가입 필요";
+            else{
+                UserKakaoDTO userKakaoDTO = userDAO.getKakaoByEmail(email);
+                if(userKakaoDTO.getKakao())
+                    return userKakaoDTO.getEmail();
+            }
+
             return "Bearer "+accessTokenResponse.getBody().get("access_token");
 
         } catch (HttpClientErrorException e) {
