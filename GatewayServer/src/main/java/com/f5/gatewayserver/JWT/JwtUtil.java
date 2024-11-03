@@ -4,9 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +19,8 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
+@RestController
+@RequestMapping("/api")
 @Component
 public class JwtUtil {
 
@@ -42,11 +48,13 @@ public class JwtUtil {
     }
 
     // 초기화 메서드에서 호출하여 secretKey 설정
+    @PostMapping("/get-secret")
     @PostConstruct
     public void initializeSecretKey() {
         if (this.secretKey == null) {
             fetchSecretKeyFromAuthServer();
         }
+//        fetchSecretKeyFromAuthServer();
     }
 
     // JWT 토큰에서 클레임 추출

@@ -22,22 +22,32 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         // GET 요청 허용
                         .pathMatchers(HttpMethod.GET,
-                                "/api/auth/register/exist-username/**",
+                                "/api/auth/register/exist-email/**",
                                 "/api/account/search-account/**",
                                 "/api/auth/user-info/**",
                                 "/api/account/dormant-accounts",
-                                "/api/auth/dormant-accounts").permitAll()
+                                "/api/auth/dormant-accounts",
+                                "/api/auth/login/kakao/page").permitAll()
 
                         // POST 요청 허용
                         .pathMatchers(HttpMethod.POST,
+                                "/api/auth/admin/register",
                                 "/api/auth/login",
                                 "/api/auth/register",
-                                "/api/auth/admin/login").permitAll()
+                                "/api/auth/admin/login",
+                                "/api/get-secret",
+                                "/api/auth/login/kakao/token",
+                                "/api/account/designer/add-designer",
+                                "/api/auth/kakao/login",
+                                "/api/auth/kakao/register").permitAll()
 
                         // PATCH 요청 허용
                         .pathMatchers(HttpMethod.PATCH,
                                 "/api/account/update-account",
                                 "/api/auth/withdraw").permitAll()
+
+                        .pathMatchers(HttpMethod.DELETE,
+                                "/api/account/designer/remove-designer/**").permitAll()
 
                         .anyExchange().authenticated() // 그 외의 요청은 인증 필요
                 )

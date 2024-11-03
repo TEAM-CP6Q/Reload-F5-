@@ -28,10 +28,15 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         // JWT 검증을 생략할 경로 설정
         if (path.startsWith("/api/auth/login") ||
                 path.startsWith("/api/auth/register") ||
-                path.startsWith("/api/auth/register/exist-username") ||
+                path.startsWith("/api/auth/register/exist-email") ||
                 path.startsWith("/api/auth/admin/login") ||
                 path.startsWith("/api/account/dormant-accounts") ||
-                path.startsWith("/api/auth/dormant-accounts")) {
+                path.startsWith("/api/auth/dormant-accounts") ||
+                path.startsWith("/api/get-secret") ||
+                path.startsWith("/api/auth/login/kakao/token") ||
+                path.startsWith("/api/auth/admin/register") ||
+                path.startsWith("/api/auth/kakao/login") ||
+                path.startsWith("/api/auth/kakao/register")){
             return chain.filter(exchange);  // 위의 경로는 JWT 검증 생략
         }
 
