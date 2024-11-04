@@ -1,9 +1,6 @@
 package com.f5.authserver.DAO.User;
 
-import com.f5.authserver.DTO.RegisterDTO;
-import com.f5.authserver.DTO.UserDTO;
-import com.f5.authserver.DTO.UserDetailDTO;
-import com.f5.authserver.DTO.UserKakaoDTO;
+import com.f5.authserver.DTO.*;
 import com.f5.authserver.Entity.DormantEntity;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.Repository.DormantRepository;
@@ -39,7 +36,6 @@ public class UserDAOImpl implements UserDAO {
                     .email(registerDTO.getEmail())
                     .password(passwordEncoder.encode(registerDTO.getPassword()))
                     .kakao(false)
-                    .userId(null)
                     .build();
             userRepository.save(userEntity);
             UserDetailDTO userDetailDTO = UserDetailDTO.builder()
@@ -75,6 +71,7 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    @Override
     public UserKakaoDTO getKakaoByEmail(String email) {
         try{
             UserEntity user = userRepository.getByEmail(email);
@@ -82,7 +79,6 @@ public class UserDAOImpl implements UserDAO {
                     .email(user.getEmail())
                     .password(user.getPassword())
                     .kakao(user.getKakao())
-                    .userId(user.getUserId())
                     .build();
         } catch (Exception e){
             throw new IllegalStateException("해당 사용자를 찾을 수 없습니다.");
@@ -105,7 +101,6 @@ public class UserDAOImpl implements UserDAO {
                         .email(user.getEmail())
                         .password(user.getPassword())
                         .kakao(user.getKakao())
-                        .userId(user.getUserId())
                         .dormantDate(LocalDate.now())
                         .build();
                 dormantRepository.save(dormant);
@@ -133,5 +128,18 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public Long getId(String email){
         return userRepository.getByEmail(email).getId();
+    }
+
+    @Override
+    public void integrationInfo(IntegrationDTO integrationDTO) {
+        try {
+            UserEntity userEntity = userRepository.getByEmail(integrationDTO.getEmail());
+            userEntity.setEmail(integrationDTO.getEmail());
+            userEntity.setPassword(passwordEncoder.encode(integrationDTO.getUserId()));
+            userEntity.setKakao(true);
+            userRepository.save(userEntity);
+        } catch (Exception e) {
+            throw new IllegalStateException("통합에 실패 하였습니다.");
+        }
     }
 }

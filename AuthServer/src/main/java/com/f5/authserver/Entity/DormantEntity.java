@@ -21,8 +21,6 @@ public class DormantEntity {
     private String password;
     @Column(nullable = false)
     private Boolean kakao = false;
-    @Column
-    private String userId;
     @Column(nullable = false)
     private LocalDate dormantDate;
 }

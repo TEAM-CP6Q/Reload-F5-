@@ -21,6 +21,4 @@ public class UserEntity {
     private String password;
     @Column(nullable = false)
     private Boolean kakao = false;
-    @Column(nullable = true)
-    private String userId;
 }

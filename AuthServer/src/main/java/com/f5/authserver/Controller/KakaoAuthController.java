@@ -1,9 +1,6 @@
 package com.f5.authserver.Controller;
 
-import com.f5.authserver.DTO.KakaoAuthRequestDTO;
-import com.f5.authserver.DTO.KakaoAuthResponseDTO;
-import com.f5.authserver.DTO.TestDTO;
-import com.f5.authserver.DTO.UserKakaoDTO;
+import com.f5.authserver.DTO.*;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.JWT.JwtTokenUtil;
 import com.f5.authserver.Repository.UserRepository;
@@ -21,8 +18,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,11 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.support.JstlUtils;
 
+import static org.springframework.http.ResponseEntity.*;
+
 @RestController
 @RequestMapping("/api/auth/kakao")
 public class KakaoAuthController {
     private final AuthenticationManager authenticationManager;
-    private final CustomUserKakaoDetailsService customUserKakaoDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
@@ -45,9 +46,9 @@ public class KakaoAuthController {
     private final KakaoAuthService kakaoAuthService;
     private final UserRepository userRepository;
 
-    public KakaoAuthController(AuthenticationManager authenticationManager, CustomUserKakaoDetailsService customUserKakaoDetailsService, PasswordEncoder passwordEncoder, JwtTokenUtil jwtTokenUtil, UserService userService, KakaoAuthService kakaoAuthService, UserRepository userRepository) {
+    public KakaoAuthController(AuthenticationManager authenticationManager, CustomUserDetailsService customUserDetailsService, PasswordEncoder passwordEncoder, JwtTokenUtil jwtTokenUtil, UserService userService, KakaoAuthService kakaoAuthService, UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
-        this.customUserKakaoDetailsService = customUserKakaoDetailsService;
+        this.customUserDetailsService = customUserDetailsService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userService = userService;
@@ -55,72 +56,71 @@ public class KakaoAuthController {
         this.userRepository = userRepository;
     }
 
-//    @PostMapping("/token")
-//    public ResponseEntity<?> getKakaoToken(@RequestBody KakaoAuthRequestDTO request) {
-//        try {
-//            logger.info("Received Kakao auth code: {}", request.getCode());
-//
-//            String accessToken = kakaoAuthService.getAccessToken(request.getCode());
-//
-//            if (accessToken == null) {
-//                logger.error("Failed to obtain access token.");
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("토큰 요청 실패");
-//            }
-//
-//            logger.info("Successfully retrieved access token: {}", accessToken);
-//            KakaoAuthResponseDTO responseDTO = new KakaoAuthResponseDTO();
-//            responseDTO.setAccessToken(accessToken);
-//            // KakaoAuthResponseDTO를 통해 토큰을 응답으로 전달
-//            return ResponseEntity.ok(responseDTO);
-//
-//        } catch (Exception e) {
-//            logger.error("Internal server error occurred during token processing", e);
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러 발생");
-//        }
-//
-//    }
-
     @PostMapping("/login")
     public ResponseEntity<?> getKakaoToken(@RequestBody KakaoAuthRequestDTO request) {
         try {
             logger.info("Received Kakao auth code: {}", request.getCode());
 
-            String status = kakaoAuthService.getAccessToken(request.getCode());
+            String status = kakaoAuthService.loginKakao(request.getCode());
 
-            if (status.equals("회원가입 필요")) {
+            if (status.equals("Need register")) {
                 logger.error("회원가입이 필요합니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("회원가입 필요");
+                return status(404).body("회원가입 필요");
+            } else if (status.equals("Need integration")) {
+                return status(405).body("통합 필요");
             }
 
+            // 정규 표현식 패턴 생성
+            Pattern emailPattern = Pattern.compile("email: (\\S+)");
+            Pattern userIdPattern = Pattern.compile("userId: (\\S+)");
 
-            final UserDetails userDetails = customUserKakaoDetailsService.loadUserByUsername(status);
+            // Matcher를 사용하여 email 추출
+            Matcher emailMatcher = emailPattern.matcher(status);
+            String email = emailMatcher.find() ? emailMatcher.group(1) : "Not found";
+
+            // Matcher를 사용하여 userId 추출
+            Matcher userIdMatcher = userIdPattern.matcher(status);
+            String password = userIdMatcher.find() ? userIdMatcher.group(1) : "Not found";
+
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+
+            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
             final String token = jwtTokenUtil.generateToken(userDetails.getUsername());
 
             // UserEntity를 서비스 메서드를 통해 가져옴
-            UserEntity loggedInUser = userService.getLoggedInUserEntity(status);
+            UserEntity loggedInUser = userService.getLoggedInUserEntity(email);
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("user", loggedInUser);
-            return ResponseEntity.ok(response);
+            return ok(response);
 
         } catch (Exception e) {
             logger.error("Internal server error occurred during token processing", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러 발생");
+            return status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 에러 발생");
+        }
+    }
+
+    @PatchMapping("/integration")
+    public ResponseEntity<?> integrationAccount(@RequestBody KakaoAuthRequestDTO request) {
+        try{
+            logger.info("Received Kakao auth code: {}", request.getCode());
+            String status = kakaoAuthService.integrationAccount(request.getCode());
+            return ok(status);
+        } catch (URISyntaxException e) {
+            return status(404).body(e);
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserKakaoDTO userKakaoDTO) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(userKakaoDTO.getEmail());
-        userEntity.setPassword(passwordEncoder.encode(userKakaoDTO.getPassword()));
-        userEntity.setKakao(userKakaoDTO.getKakao());
-        userEntity.setUserId(passwordEncoder.encode(userKakaoDTO.getUserId()));
-        userRepository.save(userEntity);
-
-        return ResponseEntity.ok("저장 성공");
-
+    public ResponseEntity<?> registerUser(@RequestBody KakaoAuthRequestDTO request) {
+        try {
+            RegisterDTO registerDTO = kakaoAuthService.registerKakao(request.getCode());
+            UserDTO savedUser = userService.registerUser(registerDTO);
+            return ok("Email: " + savedUser.getEmail() + " 회원가입 성공");
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException("회원가입 실패" + e.getMessage());
+        }
     }
 }
 
