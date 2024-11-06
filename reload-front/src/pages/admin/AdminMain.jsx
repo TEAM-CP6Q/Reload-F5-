@@ -4,6 +4,7 @@ import { UserOutlined, DashboardOutlined, ApartmentOutlined, ShoppingCartOutline
 import '/Users/dongsebi/Desktop/Reload_F5/reload-front/src/CSS/admin/AdminMain.css'; 
 import AdminDash from './AdminDash';
 import AdminProduct from './AdminProduct';
+import AdminDesigner from './AdminDesigner';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -143,6 +144,7 @@ const AdminMain = () => {
       case 'delivery':
         return <DeliveryManagementContent />;
       case 'designer-register':
+        return <AdminDesigner />;
         return <DesignerRegistrationContent />;
       case 'customer-support':
         return <CustomerSupportContent />;
@@ -156,7 +158,7 @@ const AdminMain = () => {
       <Sider width={250} className="sider">
         <div className="logo">
           <Avatar size={64} icon={<UserOutlined />} />
-          <Text className="user-name">{adminName}</Text>
+          <Text className="user-name">관리자 <br/> {adminName}</Text>
         </div>
         <Menu
           theme="dark"
