@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Avatar, Typography, Table, Card, Divider, Button, List } from 'antd';
 import { UserOutlined, DashboardOutlined, ApartmentOutlined, ShoppingCartOutlined, UploadOutlined, RocketOutlined, UserAddOutlined, LogoutOutlined, CommentOutlined } from '@ant-design/icons';
-import '/Users/dongsebi/Desktop/Reload_F5/reload-front/src/CSS/admin/AdminMain.css'; 
+import '../../CSS/admin/AdminMain.css';
 import AdminDash from './AdminDash';
 import AdminProduct from './AdminProduct';
 import AdminDesigner from './AdminDesigner';

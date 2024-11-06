@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Card, Modal, Form, Input, Table, Upload, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import '/Users/dongsebi/Desktop/Reload_F5/reload-front/src/CSS/admin/AdminProduct.css'; 
+import '../../CSS/admin/AdminProduct.css'; 
 
 const { Option } = Select;
 
