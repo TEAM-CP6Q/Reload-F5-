@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Button, Card, Modal, Form, Input, Table, Upload, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
-
 const { Option } = Select;
 
 const AdminDesigner = () => {
@@ -75,6 +74,7 @@ const AdminDesigner = () => {
         designer.key === editingDesigner.key ? { ...designer, ...values } : designer
       )
     );
+    setEditingDesigner(null);
     setIsEditModalOpen(false);
   };
 
@@ -186,6 +186,14 @@ const AdminDesigner = () => {
 
           <Form.Item label="경력 (년)" name="experience">
             <Input type="number" />
+          </Form.Item>
+
+          <Form.Item label="재직 현황" name="status">
+            <Select placeholder="재직 현황을 선택해주세요">
+              <Option value="재직 중">재직 중</Option>
+              <Option value="휴직">휴직</Option>
+              <Option value="퇴사">퇴사</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item label="주요 카테고리" name="category">
