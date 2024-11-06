@@ -33,38 +33,34 @@ const SideBar = ({ isOpen, onClose }) => {
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-                <div className="sidebar-content">
-                    <button
-                        className="sidebar-menu-item"
-                        onClick={handleMyPageClick}
-                    >
-                        마이페이지
-                    </button>
-                    <div className="sidebar-menu-divider" />
-                    <button
-                        className="sidebar-menu-item"
-                        onClick={() => handleNavigation('/')}
-                    >
-                        수거 신청
-                    </button>
-                    <div className="sidebar-menu-divider" />
-                    <button
-                        className="sidebar-menu-item"
-                        onClick={() => handleNavigation('/')}
-                    >
-                        기업 파트너십 신청
-                    </button>
-                    <div className="sidebar-menu-divider" />
-                    <button
-                        className="sidebar-menu-item"
-                        onClick={() => handleNavigation('/')}
-                    >
-                        상품 문의
+                <div className="sidebar-content-wrapper"> {/* New wrapper div */}
+                    <div className="sidebar-content">
+                        <button className="sidebar-menu-item" onClick={handleMyPageClick}>
+                            마이페이지
+                        </button>
+                        <div className="sidebar-menu-divider" />
+                        <button className="sidebar-menu-item" onClick={() => handleNavigation('/')}>
+                            수거 신청
+                        </button>
+                        <div className="sidebar-menu-divider" />
+                        <button className="sidebar-menu-item" onClick={() => handleNavigation('/')}>
+                            기업 파트너십 신청
+                        </button>
+                        <div className="sidebar-menu-divider" />
+                        <button className="sidebar-menu-item" onClick={() => handleNavigation('/')}>
+                            상품 문의
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <button className="sidebar-bottom" onClick={() => handleNavigation('/login')}>
+                        로그인
                     </button>
                 </div>
             </div>
         </>
     );
+    
 };
 
 export default SideBar;
