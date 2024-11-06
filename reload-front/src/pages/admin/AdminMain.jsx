@@ -3,6 +3,7 @@ import { Layout, Menu, Avatar, Typography, Table, Card, List,Divider } from 'ant
 import { UserOutlined, DashboardOutlined, ApartmentOutlined, ShoppingCartOutlined, UploadOutlined, RocketOutlined, UserAddOutlined, LogoutOutlined } from '@ant-design/icons';
 import '/Users/dongsebi/Desktop/Reload_F5/reload-front/src/CSS/admin/AdminMain.css';
 import AdminDash from './AdminDash';
+import AdminProduct from './AdminProduct';
 
 const { Header, Sider, Content } = Layout;
 const { Title, Text } = Typography;
@@ -127,7 +128,7 @@ const AdminMain = () => {
       case 'orders':
         return <OrderManagementContent />;
       case 'product-upload':
-        return <ProductUploadContent />;
+        return <AdminProduct />;
       case 'delivery':
         return <DeliveryManagementContent />;
       case 'designer-register':

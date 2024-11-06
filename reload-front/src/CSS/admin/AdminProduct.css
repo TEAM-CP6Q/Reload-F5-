@@ -1,0 +1,14 @@
+
+
+.custom-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 전체 화면에서 중앙에 위치하도록 설정 */
+    top: 0 !important;
+  }
+  
+  .custom-modal .ant-modal-content {
+    margin: auto;
+  }
+  
