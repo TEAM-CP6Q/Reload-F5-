@@ -9,17 +9,15 @@ import MyPage from './pages/MyPage';
 import UserUpdate from './pages/UserUpdate';
 import SignupType from './pages/SignupType';
 import OrderListDetail from './pages/OrderListDetail';
-
-
 import OrderList from './pages/OrderList';
-
+import AdminMain from './pages/admin/AdminMain';
 
 function App() {
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState('user'); // 기본값을 'user'로 설정
 
   useEffect(() => {
     const storedRole = localStorage.getItem("role");
-    setRole(storedRole);
+    if (storedRole) setRole(storedRole);
   }, []);
 
   return (
@@ -27,27 +25,17 @@ function App() {
       <Router>
         <Routes>
           {role === 'admin' ? (
-           <Route 
-           path="/admin-main" 
-           element={
-             <div>
-               <h2>관리자 메인 페이지</h2>
-
-               <p>여기에 관리자 기능 및 내용을 추가하세요.</p>
-             </div>
-           } 
-         />
+            <Route path="/admin-main" element={<AdminMain setRole={setRole} />} />
           ) : (
             <>
               <Route path="/" element={<MainPage />} />
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login" element={<LoginPage setRole={setRole} />} />
               <Route path="/signup" element={<SignupPage />} />
-              {/* <Route path="/auth/kakao/callback" element={<KakaoCallback />} /> */}
               <Route path="/auth" element={<KakaoCallback />} />
               <Route path="/mypage" element={<MyPage />} />
-              <Route path="/user-update" element={<UserUpdate/>} />
-              <Route path="/signup-type" element={<SignupType/>} />
-              <Route path="/order-list" element={<OrderList/>} />
+              <Route path="/user-update" element={<UserUpdate />} />
+              <Route path="/signup-type" element={<SignupType />} />
+              <Route path="/order-list" element={<OrderList />} />
               <Route path="/order-list-detail" element={<OrderListDetail />} />
             </>
           )}

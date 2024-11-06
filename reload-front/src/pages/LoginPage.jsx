@@ -8,11 +8,11 @@ import KakaoLogin from '../pages/KakaoLogin';
 
 const LoginPage = () => {
   const [activeTab, setActiveTab] = useState('user');
-  const [userId, setUserId] = useState(''); // 아이디 상태
+  const [email, setEmail] = useState(''); // 아이디 상태
   const [password, setPassword] = useState(''); // 비밀번호 상태
   const [adminCode, setAdminCode] = useState(''); // 관리자 코드 상태
 
-  const handleUserIdChange = (e) => setUserId(e.target.value);
+  const handleUserIdChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
   const handleAdminCodeChange = (e) => setAdminCode(e.target.value);
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const LoginPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: userId,
+          email: email,
           password: password,
         }),
       });
@@ -41,8 +41,7 @@ const LoginPage = () => {
       if (response.status === 200) {
         console.log(result);
         localStorage.setItem("token", result.token);
-        localStorage.setItem("email", result.email);
-        localStorage.setItem("username", result.user.username);
+        localStorage.setItem("email", result.user.email);
         localStorage.setItem("id", result.user.id);
         localStorage.setItem("role", "user"); // 역할을 로컬 스토리지에 저장
         console.log("로그인 성공");
@@ -77,6 +76,8 @@ const LoginPage = () => {
         console.log(result);
         localStorage.setItem("token", result.token);
         localStorage.setItem("role", "admin"); // 역할을 로컬 스토리지에 저장
+        localStorage.setItem("adminname", result.admin.adminName);
+      
         console.log("로그인 성공");
         navigate('/admin-main');
       } else {
@@ -120,13 +121,13 @@ const LoginPage = () => {
         {activeTab === 'user' && (
           <div className="login-form">
             <div className="form-group">
-              <label>아이디</label>
+              <label>이메일</label>
               <input
               className='login-id'
                 type="text"
-                value={userId}
+                value={email}
                 onChange={handleUserIdChange}
-                placeholder="아이디를 입력해 주세요."
+                placeholder="이메일을 입력해 주세요."
               />
             </div>
 
