@@ -1,34 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Avatar, Typography, Table, Card, List,Divider } from 'antd';
-import { UserOutlined, DashboardOutlined, ApartmentOutlined, ShoppingCartOutlined, UploadOutlined, RocketOutlined, UserAddOutlined, LogoutOutlined } from '@ant-design/icons';
-import '/Users/dongsebi/Desktop/Reload_F5/reload-front/src/CSS/admin/AdminMain.css';
+import { Layout, Menu, Avatar, Typography, Table, Card, Divider, Button, List } from 'antd';
+import { UserOutlined, DashboardOutlined, ApartmentOutlined, ShoppingCartOutlined, UploadOutlined, RocketOutlined, UserAddOutlined, LogoutOutlined, CommentOutlined } from '@ant-design/icons';
+import '/Users/dongsebi/Desktop/Reload_F5/reload-front/src/CSS/admin/AdminMain.css'; 
 import AdminDash from './AdminDash';
 
 const { Header, Sider, Content } = Layout;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
-// 각 탭에 표시할 컴포넌트를 정의합니다.
-const DashboardContent = () => {
-  const dashboardData = [
-    { key: '1', metric: '총 사용자 수', value: 120 },
-    { key: '2', metric: '총 주문 수', value: 75 },
-    { key: '3', metric: '총 수익', value: '$4500' },
-  ];
-
-  return (
-    <div>
-      <h2>대시보드</h2>
-      <Table dataSource={dashboardData} columns={[{ title: '지표', dataIndex: 'metric' }, { title: '값', dataIndex: 'value' }]} pagination={false} />
-    </div>
-  );
-};
-
+// 수거 관리 컴포넌트
 const PickupManagementContent = () => {
   const pickupData = [
     { key: '1', name: '김철수', status: '수거 대기', date: '2024-11-05' },
     { key: '2', name: '이영희', status: '수거 완료', date: '2024-11-04' },
   ];
-
   return (
     <div>
       <h2>수거 관리</h2>
@@ -37,12 +21,12 @@ const PickupManagementContent = () => {
   );
 };
 
+// 주문 관리 컴포넌트
 const OrderManagementContent = () => {
   const orderData = [
     { key: '1', orderNumber: '20241105-001', customer: '김철수', total: '$150' },
     { key: '2', orderNumber: '20241105-002', customer: '박영희', total: '$200' },
   ];
-
   return (
     <div>
       <h2>주문 관리</h2>
@@ -51,12 +35,12 @@ const OrderManagementContent = () => {
   );
 };
 
+// 상품 등록 컴포넌트
 const ProductUploadContent = () => {
   const productData = [
     { key: '1', productName: '상품 A', status: '등록 완료' },
     { key: '2', productName: '상품 B', status: '대기 중' },
   ];
-
   return (
     <div>
       <h2>상품 등록</h2>
@@ -65,12 +49,12 @@ const ProductUploadContent = () => {
   );
 };
 
+// 배송 관리 컴포넌트
 const DeliveryManagementContent = () => {
   const deliveryData = [
     { key: '1', deliveryId: 'DEL-001', status: '배송 중', date: '2024-11-05' },
     { key: '2', deliveryId: 'DEL-002', status: '배송 완료', date: '2024-11-04' },
   ];
-
   return (
     <div>
       <h2>배송 관리</h2>
@@ -79,16 +63,42 @@ const DeliveryManagementContent = () => {
   );
 };
 
+// 디자이너 등록 컴포넌트
 const DesignerRegistrationContent = () => {
   const designerData = [
     { key: '1', name: '곽팔수', registrationDate: '2024-11-03', status: '승인 완료' },
     { key: '2', name: '홍길동', registrationDate: '2024-11-04', status: '대기 중' },
   ];
-
   return (
     <div>
       <h2>디자이너 등록</h2>
       <Table dataSource={designerData} columns={[{ title: '이름', dataIndex: 'name' }, { title: '등록 날짜', dataIndex: 'registrationDate' }, { title: '상태', dataIndex: 'status' }]} pagination={false} />
+    </div>
+  );
+};
+
+// 문의 채팅 컴포넌트
+const CustomerSupportContent = () => {
+  const chatData = [
+    { key: '1', name: '윤산하', inquiry: '배송 문의', message: '상품 출고 배송은 언제 되나요?' },
+    { key: '2', name: '차은우', inquiry: '재입고 문의', message: '이 옷 언제 재입고 되나요?' },
+    { key: '3', name: '문빈', inquiry: '수거 문의', message: '쓰레기 수거 오는 건가요?' },
+  ];
+
+  return (
+    <div>
+      <h2>문의 채팅</h2>
+      <List
+        dataSource={chatData}
+        renderItem={(item) => (
+          <List.Item key={item.key}>
+            <List.Item.Meta
+              title={`${item.name} (${item.inquiry})`}
+              description={item.message}
+            />
+          </List.Item>
+        )}
+      />
     </div>
   );
 };
@@ -117,6 +127,7 @@ const AdminMain = () => {
     { label: '상품 등록', key: 'product-upload', icon: <UploadOutlined /> },
     { label: '배송 관리', key: 'delivery', icon: <RocketOutlined /> },
     { label: '디자이너 등록', key: 'designer-register', icon: <UserAddOutlined /> },
+    { label: '문의 채팅', key: 'customer-support', icon: <CommentOutlined /> },
     { label: '로그아웃', key: 'logout', icon: <LogoutOutlined />, onClick: handleLogout },
   ];
 
@@ -132,8 +143,10 @@ const AdminMain = () => {
         return <DeliveryManagementContent />;
       case 'designer-register':
         return <DesignerRegistrationContent />;
+      case 'customer-support':
+        return <CustomerSupportContent />;
       default:
-        return <AdminDash />;
+        return <AdminDash onMoreClick={() => setActiveTab('customer-support')} />;
     }
   };
 
@@ -156,14 +169,13 @@ const AdminMain = () => {
       </Sider>
 
       <Layout className="main-layout">
-      <Header className="header" style={{ backgroundColor: '#f0f2f5', textAlign: 'center', padding: '20px 0' }}>
+        <Header className="header" style={{ backgroundColor: '#f0f2f5', textAlign: 'center', padding: '20px 0' }}>
           <Divider>
             <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#1890ff', letterSpacing: '1px' }}>
               지구를 다시 고칠 때까지, <span style={{ color: '#52c41a' }}>새로고침</span>
             </Text>
           </Divider>
         </Header>
-
 
         <Content className="content">
           {renderContent()}
