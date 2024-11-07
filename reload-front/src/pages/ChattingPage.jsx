@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../CSS/ChattingPage.css';
 import Header from '../components/Header';
 import { useNavigate } from "react-router-dom";
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
 const ChattingPage = () => {
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
-    const [socket, setSocket] = useState(null);
     const [name, setName] = useState('');
+    const stompClientRef = useRef(null);
     const navigate = useNavigate();
     const chatId = 1; // 지정된 관리자와의 채팅을 위한 고유 chatId
 
@@ -39,54 +41,74 @@ const ChattingPage = () => {
     }, []);
 
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:8080/chat'); 
-        setSocket(ws);
+        if (!stompClientRef.current) {
+            const client = new Client({
+                webSocketFactory: () => new SockJS('http://localhost:8080/ws/chat'),
+           
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+                debug: (str) => {
+                    console.log(str);
+                },
+            });
 
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            if (message.chatId === chatId) { // 지정된 관리자와의 채팅만 수신
-                setMessages((prevMessages) => [...prevMessages, message]);
-            }
-        };
+            client.onConnect = () => {
+                console.log('Connected to WebSocket server');
+                client.subscribe(`/topic/chat/${chatId}`, (message) => {
+                    const receivedMessage = JSON.parse(message.body);
+                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                });
+            };
 
-        ws.onclose = () => {
-            console.log('WebSocket 연결이 종료되었습니다.');
-        };
+            client.onStompError = (frame) => {
+                console.error('Broker reported error: ' + frame.headers['message']);
+                console.error('Additional details: ' + frame.body);
+            };
+
+            client.activate();
+            stompClientRef.current = client;
+        }
 
         return () => {
-            ws.close();
+            if (stompClientRef.current) {
+                stompClientRef.current.deactivate();
+                stompClientRef.current = null;
+            }
         };
     }, [chatId]);
 
     const handleSendMessage = () => {
-        if (newMessage.trim() && socket) {
+        if (newMessage.trim() && stompClientRef.current) {
             const messageData = {
-                chatId: chatId, // 지정된 관리자와의 채팅을 위한 ID
+                chatId: chatId,
                 sender: 'user',
                 name: name,
                 content: newMessage,
                 timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             };
-            
-            socket.send(JSON.stringify(messageData));
-            setMessages((prevMessages) => [...prevMessages, messageData]);
+
+            // 서버로 메시지 전송만 하고 상태 업데이트는 하지 않음
+            stompClientRef.current.publish({
+                destination: '/app/chat.sendMessage',
+                body: JSON.stringify(messageData),
+            });
+
+            // 메시지 전송 후 입력 필드 비움
             setNewMessage('');
         }
     };
-    
+
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (newMessage.trim()) {
-                handleSendMessage();
-            }
+            handleSendMessage();
         }
     };
 
     const handleEndChat = () => {
-        if (socket) {
-            socket.close(); // WebSocket 연결 해제
-            setSocket(null); // 소켓 상태 초기화
+        if (stompClientRef.current) {
+            stompClientRef.current.deactivate();
             alert('채팅이 종료되었습니다.');
             navigate('/');
         }
