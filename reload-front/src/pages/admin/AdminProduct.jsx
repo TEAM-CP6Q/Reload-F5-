@@ -39,7 +39,8 @@ const AdminProduct = () => {
   };
 
   const columns = [
-    { title: '이미지', dataIndex: 'image', key: 'image', render: () => <UploadOutlined /> },
+    { title: '대표 사진', dataIndex: 'image', key: 'image', render: () => <UploadOutlined /> },
+    { title: '상품 설명 이미지', dataIndex: 'image-detail', key: 'image-detail', render: () => <UploadOutlined /> },
     { title: '상품명', dataIndex: 'name', key: 'name' },
     { title: '가격', dataIndex: 'price', key: 'price' },
     { title: '디자이너', dataIndex: 'designer', key: 'designer' },
@@ -63,7 +64,7 @@ const AdminProduct = () => {
         className="custom-modal" // 모달 중앙 정렬을 위한 클래스 추가
       >
         <Form layout="vertical" onFinish={handleFinish}>
-          <Form.Item label="이미지 삽입" name="image" rules={[{ required: true, message: '이미지를 선택해주세요' }]}>
+          <Form.Item label="대표 이미지" name="image" rules={[{ required: true, message: '이미지를 선택해주세요' }]}>
             <Upload
               listType="picture"
               maxCount={1}
@@ -73,6 +74,18 @@ const AdminProduct = () => {
               <Button icon={<UploadOutlined />}>이미지 업로드</Button>
             </Upload>
           </Form.Item>
+
+          <Form.Item label="상품 설명 이미지" name="image-detail" rules={[{ required: true, message: '이미지를 선택해주세요' }]}>
+            <Upload
+              listType="picture"
+              maxCount={1}
+              fileList={fileList}
+              onChange={handleFileChange}
+            >
+              <Button icon={<UploadOutlined />}>이미지 업로드</Button>
+            </Upload>
+          </Form.Item>
+
 
           <Form.Item label="상품명" name="name" rules={[{ required: true, message: '상품명을 입력해주세요' }]}>
             <Input />
