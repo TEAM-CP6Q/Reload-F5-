@@ -12,6 +12,7 @@ import AdminDash from './AdminDash';
 import AdminProduct from './AdminProduct';
 import AdminDesigner from './AdminDesigner';
 import AdminAllUser from './AdminAllUser';
+import AdminChat from './AdminChat';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -88,7 +89,7 @@ const AdminMain = () => {
       case 'designer-register':
         return <AdminDesigner />;
       case 'customer-support':
-        return <CustomerSupportContent />;
+        return <AdminChat />;
       case 'user-management':
         return <AdminAllUser />;
       default:
