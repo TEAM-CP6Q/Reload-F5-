@@ -87,6 +87,7 @@
 
 .address-serch button {
     width: 30%;
+    padding: 10px;
     background-color: transparent; /* 배경색 제거 */
     color: #388E3C; /* 글자 색상 */
     border: 1px solid #388E3C; /* 테두리 색상 추가 */
@@ -170,10 +171,11 @@
 }
 
 .verification-btn {
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 30%;
-    height: 30px;
+    padding: 10px;
     background-color: transparent; /* 배경색 제거 */
     color: #388E3C; /* 글자 색상 */
     border: 1px solid #388E3C; /* 테두리 색상 추가 */
