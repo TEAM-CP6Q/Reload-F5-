@@ -1,10 +1,11 @@
 package com.f5.authserver.Service.Kakao;
 
 import com.f5.authserver.DAO.User.UserDAO;
-import com.f5.authserver.DTO.AddressDTO;
-import com.f5.authserver.DTO.IntegrationDTO;
-import com.f5.authserver.DTO.RegisterDTO;
-import com.f5.authserver.DTO.UserKakaoDTO;
+import com.f5.authserver.DTO.Kakao.AddressDTO;
+import com.f5.authserver.DTO.Kakao.IntegrationDTO;
+import com.f5.authserver.DTO.Auth.RegisterDTO;
+import com.f5.authserver.DTO.Kakao.KakaoLoginDTO;
+import com.f5.authserver.DTO.Kakao.UserKakaoDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
         );
         String accessToken = accessTokenResponse.getBody().get("access_token").toString();
         LinkedHashMap<String, Object> value = fetchKakaoUserData(accessToken);
+        value.put("access_token", accessToken);
         return value;
     }
 
@@ -79,7 +81,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     }
 
     @Override
-    public String loginKakao(String authCode) {
+    public KakaoLoginDTO loginKakao(String authCode) {
         try {
             LinkedHashMap<String, Object> value = this.getKakaoInfo(authCode);
 
@@ -93,17 +95,20 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
                     ", name: " + name + "\n");
             Boolean status = userDAO.existsByEmail(email);
             if(!status)
-                return "Need register";
+                throw new IllegalStateException("Need register");
             else if (!userDAO.getKakaoByEmail(email).getKakao()) {
-                return "Need integration";
+                throw new IllegalStateException("Need integration");
             }
             else {
                 UserKakaoDTO userKakaoDTO = userDAO.getKakaoByEmail(email);
                 if(userKakaoDTO.getKakao())
-                    return "Email: " + userKakaoDTO.getEmail() + " UserId: " + userKakaoDTO.getUserId();
+                    return KakaoLoginDTO.builder()
+                            .email(userKakaoDTO.getEmail())
+                            .userId(userKakaoDTO.getUserId())
+                            .build();
             }
 
-            return "Bearer "+value.get("access_token");
+            return null;
 
         } catch (HttpClientErrorException e) {
             System.err.println("카카오 API 요청 실패: " + e.getResponseBodyAsString());
@@ -116,7 +121,7 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     @Override
     public RegisterDTO registerKakao(String authCode) throws URISyntaxException {
         LinkedHashMap<String, Object> value = this.getKakaoInfo(authCode);
-        AddressDTO addressDTO = this.getShippingAddress(authCode);
+        AddressDTO addressDTO = this.getShippingAddress(value.get("access_token").toString());
         return RegisterDTO.builder()
                 .email(value.get("email").toString())
                 .password(value.get("id").toString())

@@ -1,6 +1,6 @@
 package com.f5.authserver.DAO.Administrator;
 
-import com.f5.authserver.DTO.AdministratorDTO;
+import com.f5.authserver.DTO.User.AdministratorDTO;
 import com.f5.authserver.Entity.AdministratorEntity;
 
 import java.util.Optional;

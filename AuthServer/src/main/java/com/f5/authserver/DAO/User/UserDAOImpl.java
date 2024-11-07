@@ -1,6 +1,10 @@
 package com.f5.authserver.DAO.User;
 
-import com.f5.authserver.DTO.*;
+import com.f5.authserver.DTO.Auth.RegisterDTO;
+import com.f5.authserver.DTO.Kakao.IntegrationDTO;
+import com.f5.authserver.DTO.Kakao.UserKakaoDTO;
+import com.f5.authserver.DTO.User.UserDTO;
+import com.f5.authserver.DTO.User.UserDetailDTO;
 import com.f5.authserver.Entity.DormantEntity;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.Repository.DormantRepository;
@@ -55,7 +59,12 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public Boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email) || dormantRepository.existsByEmail(email);
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Boolean existByEmailOnDormant(String email) {
+        return dormantRepository.existsByEmail(email);
     }
 
     @Override
@@ -141,5 +150,30 @@ public class UserDAOImpl implements UserDAO {
         } catch (Exception e) {
             throw new IllegalStateException("통합에 실패 하였습니다.");
         }
+    }
+
+    @Override
+    public UserDTO kakaoSave(RegisterDTO registerDTO) throws IllegalArgumentException{
+        UserEntity userEntity = UserEntity.builder()
+                .email(registerDTO.getEmail())
+                .password(passwordEncoder.encode(registerDTO.getPassword()))
+                .kakao(true)
+                .build();
+        userRepository.save(userEntity);
+        UserDetailDTO userDetailDTO = UserDetailDTO.builder()
+                .id(userEntity.getId())
+                .name(registerDTO.getName())
+                .postalCode(registerDTO.getPostalCode())
+                .roadNameAddress(registerDTO.getRoadNameAddress())
+                .detailedAddress(registerDTO.getDetailedAddress())
+                .phoneNumber(registerDTO.getPhoneNumber())
+                .build();
+        accountCommunicationService.registerAccount(userDetailDTO);
+        return entityToDTO(userEntity);
+    }
+
+    @Override
+    public String getEmail(Long id) throws IllegalArgumentException {
+        return userRepository.getEmailById(id);
     }
 }

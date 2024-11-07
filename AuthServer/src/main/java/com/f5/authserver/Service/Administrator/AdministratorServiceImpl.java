@@ -1,16 +1,11 @@
 package com.f5.authserver.Service.Administrator;
 
 import com.f5.authserver.DAO.Administrator.AdministratorDAO;
-import com.f5.authserver.DTO.AdministratorDTO;
+import com.f5.authserver.DTO.User.AdministratorDTO;
 import com.f5.authserver.Entity.AdministratorEntity;
-import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.Repository.AdministratorRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor

@@ -1,8 +1,8 @@
 package com.f5.authserver.Service.User;
 
 import com.f5.authserver.DAO.User.UserDAO;
-import com.f5.authserver.DTO.RegisterDTO;
-import com.f5.authserver.DTO.UserDTO;
+import com.f5.authserver.DTO.Auth.RegisterDTO;
+import com.f5.authserver.DTO.User.UserDTO;
 import com.f5.authserver.Entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -17,8 +17,20 @@ public class UserServiceImpl implements UserService {
     public UserDTO registerUser(RegisterDTO registerDTO) {
         if(userDAO.existsByEmail(registerDTO.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        } else if(userDAO.existByEmailOnDormant(registerDTO.getEmail())) {
+            throw new IllegalStateException("탈퇴한 회원 입니다.");
         }
         return userDAO.save(registerDTO);
+    }
+
+    @Override
+    public UserDTO registerKakaoUser(RegisterDTO registerDTO){
+        if(userDAO.existsByEmail(registerDTO.getEmail())) {
+            throw new IllegalArgumentException("이미 가입된 계정입니다. 통합을 진행해주세요");
+        } else if(userDAO.existByEmailOnDormant(registerDTO.getEmail())) {
+            throw new IllegalStateException("탈퇴한 회원 입니다.");
+        }
+        return userDAO.kakaoSave(registerDTO);
     }
 
     @Override
@@ -29,6 +41,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Long getIdByEmail(String email) {
         return userDAO.getId(email);
+    }
+
+    @Override
+    public String getEmailById(Long id){
+        return userDAO.getEmail(id);
     }
 
     @Override

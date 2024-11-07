@@ -1,6 +1,7 @@
 package com.f5.authserver.Controller;
 
-import com.f5.authserver.DTO.UserDTO;
+import com.f5.authserver.DTO.StatusCodeDTO;
+import com.f5.authserver.DTO.User.UserDTO;
 import com.f5.authserver.Entity.DormantEntity;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.JWT.JwtTokenUtil;
@@ -36,7 +37,7 @@ public class LoginController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody UserDTO user) throws AuthenticationException {
+    public ResponseEntity<?> login(@RequestBody UserDTO user) throws AuthenticationException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
         final UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
@@ -45,21 +46,23 @@ public class LoginController {
         // UserEntity를 서비스 메서드를 통해 가져옴
         UserEntity loggedInUser = userService.getLoggedInUserEntity(user.getEmail());
 
-        if(loggedInUser.getUserId() == null) {
+        if(!loggedInUser.getKakao()) {
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("user", loggedInUser);
             return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(403).body("카카오 계정으로 로그인 해주세요.");
+            return ResponseEntity.ok().body(StatusCodeDTO.builder()
+                            .Code(400L)
+                            .Msg("카카오 계정으로 로그인 해주세요.")
+                            .build());
         }
     }
 
     // 원래 이렇게 하면 안돼지만 귀찮으므로 걍 함
     @GetMapping("/user-info/{email}")
-    public ResponseEntity<?> userInfo(@PathVariable String email) {
-        UserEntity user = userService.getLoggedInUserEntity(email);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<?> userInfo(@PathVariable String email) throws IllegalStateException {
+        return ResponseEntity.ok(userService.getLoggedInUserEntity(email));
     }
 
     @PatchMapping("/withdraw")
@@ -75,11 +78,20 @@ public class LoginController {
             return ResponseEntity.ok("탈퇴 성공");
 
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 올바르지 않습니다.");
+            return ResponseEntity.status(401).body(StatusCodeDTO.builder()
+                            .Code(401L)
+                            .Msg("아이디 또는 비밀번호가 올바르지 않습니다.")
+                            .build());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(403).body(StatusCodeDTO.builder()
+                            .Code(403L)
+                            .Msg("탈퇴 실패")
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
+            return ResponseEntity.status(500).body(StatusCodeDTO.builder()
+                            .Code(500L)
+                            .Msg("서버 오류 발생")
+                            .build());
         }
     }
 
@@ -89,34 +101,22 @@ public class LoginController {
             List<DormantEntity> dormantEntities = dormantRepository.findAll();
             return ResponseEntity.ok(dormantEntities);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.ok().body(StatusCodeDTO.builder()
+                            .Code(400L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
 
-//    @GetMapping("/get-all-users")
-//    public ResponseEntity<?> getAll() {
-//        try{
-//
-//        }
-//    }
-
-//    @DeleteMapping("/withdraw/{username}")
-//    public ResponseEntity<?> withdraw(@PathVariable String username) {
-//        try{
-//            userService.dormantAccount(username);
-//            return ResponseEntity.ok("탈퇴 성공");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
-
-//    @PatchMapping("/withdraw")
-//    public ResponseEntity<?> withdraw(@RequestBody UserDTO user) {
-//        try{
-//            userService.dormantAccount(user);
-//            return ResponseEntity.ok("탈퇴 성공");
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
+    @GetMapping("/email/{id}")
+    public ResponseEntity<?> emails(@PathVariable Long id) {
+        try{
+            return ResponseEntity.ok(userService.getEmailById(id));
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(StatusCodeDTO.builder()
+                            .Code(400L)
+                            .Msg(e.getMessage())
+                            .build());
+        }
+    }
 }

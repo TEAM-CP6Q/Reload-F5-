@@ -1,7 +1,8 @@
 package com.f5.authserver.Controller;
 
-import com.f5.authserver.DTO.AdminLoginDTO;
-import com.f5.authserver.DTO.AdministratorDTO;
+import com.f5.authserver.DTO.Auth.AdminLoginDTO;
+import com.f5.authserver.DTO.StatusCodeDTO;
+import com.f5.authserver.DTO.User.AdministratorDTO;
 import com.f5.authserver.Entity.AdministratorEntity;
 import com.f5.authserver.JWT.JwtTokenUtil;
 import com.f5.authserver.Repository.AdministratorRepository;
@@ -77,7 +78,10 @@ public class AdministratorController {
             AdministratorDTO saveAdmin = administratorService.addAdministrator(admin);
             return ResponseEntity.ok(saveAdmin);
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
 }

@@ -1,4 +1,5 @@
-package com.f5.authserver.DTO;
+package com.f5.authserver.DTO.User;
+
 
 import lombok.*;
 
@@ -8,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AdminLoginDTO {
+public class AdministratorDTO {
+    private String adminName;
     private String adminCode;
 }

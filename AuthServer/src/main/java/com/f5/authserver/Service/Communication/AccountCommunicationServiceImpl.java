@@ -1,6 +1,6 @@
 package com.f5.authserver.Service.Communication;
 
-import com.f5.authserver.DTO.UserDetailDTO;
+import com.f5.authserver.DTO.User.UserDetailDTO;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.http.*;

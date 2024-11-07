@@ -1,19 +1,15 @@
-package com.f5.authserver.DTO;
+package com.f5.authserver.DTO.Kakao;
 
 import lombok.*;
 
-@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Setter
 @Getter
-public class RegisterDTO {
-    private String email;
-    private String password;
-    private String name;
+public class AddressDTO {
     private String postalCode;
     private String roadNameAddress;
     private String detailedAddress;
-    private String phoneNumber;
 }

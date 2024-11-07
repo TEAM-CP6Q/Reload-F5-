@@ -1,4 +1,4 @@
-package com.f5.authserver.DTO;
+package com.f5.authserver.DTO.Kakao;
 
 import lombok.*;
 

@@ -1,14 +1,14 @@
-package com.f5.authserver.DTO;
+package com.f5.authserver.DTO.Kakao;
 
 import lombok.*;
 
 @Data
+@Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
-public class IntegrationDTO {
+public class KakaoLoginDTO {
     private String email;
     private String userId;
 }

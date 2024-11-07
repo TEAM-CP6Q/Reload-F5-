@@ -51,10 +51,11 @@ public class SecurityConfig {
 
                                 // GET 요청 허용
                                 .requestMatchers(HttpMethod.GET,
-                                        "/api/auth/register/exist-username/**",
+                                        "/api/auth/register/exist-email/**",
                                         "/api/auth/user-info/**",
                                         "/api/auth/dormant-accounts",
-                                        "/api/auth/key")
+                                        "/api/auth/key",
+                                        "/api/auth/email/**")
                                 .permitAll()
 
                                 // POST 요청 허용
@@ -65,13 +66,13 @@ public class SecurityConfig {
                                         "/api/auth/admin/login",
                                         "/api/auth/login/kakao/token",
                                         "/api/auth/kakao/login",
-                                        "/api/auth/kakao/register",
-                                        "/api/auth/kakao/test")
+                                        "/api/auth/kakao/register")
                                 .permitAll()
 
                                 // PATCH 요청 허용
                                 .requestMatchers(HttpMethod.PATCH,
-                                        "/api/auth/withdraw")
+                                        "/api/auth/withdraw",
+                                        "/api/auth/kakao/integration")
                                 .permitAll()
 
                                 // 그 외의 요청은 인증 필요
