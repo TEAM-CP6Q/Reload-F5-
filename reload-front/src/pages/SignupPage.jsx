@@ -16,34 +16,14 @@ const SignupPage = () => {
   const [zipCode, setZipCode] = useState("");
   const [roadAddress, setRoadAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
-  const [verificationCode, setVerificationCode] = useState(""); // 인증번호 상태 추가
-  const [inputVerificationCode, setInputVerificationCode] = useState(""); // 사용자가 입력하는 인증번호
-  const [isCodeSent, setIsCodeSent] = useState(false); // 인증번호 발송 여부 상태 추가
+  const [verificationCode, setVerificationCode] = useState("");
+  const [inputVerificationCode, setInputVerificationCode] = useState("");
+  const [isCodeSent, setIsCodeSent] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [error, setError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [isEmailCheckModalOpen, setIsEmailCheckModalOpen] = useState(false);
   const navigate = useNavigate();
-
-  // 인증번호 발송 함수
-  const sendVerificationCode = () => {
-    if (!phoneNumber) {
-      alert("연락처를 입력해주세요.");
-      return;
-    }
-    // 여기에 인증번호를 실제로 발송하는 로직을 추가
-    const generatedCode = Math.floor(1000 + Math.random() * 9000);
-    setVerificationCode(generatedCode.toString());
-    setIsCodeSent(true);
-    alert(`인증번호가 ${phoneNumber}로 발송되었습니다.`);
-  };
-
-  // 인증번호 확인 함수
-  const verifyCode = () => {
-    if (verificationCode === inputVerificationCode) {
-      alert("인증번호가 확인되었습니다.");
-    } else {
-      alert("인증번호가 일치하지 않습니다. 다시 입력해주세요.");
-    }
-  };
 
   const completeHandler = (data) => {
     setZipCode(data.zonecode);
@@ -78,12 +58,45 @@ const SignupPage = () => {
     },
   };
 
-  //회원가입 fetch
+  // 이메일 중복확인 함수
+  const checkEmailExists = async () => {
+    try {
+      const response = await fetch(
+        `http://3.37.122.192:8000/api/auth/register/exist-email/${email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      if (response.ok) {
+        const result = await response.json();
+        if (result.exists) {
+          setEmailError("이미 사용 중인 이메일입니다.");
+        } else {
+          setEmailError("사용 가능한 이메일입니다.");
+        }
+        await new Promise((resolve) => setIsEmailCheckModalOpen(true) && resolve()); // 모달 열기 후 대기
+      } else {
+        console.error("이메일 중복 확인 실패:", response.statusText);
+        setEmailError("이메일 중복 확인에 실패했습니다. 다시 시도해주세요.");
+        await new Promise((resolve) => setIsEmailCheckModalOpen(true) && resolve()); // 에러 메시지를 표시하기 위해 모달 열기
+      }
+    } catch (error) {
+      console.error("오류 발생:", error);
+      setEmailError("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
+      await new Promise((resolve) => setIsEmailCheckModalOpen(true) && resolve()); // 에러 메시지를 표시하기 위해 모달 열기
+    }
+  };
+  
+
+  //회원가입
   const handleSignup = async (event) => {
     event.preventDefault();
 
     const response = await fetch("http://3.37.122.192:8000/api/auth/register", {
-
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -99,10 +112,9 @@ const SignupPage = () => {
       }),
     });
 
-    const result = await response.json(); // 응답이 JSON 형식일 경우 이를 JavaScript 객체로 변환
+    const result = await response.json();
 
     if (response.status === 200) {
-      // 응답 status가 200 OK 일 경우
       console.log(result);
       alert("회원가입 성공하였습니다. 로그인 해주세요.");
       navigate("/login");
@@ -120,19 +132,42 @@ const SignupPage = () => {
           <img src={signuplogo} className="signuplogo" alt="로그인로고" />
         </div>
 
-        {/* email 입력 */}
-        <div className="form-group">
+       {/* 이메일 입력과 중복확인 버튼 */}
+       <div className="form-group email-group">
           <input
             type="text"
             id="email"
             value={email}
             className="signup-input"
             placeholder="이메일을 입력해주세요."
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailError("");
+            }}
           />
+          <button  className="email-check-btn"  onClick={checkEmailExists}>
+            중복확인하기
+          </button>
         </div>
 
-        {/* 비밀번호 입력 */}
+        {/* 이메일 중복 확인 모달 */}
+        <Modal
+          isOpen={isEmailCheckModalOpen}
+          onRequestClose={() => setIsEmailCheckModalOpen(false)}
+          style={customStyles}
+          ariaHideApp={false}
+        >
+          <div className="email-check-modal">
+            <p>{emailError}</p>
+            <button
+              onClick={() => setIsEmailCheckModalOpen(false)}
+              className="close-btn"
+            >
+              닫기
+            </button>
+          </div>
+        </Modal>
+
         <div className="form-group">
           <input
             type="password"
@@ -147,7 +182,6 @@ const SignupPage = () => {
           />
         </div>
 
-        {/* 비밀번호 확인 */}
         <div className="form-group">
           <input
             type="password"
@@ -163,7 +197,6 @@ const SignupPage = () => {
           {error && <div className="error-message">{error}</div>}
         </div>
 
-        {/* 이름 입력 */}
         <div className="form-group">
           <input
             type="text"
@@ -175,42 +208,20 @@ const SignupPage = () => {
           />
         </div>
 
-        {/* 연락처 입력 및 인증번호 발송 */}
-        <div className="form-group">
-          <div className="phone-container">
-            <input
-              type="text"
-              id="phonenumber"
-              value={phoneNumber}
-              className="signup-input phone-input"
-              placeholder="연락처를 입력해주세요"
-              onChange={(e) => setPhoneNumber(e.target.value)}
-            />
-            <button className="verification-btn" onClick={sendVerificationCode}>
-              인증번호 발송
-            </button>
-          </div>
+        <div className="form-group phone-group">
+          <input
+            type="text"
+            id="phonenumber"
+            value={phoneNumber}
+            className="signup-input phone-input"
+            placeholder="연락처를 입력해주세요"
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+          <button className="verification-btn">
+            인증번호 발송
+          </button>
         </div>
 
-        {/* 인증번호 입력 */}
-        {isCodeSent && (
-          <div className="form-group">
-            <div className="verification-container">
-              <input
-                type="text"
-                value={inputVerificationCode}
-                className="signup-input verification-input"
-                placeholder="인증번호 입력"
-                onChange={(e) => setInputVerificationCode(e.target.value)}
-              />
-              <button className="verification-btn" onClick={verifyCode}>
-                인증번호 확인
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* 주소 입력 */}
         <div className="form-group">
           <div className="address">
             <div className="address-serch">
@@ -255,7 +266,6 @@ const SignupPage = () => {
           <DaumPostcode onComplete={completeHandler} height="100%" />
         </Modal>
 
-        {/* 회원가입 버튼 */}
         <button className="signup-btn" onClick={handleSignup}>
           회원가입
         </button>

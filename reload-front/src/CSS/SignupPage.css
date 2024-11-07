@@ -188,3 +188,24 @@
     background-color: #388E3C; /* 호버 시 배경색 추가 */
     color: white; /* 호버 시 글자 색상 변경 */
 }
+.email-group, .phone-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .email-check-btn{
+    width: 35%;
+    padding: 10px;
+    background-color: transparent; /* 배경색 제거 */
+    color: #388E3C; /* 글자 색상 */
+    border: 1px solid #388E3C; /* 테두리 색상 추가 */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .email-check-btn:hover{
+    background-color: #388E3C; /* 호버 시 배경색 추가 */
+    color: white; /* 호버 시 글자 색상 변경 */
+  }
