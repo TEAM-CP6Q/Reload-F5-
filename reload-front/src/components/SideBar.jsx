@@ -1,4 +1,4 @@
-// components/SideBar.js
+// SideBar.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,13 +16,12 @@ const SideBar = ({ isOpen, onClose }) => {
 
     const handleMyPageClick = () => {
         navigate('/mypage');
+        onClose();
     }
-
-    if (!isOpen) return null;
 
     return (
         <>
-            <div className="sidebar-overlay" onClick={onClose} />
+            <div className={`sidebar-overlay ${isOpen ? 'active' : ''}`} onClick={onClose} />
             <div className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
                 <div className="sidebar-header">
                     <div className="sidebar-header-content">
@@ -33,7 +32,7 @@ const SideBar = ({ isOpen, onClose }) => {
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
-                <div className="sidebar-content-wrapper"> {/* New wrapper div */}
+                <div className="sidebar-content-wrapper">
                     <div className="sidebar-content">
                         <button className="sidebar-menu-item" onClick={handleMyPageClick}>
                             마이페이지
@@ -60,7 +59,6 @@ const SideBar = ({ isOpen, onClose }) => {
             </div>
         </>
     );
-    
 };
 
 export default SideBar;

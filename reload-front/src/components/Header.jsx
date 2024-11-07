@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from "react";
+// Header.js
+import React, { useState } from "react";
 import '../CSS/Header.css';
 import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faBars, faCartShopping, faHouse } from '@fortawesome/free-solid-svg-icons';
-import SideBar from './SideBar';  // SideBar 컴포넌트를 import
+import SideBar from './SideBar';
 
 const Header = () => {
-
     const navigate = useNavigate();
     const location = useLocation();
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
-    // 장바구니 버튼
     const handleShoppingCart = () => {
         navigate('/login');
     };
 
-    // 뒤로가기 버튼
     const handleBackClick = () => {
         navigate(-1);
     };
@@ -25,7 +23,6 @@ const Header = () => {
         navigate('/');
     }
 
-    // 메뉴바 버튼 눌렀을 때, 왼쪽에서 오른쪽으로 사이드 바 펼치기
     const handleOpenMenuBar = () => {
         setIsSideBarOpen(true);
     };
@@ -56,7 +53,6 @@ const Header = () => {
     };
 
     const isMainPage = location.pathname === '/';
-    const isLoginPage = location.pathname === '/login';
 
     return (
         <>
@@ -74,17 +70,15 @@ const Header = () => {
                         </div>
                     )}
                     {isMainPage && (
-                        <>
-                            <div className="header-main_page_header">
-                                <span className="header-menu_btn" onClick={handleOpenMenuBar}>
-                                    <FontAwesomeIcon icon={faBars} style={{ fontSize: '25px' }} />
-                                </span>
-                                <span className="header-main_page_title">새로고침</span>
-                                <span onClick={handleShoppingCart} className="header-cart_btn">
-                                    <FontAwesomeIcon icon={faCartShopping} style={{ fontSize: '25px' }} />
-                                </span>
-                            </div>
-                        </>
+                        <div className="header-main_page_header">
+                            <span className="header-menu_btn" onClick={handleOpenMenuBar}>
+                                <FontAwesomeIcon icon={faBars} style={{ fontSize: '25px' }} />
+                            </span>
+                            <span className="header-main_page_title">새로고침</span>
+                            <span onClick={handleShoppingCart} className="header-cart_btn">
+                                <FontAwesomeIcon icon={faCartShopping} style={{ fontSize: '25px' }} />
+                            </span>
+                        </div>
                     )}
                 </div>
             </header>
