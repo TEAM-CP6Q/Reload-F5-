@@ -85,19 +85,19 @@ const MyPage = () => {
     }
 
     const token = localStorage.getItem("token");
-    const username = localStorage.getItem("username");
+    const email = localStorage.getItem("email");
 
     try {
       const response = await fetch(
         "http://3.37.122.192:8000/api/auth/withdraw",
         {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: `Bearer ${token}`
           },
           body: JSON.stringify({
-            username: username,
+            email: email,
             password: password,
           }),
         }
@@ -107,6 +107,12 @@ const MyPage = () => {
 
       if (response.status === 200) {
         alert("탈퇴가 완료되었습니다.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("role");
+        localStorage.removeItem("email");
+        localStorage.removeItem("username");
+        localStorage.removeItem("id");
+        localStorage.removeItem("access_token");
         navigate("/");
       } else {
         alert("탈퇴 실패: " + result.message);
