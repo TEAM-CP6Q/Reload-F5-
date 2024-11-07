@@ -9,6 +9,7 @@ const ChattingPage = () => {
     const [socket, setSocket] = useState(null);
     const [name, setName] = useState('');
     const navigate = useNavigate();
+    const chatId = 1; // 지정된 관리자와의 채팅을 위한 고유 chatId
 
     useEffect(() => {
         const handleGet = async () => {
@@ -43,7 +44,9 @@ const ChattingPage = () => {
 
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            setMessages((prevMessages) => [...prevMessages, message]);
+            if (message.chatId === chatId) { // 지정된 관리자와의 채팅만 수신
+                setMessages((prevMessages) => [...prevMessages, message]);
+            }
         };
 
         ws.onclose = () => {
@@ -53,11 +56,12 @@ const ChattingPage = () => {
         return () => {
             ws.close();
         };
-    }, []);
+    }, [chatId]);
 
     const handleSendMessage = () => {
         if (newMessage.trim() && socket) {
             const messageData = {
+                chatId: chatId, // 지정된 관리자와의 채팅을 위한 ID
                 sender: 'user',
                 name: name,
                 content: newMessage,
