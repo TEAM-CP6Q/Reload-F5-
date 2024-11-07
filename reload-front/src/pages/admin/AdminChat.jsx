@@ -1,8 +1,8 @@
-// 관리자 채팅 코드 (AdminChat.js)
-
 import React, { useState, useEffect } from 'react';
 import { Badge, List, Layout, Input, Button, Typography } from 'antd';
 import { useNavigate } from "react-router-dom";
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
 import '../../CSS/admin/AdminChat.css';
 
 const { Sider, Content } = Layout;
@@ -13,44 +13,70 @@ const AdminChat = () => {
   const [selectedChat, setSelectedChat] = useState(null); // 선택된 유저 채팅
   const [messages, setMessages] = useState([]); // 현재 채팅의 메시지
   const [newMessage, setNewMessage] = useState(''); // 새로운 메시지
-  const [socket, setSocket] = useState(null); // WebSocket 연결
+  const [stompClient, setStompClient] = useState(null); // STOMP 클라이언트
   const navigate = useNavigate();
 
   useEffect(() => {
-    // WebSocket 연결 설정 및 메시지 수신 처리
-    const ws = new WebSocket('ws://localhost:8080/chat');
-    setSocket(ws);
+    // SockJS와 STOMP 클라이언트를 통한 WebSocket 연결 설정
+    const socket = new SockJS('http://localhost/ws/chat');
+    const client = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+      debug: (str) => console.log(str),
+    });
 
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (selectedChat && message.chatId === selectedChat.id) { // 선택된 유저와의 채팅만 수신
-        setMessages((prevMessages) => [...prevMessages, message]);
-      } else {
-        setChatList((prevChatList) => {
-          const updatedChatList = [...prevChatList];
-          const chatIndex = updatedChatList.findIndex((chat) => chat.id === message.chatId);
-          if (chatIndex !== -1) {
-            updatedChatList[chatIndex].unreadCount += 1;
-          } else {
-            updatedChatList.push({ id: message.chatId, name: message.senderName, unreadCount: 1 });
-          }
-          return updatedChatList;
+    client.onConnect = () => {
+      console.log("WebSocket 연결 성공");
+
+      // 유저 채팅 목록 구독 설정
+      client.subscribe('/topic/chatList', (message) => {
+        const chatData = JSON.parse(message.body);
+        setChatList(chatData); // 초기 유저 채팅 목록 수신
+      });
+
+      // 선택된 채팅의 메시지 구독 설정
+      if (selectedChat) {
+        client.subscribe(`/topic/chat/${selectedChat.id}`, (message) => {
+          const receivedMessage = JSON.parse(message.body);
+          setMessages((prevMessages) => [...prevMessages, receivedMessage]);
         });
       }
     };
 
+    client.onStompError = (frame) => {
+      console.error('STOMP 오류: ' + frame.headers['message']);
+      console.error('상세 오류: ' + frame.body);
+    };
+
+    client.activate();
+    setStompClient(client);
+
     return () => {
-      ws.close();
+      if (client) client.deactivate();
     };
   }, [selectedChat]);
 
   const handleSelectChat = (chat) => {
     setSelectedChat(chat);
     setMessages([]); // 새로운 채팅 선택 시 메시지 초기화
-    if (socket) {
-      // 유저의 채팅 메시지 불러오기
-      socket.send(JSON.stringify({ type: 'fetchMessages', chatId: chat.id }));
+
+    // 선택된 유저 채팅 구독
+    if (stompClient) {
+      stompClient.subscribe(`/topic/chat/${chat.id}`, (message) => {
+        const receivedMessage = JSON.parse(message.body);
+        setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+      });
+
+      // 메시지 가져오기 요청
+      stompClient.publish({
+        destination: '/app/chat.fetchMessages',
+        body: JSON.stringify({ chatId: chat.id }),
+      });
     }
+
+    // 읽은 메시지로 처리
     setChatList((prevChatList) =>
       prevChatList.map((c) =>
         c.id === chat.id ? { ...c, unreadCount: 0 } : c
@@ -59,7 +85,7 @@ const AdminChat = () => {
   };
 
   const handleSendMessage = () => {
-    if (newMessage.trim() && socket && selectedChat) {
+    if (newMessage.trim() && stompClient && selectedChat) {
       const messageData = {
         chatId: selectedChat.id,
         sender: 'admin', // 관리자가 보낸 메시지
@@ -67,7 +93,12 @@ const AdminChat = () => {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
-      socket.send(JSON.stringify(messageData));
+      // 메시지 전송
+      stompClient.publish({
+        destination: '/app/chat.sendMessage',
+        body: JSON.stringify(messageData),
+      });
+
       setMessages((prevMessages) => [...prevMessages, messageData]);
       setNewMessage('');
     }
