@@ -47,6 +47,8 @@ const Header = () => {
                 return '주문내역';
             case '/order-list-detail':
                 return '주문 상세 내역';
+            case '/chat':
+                return '문의하기';
             default:
                 return 'Main Page';
         }

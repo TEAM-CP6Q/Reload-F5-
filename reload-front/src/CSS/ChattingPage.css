@@ -1,0 +1,100 @@
+.chatting-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.chat-header {
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+}
+
+.chat-title {
+    font-weight: bold;
+    color: #4caf50;
+}
+
+.chat-content {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.message-sent-wrapper {
+    align-self: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.message-received {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+}
+
+.message-box {
+    background-color: rgba(56, 142, 60, 0.2); /* 발신자 색상 */
+    border-radius: 10px;
+    padding: 10px;
+    max-width: 80%; /* 최대 너비를 80%로 설정하여 긴 텍스트는 줄바꿈 */
+    display: inline-block;
+    word-wrap: break-word; /* 텍스트가 넘칠 경우 줄바꿈 */
+}
+
+.message-received .message-box {
+    background-color: #F5F5DC; /* 수신자 색상 */
+}
+
+.message-content {
+    margin: 0;
+    white-space: pre-wrap; /* 여러 줄의 텍스트를 자동으로 줄바꿈 */
+}
+
+.message-timestamp {
+    font-size: 0.75em;
+    color: #999;
+    margin-top: 5px;
+    text-align: right;
+}
+
+.chat-input {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ccc;
+}
+
+.input-field {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffffff;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.send-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.send-button svg {
+    fill: #388E3C;
+    width: 24px;
+    height: 24px;
+}

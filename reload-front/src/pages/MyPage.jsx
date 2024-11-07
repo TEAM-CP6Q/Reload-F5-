@@ -186,12 +186,12 @@ const MyPage = () => {
           <h3 className="section-title">문의/안내</h3>
           <div
             className="inquiry-item"
-            onClick={() => navigate("/chat-support")}
+           
           >
             <div className="icon-wrapper">
               <i className="fas fa-comments inquiry-icon"></i>
             </div>
-            <div className="inquiry-details">
+            <div className="inquiry-details"  onClick={() => navigate("/chat")}>
               <h4 className="inquiry-title">채팅 상담</h4>
               <p className="inquiry-description">
                 문의 사항은 채팅으로 빠르게!
