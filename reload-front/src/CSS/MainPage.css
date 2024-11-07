@@ -22,13 +22,111 @@
   margin-bottom: 4px;
 }
 
-/* Search.css */
+/* 페이지네이션 위치 조정 */
+.swiper-pagination-fraction {
+  position: absolute !important;
+  bottom: 10px !important;  /* 아래쪽 여백 */
+  right: 15px !important;   /* 오른쪽 여백 */
+  left: auto !important;    /* 기본 left 위치 제거 */
+  width: auto !important;   /* 기본 width 값 제거 */
+  color: #000;
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .search-container {
-  margin-top: 20px;
-  text-align: center;
+  margin-top: 15px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .search-box {
-  max-width: 400px;
-  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  width: 85%;
+  padding: 8px 10px;
+  border-radius: 15px;
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(to right, #00BFFF, #4FE879) border-box;
+  outline: none;
+}
+
+.search-input {
+  width: 100%;
+  border: 2px solid transparent;
+  font-size: 10px;
+  outline: none;
+}
+
+.search-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4FE879;
+  padding: 0px;
+}
+
+.search-button:hover {
+  color: #4FE879;
+}
+
+.category-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: stretch;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.category-button-container {
+  width: 20%;
+ /* 4개의 아이템이 한 줄에 들어가도록 설정 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.category-button {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border: 1.5px solid #636363;
+  border-radius: 17px;
+  background-color: white;
+  padding: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.category-icon {
+  font-size: 20px;
+}
+
+.category-name {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 9px;
+  color: #333;
+  text-align: center;
 }
