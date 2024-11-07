@@ -26,8 +26,8 @@ const CategoryButtons = () => {
         <div className="category-container">
             <div className="category-grid">
                 {categories.map(category => (
-                    <div className="category-button-container">
-                        <button key={category.id} className="category-button">
+                    <div key={category.id} className="category-button-container"> {/* key 속성을 div에 추가 */}
+                        <button className="category-button">
                             <div className="category-icon">{category.icon}</div>
                         </button>
                         <span className="category-name">{category.name}</span>
