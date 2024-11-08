@@ -80,7 +80,8 @@
     font-size: 14px;
     width: 98%;
     border: 1px solid #ccc;
-  
+    border-radius: 10px;
+    padding-left: 10px;
   }
   
   .login-button {
