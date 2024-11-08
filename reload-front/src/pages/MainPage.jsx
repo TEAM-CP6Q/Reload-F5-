@@ -8,6 +8,13 @@ import Header from '../components/Header';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'; // 모듈을 swiper/modules에서 가져오기
 import { Input } from 'antd'; // Ant Design의 Input 모듈을 가져오기
 
+import product01 from '../images/product01.png';
+import product02 from '../images/product02.png';
+import product03 from '../images/product03.png';
+import product04 from '../images/product04.png';
+import product05 from '../images/product05.png';
+import product06 from '../images/product06.png';
+
 const { Search } = Input;
 
 const CategoryButtons = () => {
@@ -38,6 +45,23 @@ const CategoryButtons = () => {
     );
 };
 
+const NewProductCard = ({ image, designer, name, price }) => {
+    return (
+        <div className="main-product-card">
+            <div className="main-product-card-image-container">
+                <div className="new-product-card">
+                    <img src={image} alt={name} className="new-product-image" />
+                </div>
+            </div>
+            <div className="main-product-card-content">
+                <div className="new-product-designer">{designer}</div>
+                <div className="new-product-name">{name}</div>
+                <div className="new-product-price">{price}원</div>
+            </div>
+        </div>
+    );
+};
+
 const MainPage = () => {
     const [searchValue, setSearchValue] = useState('');
 
@@ -51,6 +75,51 @@ const MainPage = () => {
         }
     };
 
+    const newProducts = [
+        {
+            id: 1,
+            image: product01,
+            designer: 'Designer A',
+            name: '데스커 기본형 테이블 6인',
+            price: '53,000'
+        },
+        {
+            id: 2,
+            image: product02,
+            designer: 'Designer B',
+            name: '폴인퍼니 미엘 세라믹 식탁',
+            price: '42,000'
+        },
+        {
+            id: 3,
+            image: product03,
+            designer: 'Designer C',
+            name: '스칸디무드 접이식 식탁 테이블',
+            price: '89,000'
+        },
+        {
+            id: 4,
+            image: product04,
+            designer: 'Designer D',
+            name: '썸앤데코 라곰 고무나무 원목식탁',
+            price: '75,000'
+        },
+        {
+            id: 5,
+            image: product05,
+            designer: 'Designer E',
+            name: '레트로하우스 원목 원형 테이블',
+            price: '42,000'
+        },
+        {
+            id: 6,
+            image: product06,
+            designer: 'Designer F',
+            name: '라움에스알 빈티지 원형 식탁',
+            price: '35,000'
+        },
+    ];
+
     return (
         <>
             <Header />
@@ -63,7 +132,7 @@ const MainPage = () => {
                 }}
                 autoplay={{ delay: 3000, disableOnInteraction: false }}
                 modules={[Navigation, Pagination, Autoplay]}
-                style={{ height: '25vh' }}
+                style={{ height: '200px' }}
             >
                 <SwiperSlide className="slide-content">1</SwiperSlide>
                 <SwiperSlide className="slide-content">2</SwiperSlide>
@@ -102,6 +171,22 @@ const MainPage = () => {
                 </div>
                 <div className="main-new-products-array">
                     최신순
+                </div>
+            </div>
+
+            <div className="main-new-products-container">
+                <div className="main-products-subContanier">
+                    <div className="main-new-products-grid">
+                        {newProducts.map((product) => (
+                            <NewProductCard
+                                key={product.id}
+                                image={product.image}
+                                designer={product.designer}
+                                name={product.name}
+                                price={product.price}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
         </>
