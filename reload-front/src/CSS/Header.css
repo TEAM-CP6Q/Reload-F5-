@@ -64,13 +64,9 @@
     justify-content: center;
 }
 
-.header-main_page_title {
-    font-size: 20px;
-    font-weight: 600;
-    width: 80%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+
+.header-mainLogo {
+    width: 30%;
 }
 
 .header-other_page_title {

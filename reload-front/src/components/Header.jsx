@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faBars, faCartShopping, faHouse } from '@fortawesome/free-solid-svg-icons';
 import SideBar from './SideBar';
+import mainLogo from '../images/mainLogo.png';
 
 const Header = () => {
     const navigate = useNavigate();
@@ -76,7 +77,7 @@ const Header = () => {
                             <span className="header-menu_btn" onClick={handleOpenMenuBar}>
                                 <FontAwesomeIcon icon={faBars} style={{ fontSize: '25px' }} />
                             </span>
-                            <span className="header-main_page_title">새로고침</span>
+                            <img src={mainLogo} className='header-mainLogo' alt="메인로고" />
                             <span onClick={handleShoppingCart} className="header-cart_btn">
                                 <FontAwesomeIcon icon={faCartShopping} style={{ fontSize: '25px' }} />
                             </span>
