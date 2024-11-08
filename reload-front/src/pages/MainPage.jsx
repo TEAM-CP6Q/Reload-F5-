@@ -91,6 +91,19 @@ const MainPage = () => {
             </div>
 
             <CategoryButtons />
+
+            <div className='main-divider'>
+                <div className="main-divider-bar" />
+            </div>
+
+            <div className="main-new-products-header">
+                <div className="main-new-products-text">
+                    최신 상품
+                </div>
+                <div className="main-new-products-array">
+                    최신순
+                </div>
+            </div>
         </>
     );
 };

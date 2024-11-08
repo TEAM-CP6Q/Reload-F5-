@@ -130,3 +130,38 @@
   color: #333;
   text-align: center;
 }
+
+.main-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.main-divider-bar {
+  width: 90%;
+  height: 1px;
+  background-color: #838383;
+  margin: 5px 0;
+}
+
+.main-new-products-header {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.main-new-products-text {
+  padding-left: 8%;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.main-new-products-array {
+  font-size: 10px;
+  padding-right: 8%;
+}
