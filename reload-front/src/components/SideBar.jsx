@@ -1,5 +1,5 @@
 // SideBar.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -7,6 +7,7 @@ import loginlogo from '../images/Logo.png';
 import '../CSS/SideBar.css';
 
 const SideBar = ({ isOpen, onClose }) => {
+    const [isLogin, setIsLogin] = useState(false);
     const navigate = useNavigate();
 
     const handleNavigation = (path) => {
@@ -18,6 +19,23 @@ const SideBar = ({ isOpen, onClose }) => {
         navigate('/mypage');
         onClose();
     }
+
+    useEffect(() => {
+        const handleget = async () => {
+            const token = localStorage.getItem("token");
+            const email = localStorage.getItem("email");
+
+            if (token && email) {
+                console.log("로그인 성공");
+                setIsLogin(true);
+            } else {
+                console.log("로그인 실패");
+                setIsLogin(false);
+            }
+        };
+        handleget();
+    }, [])
+
 
     return (
         <>
@@ -52,9 +70,13 @@ const SideBar = ({ isOpen, onClose }) => {
                     </div>
                 </div>
                 <div>
-                    <button className="sidebar-bottom" onClick={() => handleNavigation('/login')}>
-                        로그인
-                    </button>
+                    {!isLogin ?
+                        <button className="sidebar-bottom-login" onClick={() => handleNavigation('/login')}>
+                            로그인
+                        </button>
+                        :
+                        <div className="sidebar-bottom-text">환영합니다.</div>
+                    }
                 </div>
             </div>
         </>
