@@ -22,7 +22,7 @@ const CategoryButtons = () => {
         { id: 1, name: '인테리어', icon: '🏠' },
         { id: 2, name: '수납/정리', icon: '📦' },
         { id: 3, name: '문구/팬시', icon: '✏️' },
-        { id: 4, name: '원구', icon: '🛍️' },
+        { id: 4, name: '완구', icon: '🛍️' },
         { id: 5, name: '패션/잡화', icon: '👕' },
         { id: 6, name: '반려동물', icon: '🐾' },
         { id: 7, name: '가구', icon: '🪑' },
