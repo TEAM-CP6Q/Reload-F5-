@@ -191,8 +191,6 @@ html::-webkit-scrollbar {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-gap: 20px 0px;
-  overflow-x: auto;
-
 }
 
 .new-product-card {
@@ -203,7 +201,6 @@ html::-webkit-scrollbar {
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
 }
 
 .main-product-card-image-container {
@@ -233,18 +230,19 @@ html::-webkit-scrollbar {
 }
 
 .new-product-designer {
-  font-size: 8px;
+  font-size: 9px;
   color: #666;
   margin-top: 8px;
 }
 
 .new-product-name {
   font-size: 13px;
-  margin-top: 2px;
+  margin-top: 4px;
+  line-height: normal;
 }
 
 .new-product-price {
   font-size: 11px;
   font-weight: 600;
-  margin-top: 1px;
+  margin-top: 4px;
 }
