@@ -170,7 +170,7 @@
     width: calc(100% - 120px); /* 버튼 크기를 감안하여 동적으로 폭 조절 */
 }
 
-.verification-btn {
+.signup-verification-btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -184,7 +184,7 @@
     transition: background-color 0.3s ease, color 0.3s ease; /* 색상 변화도 포함 */
 }
 
-.verification-btn:hover {
+.signup-verification-btn:hover {
     background-color: #388E3C; /* 호버 시 배경색 추가 */
     color: white; /* 호버 시 글자 색상 변경 */
 }

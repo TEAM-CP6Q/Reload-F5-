@@ -217,7 +217,7 @@ const SignupPage = () => {
             placeholder="연락처를 입력해주세요"
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
-          <button className="verification-btn">
+          <button className="signup-verification-btn">
             인증번호<br/>발송
           </button>
         </div>

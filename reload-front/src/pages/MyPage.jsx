@@ -123,7 +123,7 @@ const MyPage = () => {
   };
 
   return (
-    <div className="my-page">
+    <div className="my-page"  style={{height: '100vh'}}>
       <Header />
 
       <div className="my-page-inner">
