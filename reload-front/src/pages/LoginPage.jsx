@@ -91,7 +91,7 @@ const LoginPage = () => {
 
 
   return (
-    <>
+    <div style={{height: '100vh'}}>
       <Header />
       <div className="login-page">
         <div className='loginlogo-con'>
@@ -174,7 +174,7 @@ const LoginPage = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 

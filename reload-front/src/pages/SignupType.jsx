@@ -24,7 +24,7 @@ const SignupType = () => {
     };
 
     return (
-        <div className="social-login-container">
+        <div className="social-login-container" style={{height: '100vh'}}>
             <Header />
             <img src={logo} className="signup-type-logo" alt="로고" />
             <div className="tab-buttons">
