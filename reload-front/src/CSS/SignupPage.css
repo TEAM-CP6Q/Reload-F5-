@@ -175,7 +175,7 @@
     justify-content: center;
     align-items: center;
     width: 30%;
-    padding: 10px;
+    padding: 25px 0px;
     background-color: transparent; /* 배경색 제거 */
     color: #388E3C; /* 글자 색상 */
     border: 1px solid #388E3C; /* 테두리 색상 추가 */

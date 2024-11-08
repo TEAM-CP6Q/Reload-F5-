@@ -125,7 +125,7 @@ const SignupPage = () => {
   };
 
   return (
-    <>
+    <div className="social-login-container" style={{ height: '100vh' }}>
       <Header />
       <div className="signup-inner">
         <div className="signuplogo-con">
@@ -146,7 +146,7 @@ const SignupPage = () => {
             }}
           />
           <button  className="email-check-btn"  onClick={checkEmailExists}>
-            중복확인하기
+            중복<br/>확인하기
           </button>
         </div>
 
@@ -218,7 +218,7 @@ const SignupPage = () => {
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
           <button className="verification-btn">
-            인증번호 발송
+            인증번호<br/>발송
           </button>
         </div>
 
@@ -270,7 +270,7 @@ const SignupPage = () => {
           회원가입
         </button>
       </div>
-    </>
+    </div>
   );
 };
 
