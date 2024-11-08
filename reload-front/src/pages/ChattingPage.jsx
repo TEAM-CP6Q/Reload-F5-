@@ -1,161 +1,178 @@
 import React, { useState, useEffect, useRef } from 'react';
-import '../CSS/ChattingPage.css';
-import Header from '../components/Header';
-import { useNavigate } from "react-router-dom";
-import { Client } from '@stomp/stompjs';
+import { Avatar } from 'antd';
+import { UserOutlined, SendOutlined } from '@ant-design/icons';
 import SockJS from 'sockjs-client';
+import { Stomp } from '@stomp/stompjs';
+import Header from '../components/Header';
+import '../CSS/ChattingPage.css';
 
 const ChattingPage = () => {
-    const [messages, setMessages] = useState([]);
-    const [newMessage, setNewMessage] = useState('');
-    const [name, setName] = useState('');
-    const stompClientRef = useRef(null);
-    const navigate = useNavigate();
-    const chatId = 1; // 지정된 관리자와의 채팅을 위한 고유 chatId
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [stompClient, setStompClient] = useState(null);
+  const [userName, setUserName] = useState('Anonymous');
+  const messageContainerRef = useRef(null);
 
-    useEffect(() => {
-        const handleGet = async () => {
-            const token = localStorage.getItem("token");
-            const email = localStorage.getItem("email");
+  // WebSocket 연결 설정
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/chat');
+    const client = Stomp.over(socket);
 
-            const response = await fetch(
-                `http://3.37.122.192:8000/api/account/search-account/${email}`,
-                {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                }
-            );
+    client.connect({}, () => {
+      setStompClient(client);
+      client.subscribe('/topic/messages', (message) => {
+        const receivedMessage = JSON.parse(message.body);
 
-            const result = await response.json();
+        if (!receivedMessage.time) {
+          receivedMessage.time = new Date().toLocaleTimeString('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          });
+        }
 
-            if (response.status === 200) {
-                setName(result.name);
-            } else {
-                alert("로그인 부탁: " + result.message);
+        setMessages((prevMessages) => {
+          const isDuplicate = prevMessages.some(
+            (msg) => msg.time === receivedMessage.time && msg.content === receivedMessage.content
+          );
+          return isDuplicate ? prevMessages : [...prevMessages, receivedMessage];
+        });
+      });
+    });
+
+    return () => {
+      if (stompClient) {
+        stompClient.disconnect();
+      }
+    };
+  }, []);
+
+  // 초기 메시지를 추가하는 useEffect
+  useEffect(() => {
+    const initialMessage = {
+      sender: '새로고침',
+      content: '안녕하세요. 새로고침입니다. 어떤 것을 도와드릴까요?',
+      role: 'admin',
+      time: new Date().toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+    };
+    setMessages((prevMessages) => [initialMessage, ...prevMessages]);
+  }, []);
+
+  // 서버에서 유저 이름 가져오기
+  useEffect(() => {
+    const handleGetUserName = async () => {
+      const token = localStorage.getItem("token");
+      const email = localStorage.getItem("email");
+
+      try {
+        const response = await fetch(
+          `http://3.37.122.192:8000/api/account/search-account/${email}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+          }
+        );
+
+        if (response.ok) {
+          const result = await response.json();
+          setUserName(result.name);
+        } else {
+          const result = await response.json();
+          alert("로그인 부탁: " + result.message);
+        }
+      } catch (error) {
+        console.error("Error fetching user name:", error);
+      }
+    };
+    
+    handleGetUserName();
+  }, []);
+
+  const sendMessage = () => {
+    if (input.trim() && stompClient) {
+      const currentTime = new Date().toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+
+      const message = {
+        sender: userName,
+        content: input,
+        role: 'user',
+        time: currentTime,
+      };
+
+      if (message.time) {
+        stompClient.send('/app/sendMessage', {}, JSON.stringify(message));
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
+
+      setInput('');
+    }
+  };
+
+  useEffect(() => {
+    if (messageContainerRef.current) {
+      messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  return (
+    <div className="container">
+      <Header/>
+      <div className="message-container" ref={messageContainerRef}>
+        {messages.map((msg, index) => (
+          <div key={index} className={msg.role === 'admin' ? 'admin-message' : 'user-message'}>
+            {msg.role === 'admin' ? (
+              <>
+                <div className="user-avatar-container">
+                  <Avatar icon={<UserOutlined />} className="avatar-icon" />
+                  <div className="sender-name">{msg.sender}</div>
+                </div>
+                <div className="admin-bubble">
+                  <p className="message-content">{msg.content}</p>
+                </div>
+                <span className="timestamp">{msg.time}</span>
+              </>
+            ) : (
+              msg.time && (
+                <>
+                  <div className="user-bubble">
+                    <p className="message-content">{msg.content}</p>
+                  </div>
+                  <span className="timestamp">{msg.time}</span>
+                </>
+              )
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="input-container">
+        <input
+          className="chat-input"
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
             }
-        };
-        handleGet();
-    }, []);
-
-    useEffect(() => {
-        if (!stompClientRef.current) {
-            const client = new Client({
-                webSocketFactory: () => new SockJS('http://localhost:8080/ws/chat'),
-           
-                reconnectDelay: 5000,
-                heartbeatIncoming: 4000,
-                heartbeatOutgoing: 4000,
-                debug: (str) => {
-                    console.log(str);
-                },
-            });
-
-            client.onConnect = () => {
-                console.log('Connected to WebSocket server');
-                client.subscribe(`/topic/chat/${chatId}`, (message) => {
-                    const receivedMessage = JSON.parse(message.body);
-                    setMessages((prevMessages) => [...prevMessages, receivedMessage]);
-                });
-            };
-
-            client.onStompError = (frame) => {
-                console.error('Broker reported error: ' + frame.headers['message']);
-                console.error('Additional details: ' + frame.body);
-            };
-
-            client.activate();
-            stompClientRef.current = client;
-        }
-
-        return () => {
-            if (stompClientRef.current) {
-                stompClientRef.current.deactivate();
-                stompClientRef.current = null;
-            }
-        };
-    }, [chatId]);
-
-    const handleSendMessage = () => {
-        if (newMessage.trim() && stompClientRef.current) {
-            const messageData = {
-                chatId: chatId,
-                sender: 'user',
-                name: name,
-                content: newMessage,
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            };
-
-            // 서버로 메시지 전송만 하고 상태 업데이트는 하지 않음
-            stompClientRef.current.publish({
-                destination: '/app/chat.sendMessage',
-                body: JSON.stringify(messageData),
-            });
-
-            // 메시지 전송 후 입력 필드 비움
-            setNewMessage('');
-        }
-    };
-
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            handleSendMessage();
-        }
-    };
-
-    const handleEndChat = () => {
-        if (stompClientRef.current) {
-            stompClientRef.current.deactivate();
-            alert('채팅이 종료되었습니다.');
-            navigate('/');
-        }
-    };
-
-    return (
-        <div className="chatting-page">
-            <Header />
-            <div className="chat-content">
-                {messages.map((msg, index) => (
-                    <div key={index} className="message-sent-wrapper">
-                        <div className="message-box message-sent">
-                            <p className="message-content">{msg.content}</p>
-                        </div>
-                        <span className="message-timestamp">{msg.timestamp}</span>
-                    </div>
-                ))}
-            </div>
-            <div className="chat-input">
-                <input
-                    type="text"
-                    className="input-field"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyUp={handleKeyDown}
-                    placeholder="메시지를 입력하세요..."
-                />
-                <button className="send-button" onClick={handleSendMessage}>
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M2 21L23 12L2 3V10L17 12L2 14V21Z"
-                            fill="#388E3C"
-                        />
-                    </svg>
-                </button>
-                <button className="end-chat-button" onClick={handleEndChat}>
-                    채팅 종료
-                </button>
-            </div>
-        </div>
-    );
+          }}
+          placeholder="메시지를 입력하세요"
+        />
+        <SendOutlined
+          onClick={sendMessage}
+          className="send-button"
+        />
+      </div>
+    </div>
+  );
 };
 
 export default ChattingPage;
