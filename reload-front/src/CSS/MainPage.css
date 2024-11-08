@@ -1,3 +1,9 @@
+/* 스크롤 바 스타일을 없앰 */
+body::-webkit-scrollbar,
+html::-webkit-scrollbar {
+  display: none;
+}
+
 .swiper-container {
   position: relative;
 
