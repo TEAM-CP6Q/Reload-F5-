@@ -4,6 +4,7 @@ import com.f5.authserver.DAO.User.UserDAO;
 import com.f5.authserver.DTO.Auth.RegisterDTO;
 import com.f5.authserver.DTO.User.UserDTO;
 import com.f5.authserver.Entity.UserEntity;
+import com.f5.authserver.Service.Communication.AccountCommunicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO registerUser(RegisterDTO registerDTO) {
         if(userDAO.existsByEmail(registerDTO.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
-        } else if(userDAO.existByEmailOnDormant(registerDTO.getEmail())) {
-            throw new IllegalStateException("탈퇴한 회원 입니다.");
         }
         return userDAO.save(registerDTO);
     }
@@ -27,8 +26,6 @@ public class UserServiceImpl implements UserService {
     public UserDTO registerKakaoUser(RegisterDTO registerDTO){
         if(userDAO.existsByEmail(registerDTO.getEmail())) {
             throw new IllegalArgumentException("이미 가입된 계정입니다. 통합을 진행해주세요");
-        } else if(userDAO.existByEmailOnDormant(registerDTO.getEmail())) {
-            throw new IllegalStateException("탈퇴한 회원 입니다.");
         }
         return userDAO.kakaoSave(registerDTO);
     }
@@ -55,16 +52,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void dormantAccount(UserDTO user) {
+    public void deleteAccount(UserDTO user) {
         try{
-            userDAO.moveToDormantAccount(user);
+            userDAO.deleteAccount(user);
         } catch (Exception e){
             throw new IllegalArgumentException(e);
         }
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void scheduledTaskToRemoveDormantAccount() {
-        userDAO.removeDormantAccount();
     }
 }

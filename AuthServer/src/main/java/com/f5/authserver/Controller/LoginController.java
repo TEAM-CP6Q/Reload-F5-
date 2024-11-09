@@ -2,15 +2,12 @@ package com.f5.authserver.Controller;
 
 import com.f5.authserver.DTO.StatusCodeDTO;
 import com.f5.authserver.DTO.User.UserDTO;
-import com.f5.authserver.Entity.DormantEntity;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.JWT.JwtTokenUtil;
-import com.f5.authserver.Repository.DormantRepository;
 import com.f5.authserver.Service.Communication.AccountCommunicationService;
 import com.f5.authserver.Service.User.CustomUserDetailsService;
 import com.f5.authserver.Service.User.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -32,7 +28,6 @@ public class LoginController {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
-    private final DormantRepository dormantRepository;
     private final AccountCommunicationService accountCommunicationService;
 
 
@@ -65,7 +60,7 @@ public class LoginController {
         return ResponseEntity.ok(userService.getLoggedInUserEntity(email));
     }
 
-    @PatchMapping("/withdraw")
+    @DeleteMapping("/withdraw")
     public ResponseEntity<?> withdraw(@RequestBody UserDTO user) {
         try {
             // 아이디와 비밀번호 인증
@@ -74,8 +69,11 @@ public class LoginController {
             );
 
             // 인증 성공 시 탈퇴 로직 진행
-            userService.dormantAccount(user);
-            return ResponseEntity.ok("탈퇴 성공");
+            userService.deleteAccount(user);
+            return ResponseEntity.ok(StatusCodeDTO.builder()
+                            .Code(200L)
+                            .Msg("탈퇴 성공")
+                            .build());
 
         } catch (BadCredentialsException e) {
             return ResponseEntity.status(401).body(StatusCodeDTO.builder()
@@ -91,19 +89,6 @@ public class LoginController {
             return ResponseEntity.status(500).body(StatusCodeDTO.builder()
                             .Code(500L)
                             .Msg("서버 오류 발생")
-                            .build());
-        }
-    }
-
-    @GetMapping("/dormant-accounts")
-    public ResponseEntity<?> dormantAccounts() {
-        try{
-            List<DormantEntity> dormantEntities = dormantRepository.findAll();
-            return ResponseEntity.ok(dormantEntities);
-        } catch (Exception e) {
-            return ResponseEntity.ok().body(StatusCodeDTO.builder()
-                            .Code(400L)
-                            .Msg(e.getMessage())
                             .build());
         }
     }

@@ -1,5 +1,6 @@
 package com.f5.authserver.Service.Communication;
 
+import com.f5.authserver.DTO.StatusCodeDTO;
 import com.f5.authserver.DTO.User.UserDetailDTO;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.ServiceInstance;
@@ -55,7 +56,7 @@ public class AccountCommunicationServiceImpl implements AccountCommunicationServ
     }
 
     @Override
-    public void dormantAccount(Long id) {
+    public void deleteAccount(Long id) {
         List<ServiceInstance> instances = discoveryClient.getInstances("ACCOUNT-SERVER");
         if (instances == null || instances.isEmpty()) {
             throw new IllegalStateException("No Account-Server instances available");
@@ -88,6 +89,7 @@ public class AccountCommunicationServiceImpl implements AccountCommunicationServ
         }
     }
 
+    @Override
     public String getAccountEmail(Long id) {
         List<ServiceInstance> instances = discoveryClient.getInstances("ACCOUNT-SERVER");
         if (instances == null || instances.isEmpty()) {
@@ -118,4 +120,39 @@ public class AccountCommunicationServiceImpl implements AccountCommunicationServ
             throw new IllegalStateException("Failed to send request to Account-Server", e);
         }
     }
+
+    @Override
+    public void releaseAccount(Long id) {
+        List<ServiceInstance> instances = discoveryClient.getInstances("ACCOUNT-SERVER");
+        if (instances == null || instances.isEmpty()) {
+            throw new IllegalStateException("No Account-Server instances available");
+        }
+        ServiceInstance accountService = instances.get(new Random().nextInt(instances.size()));
+
+        // URI 생성
+        URI uri = UriComponentsBuilder.fromUri(accountService.getUri())
+                .path("/api/account/rollback-account/{id}")
+                .buildAndExpand(id)
+                .toUri();
+
+        // HTTP 헤더 및 본문 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(headers);
+
+        // REST 요청 보내기
+        try {
+            ResponseEntity<StatusCodeDTO> response = restTemplate.exchange(uri, HttpMethod.POST, httpEntity, StatusCodeDTO.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                StatusCodeDTO statusCodeDTO = response.getBody();
+                System.out.println("Request to release account successfully. Code: " + statusCodeDTO.getCode() + ", Message: " + statusCodeDTO.getMsg());
+            } else {
+                throw new IllegalStateException("Failed to send request to release account information.");
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to send request to Account-Server");
+        }
+    }
+
 }

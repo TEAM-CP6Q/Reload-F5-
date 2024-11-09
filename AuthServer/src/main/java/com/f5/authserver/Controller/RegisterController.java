@@ -6,7 +6,6 @@ import com.f5.authserver.DTO.StatusCodeDTO;
 import com.f5.authserver.DTO.User.UserDTO;
 import com.f5.authserver.Service.User.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,13 +33,6 @@ public class RegisterController {
                             .build());
         }
     }
-
-//    @PatchMapping("/rollback-account")
-//    public ResponseEntity<?> rollbackAccount(@RequestBody RegisterDTO registerDTO) {
-//        return ResponseEntity.ok();
-//    }
-
-
 
     @GetMapping("/exist-email/{email}")
     public ResponseEntity<?> existEmail(@PathVariable String email) {

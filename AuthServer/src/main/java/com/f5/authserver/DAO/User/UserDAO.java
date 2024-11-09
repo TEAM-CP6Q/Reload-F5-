@@ -11,11 +11,9 @@ import java.util.Optional;
 public interface UserDAO {
     UserDTO save(RegisterDTO registerDTO);
     Boolean existsByEmail(String email);
-    Boolean existByEmailOnDormant(String email);
     UserDTO getByEmail(String email);
     Optional<UserEntity> findByEmail(String email);
-    void moveToDormantAccount(UserDTO userDTO);
-    void removeDormantAccount();
+    void deleteAccount(UserDTO userDTO);
     Long getId(String username);
     UserKakaoDTO getKakaoByEmail(String email);
     void integrationInfo(IntegrationDTO integrationDTO);

@@ -5,26 +5,23 @@ import com.f5.authserver.DTO.Kakao.IntegrationDTO;
 import com.f5.authserver.DTO.Kakao.UserKakaoDTO;
 import com.f5.authserver.DTO.User.UserDTO;
 import com.f5.authserver.DTO.User.UserDetailDTO;
-import com.f5.authserver.Entity.DormantEntity;
 import com.f5.authserver.Entity.UserEntity;
-import com.f5.authserver.Repository.DormantRepository;
 import com.f5.authserver.Repository.UserRepository;
 import com.f5.authserver.Service.Communication.AccountCommunicationService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class UserDAOImpl implements UserDAO {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AccountCommunicationService accountCommunicationService;
-    private final DormantRepository dormantRepository;
 
     private UserDTO entityToDTO(UserEntity userEntity) {
         return UserDTO.builder()
@@ -63,11 +60,6 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public Boolean existByEmailOnDormant(String email) {
-        return dormantRepository.existsByEmail(email);
-    }
-
-    @Override
     public UserDTO getByEmail(String email) {
         try {
             UserEntity user = userRepository.getByEmail(email);
@@ -101,36 +93,17 @@ public class UserDAOImpl implements UserDAO {
 
 
     @Override
-    public void moveToDormantAccount(UserDTO userDTO) {
+    public void deleteAccount(UserDTO userDTO) {
         try {
             if (userRepository.existsByEmail(userDTO.getEmail())) {
                 UserEntity user = userRepository.getByEmail(userDTO.getEmail());
-                DormantEntity dormant = DormantEntity.builder()
-                        .Id(user.getId())
-                        .email(user.getEmail())
-                        .password(user.getPassword())
-                        .kakao(user.getKakao())
-                        .dormantDate(LocalDate.now())
-                        .build();
-                dormantRepository.save(dormant);
-                accountCommunicationService.dormantAccount(dormant.getId()); // 중첩 예외 제거
+                accountCommunicationService.deleteAccount(user.getId());
                 userRepository.delete(user); // 실제 삭제 로직 확인 필요
             } else {
                 throw new IllegalArgumentException("해당 이메일이 없음");
             }
         } catch (Exception e) {
             throw new IllegalStateException("삭제에 실패 하였습니다.", e);
-        }
-    }
-
-    @Override
-    public void removeDormantAccount() {
-        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
-        List<DormantEntity> expiredDormantAccounts = dormantRepository.findByDormantDateBefore(threeMonthsAgo);
-
-        for (DormantEntity dormant : expiredDormantAccounts) {
-            System.out.println(LocalDate.now()+ " " + dormant.getEmail() + " 계정이 삭제됨");
-            dormantRepository.delete(dormant);
         }
     }
 
@@ -176,4 +149,5 @@ public class UserDAOImpl implements UserDAO {
     public String getEmail(Long id) throws IllegalArgumentException {
         return userRepository.getEmailById(id);
     }
+
 }

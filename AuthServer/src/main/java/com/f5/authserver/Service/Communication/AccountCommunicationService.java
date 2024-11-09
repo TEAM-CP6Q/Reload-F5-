@@ -4,6 +4,7 @@ import com.f5.authserver.DTO.User.UserDetailDTO;
 
 public interface AccountCommunicationService {
     void registerAccount(UserDetailDTO userDetailDTO);
-    void dormantAccount(Long id);
+    void deleteAccount(Long id);
     String getAccountEmail(Long id);
+    void releaseAccount(Long id);
 }

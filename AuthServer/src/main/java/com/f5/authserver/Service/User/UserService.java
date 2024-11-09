@@ -9,7 +9,7 @@ public interface UserService {
     UserDTO registerKakaoUser(RegisterDTO registerDTO);
     Long getIdByEmail(String email);
     UserEntity getLoggedInUserEntity(String email);
-    void dormantAccount(UserDTO user);
+    void deleteAccount(UserDTO user);
     UserDTO getByEmail(String email);
     String getEmailById(Long id);
 }
