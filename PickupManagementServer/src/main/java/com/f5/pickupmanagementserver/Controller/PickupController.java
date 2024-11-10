@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pickup")
-@CrossOrigin(originPatterns = "http://localhost")
 public class PickupController {
     private final PickupService pickupService;
 
