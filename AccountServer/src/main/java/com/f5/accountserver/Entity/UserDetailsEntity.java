@@ -12,7 +12,8 @@ import lombok.*;
 @AllArgsConstructor
 public class UserDetailsEntity {
     @Id
-    private Long Id;
+    @Column(nullable = false, unique = true)
+    private Long id;
 
     @Column(nullable = false)
     private String name;

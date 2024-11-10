@@ -5,15 +5,18 @@ import com.f5.accountserver.Entity.DormantEntity;
 import com.f5.accountserver.Entity.UserDetailsEntity;
 import com.f5.accountserver.Repository.DormantRepository;
 import com.f5.accountserver.Repository.UserDetailsRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class UserDetailsDAOImpl implements UserDetailsDAO {
     private final UserDetailsRepository userDetailsRepository;
     private final DormantRepository dormantRepository;
@@ -22,7 +25,7 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
     public void save(UserDetailDTO userDetails) {
         try{
             UserDetailsEntity userDetailsEntity = UserDetailsEntity.builder()
-                    .Id(userDetails.getId())
+                    .id(userDetails.getId())
                     .name(userDetails.getName())
                     .postalCode(userDetails.getPostalCode())
                     .roadNameAddress(userDetails.getRoadNameAddress())
@@ -31,7 +34,7 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
                     .build();
             userDetailsRepository.save(userDetailsEntity);
         } catch (Exception e) {
-            throw new IllegalStateException("상세 정보 저장 실패", e);
+            throw new IllegalStateException("상세 정보 저장 실패");
         }
     }
 
@@ -61,34 +64,34 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
 
             userDetailsRepository.save(existingUser);
         } catch (Exception e) {
-            throw new IllegalStateException("유저 상세 정보 업데이트 실패", e);
+            throw new IllegalStateException("유저 상세 정보 업데이트 실패");
         }
     }
 
     @Override
-    public void dormantAccount(Long id) {
+    public void removeAccount(Long id) {
         UserDetailsEntity user = userDetailsRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 id의 유저가 없음: " + id));
-        DormantEntity dormant = DormantEntity.builder()
-                .Id(user.getId())
-                .name(user.getName())
-                .postalCode(user.getPostalCode())
-                .roadNameAddress(user.getRoadNameAddress())
-                .detailedAddress(user.getDetailedAddress())
-                .phoneNumber(user.getPhoneNumber())
-                .dormantDate(LocalDate.now())
-                .build();
-        dormantRepository.save(dormant);
-        userDetailsRepository.delete(user); // 삭제 작업에서 예외가 발생할 경우, 트랜잭션이 롤백됨
+        try {
+            userDetailsRepository.delete(user); // 삭제 작업에서 예외가 발생할 경우, 트랜잭션이 롤백됨
+        } catch (Exception e) {
+            throw new IllegalStateException("유저 탈퇴 실패");
+        }
     }
 
     @Override
-    public void removeDormantAccount() {
-        LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
-        List<DormantEntity> expiredDormantAccounts = dormantRepository.findByDormantDateBefore(threeMonthsAgo);
-        for (DormantEntity dormant : expiredDormantAccounts) {
-            System.out.println(LocalDate.now()+ " " + dormant.getName() + " 계정 정보가 삭제됨");
-            dormantRepository.delete(dormant);
-        }
+    public List<UserDetailDTO> findAllUserDetails() {
+        List<UserDetailDTO> userDetailDTOS = new ArrayList<>();
+        userDetailsRepository.findAll().forEach(userDetails -> {
+            UserDetailDTO userDetailDTO = new UserDetailDTO();
+            userDetailDTO.setId(userDetails.getId());
+            userDetailDTO.setName(userDetails.getName());
+            userDetailDTO.setPostalCode(userDetails.getPostalCode());
+            userDetailDTO.setRoadNameAddress(userDetails.getRoadNameAddress());
+            userDetailDTO.setDetailedAddress(userDetails.getDetailedAddress());
+            userDetailDTO.setPhoneNumber(userDetails.getPhoneNumber());
+            userDetailDTOS.add(userDetailDTO);
+        });
+        return userDetailDTOS;
     }
 }

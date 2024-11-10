@@ -32,7 +32,7 @@ public class SecurityConfig {
                                 // GET 요청만 허용
                                 .requestMatchers(HttpMethod.GET,
                                         "/api/account/search-account/**",
-                                        "/api/account/dormant-accounts")
+                                        "/api/account/user-list")
                                 .permitAll()
 
                                 // PATCH 요청만 허용
@@ -52,18 +52,4 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable); // CSRF 보호 비활성화
         return http.build();
     }
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList("http://192.168.0.6:3000",
-//                "http://localhost:3000",
-//                "http://121.182.42.161:8000"));
-//        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
-//        configuration.addAllowedHeader("*"); // 모든 헤더 허용
-//        configuration.setAllowCredentials(true);
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 }
