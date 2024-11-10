@@ -19,7 +19,7 @@ public class DesignerServiceImpl implements DesignerService {
         try{
             designerDAO.saveDesigner(designerDTO);
         } catch (Exception e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("디자이너 저장 실패");
         }
     }
 
@@ -28,7 +28,7 @@ public class DesignerServiceImpl implements DesignerService {
         try{
             designerDAO.removeDesigner(designerName);
         } catch (Exception e){
-            throw new IllegalStateException(e);
+            throw new IllegalStateException("디자이너 삭제 실패");
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.f5.accountserver.Controller;
 
 import com.f5.accountserver.DTO.DesignerDTO;
+import com.f5.accountserver.DTO.StatusCodeDTO;
 import com.f5.accountserver.Service.Designer.DesignerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,15 @@ public class DesignerController {
     public ResponseEntity<?> addDesigner(@RequestBody DesignerDTO designerDTO) {
         try {
             designerService.addDesigner(designerDTO);
-            return ResponseEntity.ok("디자이너 저장 성공");
+            return ResponseEntity.ok(StatusCodeDTO.builder()
+                            .Code(200L)
+                            .Msg("디자이너 저장 성공")
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
 
@@ -30,7 +37,10 @@ public class DesignerController {
             designerService.deleteDesigner(designerName);
             return ResponseEntity.ok("디자이너 삭제 성공");
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
 }

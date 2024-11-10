@@ -28,7 +28,7 @@ public class DesignerDAOImpl implements DesignerDAO {
         } catch (IllegalStateException e) {
             throw e;  // 중복 오류는 그대로 전달
         } catch (Exception e) {
-            throw new RuntimeException("디자이너 저장 중 오류 발생: " + e.getMessage(), e);
+            throw new RuntimeException("디자이너 저장 중 오류 발생: " + e.getMessage());
         }
     }
 
@@ -43,7 +43,7 @@ public class DesignerDAOImpl implements DesignerDAO {
         } catch (IllegalStateException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("디자이너 삭제 중 오류 발생"+ e.getMessage(), e);
+            throw new RuntimeException("디자이너 삭제 중 오류 발생"+ e.getMessage());
         }
     }
 

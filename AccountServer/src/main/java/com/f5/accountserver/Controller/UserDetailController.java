@@ -1,5 +1,6 @@
 package com.f5.accountserver.Controller;
 
+import com.f5.accountserver.DTO.StatusCodeDTO;
 import com.f5.accountserver.DTO.UserDetailDTO;
 import com.f5.accountserver.Entity.DormantEntity;
 import com.f5.accountserver.Repository.DormantRepository;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -30,7 +32,10 @@ public class UserDetailController {
             UserDetailDTO user = userDetailsService.getUserDetails(communicationService.searchInfo(email));
             return ResponseEntity.ok(user);
         } catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
 
@@ -38,21 +43,36 @@ public class UserDetailController {
     public ResponseEntity<?> updateAccount(@RequestBody UserDetailDTO userDetailDTO) {
         try {
             userDetailsService.updateUserDetails(userDetailDTO);  // 서비스 레이어에서 업데이트 처리
-            return ResponseEntity.ok("유저 상세 정보가 성공적으로 업데이트되었습니다.");
+            return ResponseEntity.ok(StatusCodeDTO.builder()
+                            .Code(200L)
+                            .Msg("유저 상세 정보가 성공적으로 업데이트 되었습니다.")
+                            .build());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("유저 상세 정보 업데이트에 실패했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusCodeDTO.builder()
+                            .Code(405L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
 
     @DeleteMapping("/withdraw/{id}")
     public ResponseEntity<?> withdraw(@PathVariable Long id) {
         try{
-            userDetailsService.dormantAccount(id);
-            return ResponseEntity.ok("탈퇴 성공");
+            userDetailsService.deleteAccount(id);
+            return ResponseEntity.ok(StatusCodeDTO.builder()
+                            .Code(200L)
+                            .Msg("탈퇴 성공")
+                            .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusCodeDTO.builder()
+                            .Code(405L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
 
@@ -62,7 +82,29 @@ public class UserDetailController {
             List<DormantEntity> dormantEntities = dormantRepository.findAll();
             return ResponseEntity.ok(dormantEntities);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusCodeDTO.builder()
+                            .Code(405L)
+                            .Msg(e.getMessage())
+                            .build());
         }
     }
+
+    @GetMapping("/user-list")
+    public ResponseEntity<?> getUserList() {
+        LinkedHashMap<String, UserDetailDTO> userList = new LinkedHashMap<>();
+        try {
+            List<UserDetailDTO> users = userDetailsService.findAllUserDetails(); // 전체 사용자 리스트 가져오기
+            for (UserDetailDTO user : users) {
+                String email = communicationService.getEmail(user.getId()); // 각 사용자의 이메일 가져오기
+                userList.put(email, user); // email을 키로, userDetailDTO를 값으로 맵에 추가
+            }
+            return ResponseEntity.ok(userList); // 성공 시 맵을 응답으로 반환
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusCodeDTO.builder()
+                            .Code(500L)
+                            .Msg(e.getMessage())
+                            .build());
+        }
+    }
+
 }
