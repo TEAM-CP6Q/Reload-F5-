@@ -1,28 +1,68 @@
-import React from 'react';
-import { Card, Col, Row, Typography, List, Avatar, Table, Button } from 'antd';
-import { MessageOutlined, UserOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import { Card, Col, Row, Typography, Table, message, Tag } from 'antd'; // Button을 제거했습니다
 import AdminAllUser from './AdminAllUser';
-
 
 const { Text } = Typography;
 
 const AdminDash = ({ setActiveTab }) => {
-  const pickupData = [
-    { key: '1', name: '김철수', status: '수거 대기' },
-    { key: '2', name: '이영희', status: '수거 완료' },
-  ];
+  const [pickupData, setPickupData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const chatData = [
-    { id: '1', name: '윤산하', inquiry: '배송 문의', message: '상품 출고 배송은 언제 되나요?' },
-    { id: '2', name: '차은우', inquiry: '재입고 문의', message: '이 옷 언제 재입고 되나요?' },
-    { id: '3', name: '문빈', inquiry: '수거 문의', message: '쓰레기 수거 오는 건가요?' },
-    { id: '4', name: '박진우', inquiry: '수거 문의', message: '수거 신청했는데 되지 않았어요.' },
-    { id: '5', name: '김명준', inquiry: '디자이너 문의', message: '디자이너 관련해서 문의는 어디로 하면 되나요?' },
-  ];
+  // 데이터 가져오기
+  useEffect(() => {
+    const fetchPickupData = async () => {
+      const token = localStorage.getItem("token");
+      try {
+        const response = await fetch('http://3.37.122.192:8000/api/pickup/get-all-pickups', {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
+        if (response.ok) {
+          const data = await response.json();
+          setPickupData(data.map(item => ({
+            pickupId: item.pickupId,
+            requestDate: item.requestDate,
+            payment: item.payment,
+            accepted: item.accepted,
+            key: item.pickupId,
+          })));
+        } else {
+          message.error('수거 데이터를 불러오는 데 실패했습니다.');
+        }
+      } catch (error) {
+        console.error("데이터 로드 오류:", error);
+        message.error('데이터를 가져오는 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPickupData();
+  }, []);
+
+  // 필요한 필드만 테이블에 표시
   const pickupColumns = [
-    { title: '이름', dataIndex: 'name', key: 'name' },
-    { title: '상태', dataIndex: 'status', key: 'status' },
+    { title: '신청 날짜', dataIndex: 'requestDate', key: 'requestDate' },
+    { 
+      title: '결제 상태', 
+      dataIndex: 'payment', 
+      key: 'payment', 
+      render: (payment) => (
+        payment ? <Tag color="green">결제 완료</Tag> : <Tag color="red">미결제</Tag>
+      ),
+    },
+    {
+      title: '승인 상태',
+      dataIndex: 'accepted',
+      key: 'accepted',
+      render: (accepted) => (
+        accepted ? <Tag color="blue">승인됨</Tag> : <Tag color="gray">미승인</Tag>
+      ),
+    },
   ];
 
   return (
@@ -32,7 +72,7 @@ const AdminDash = ({ setActiveTab }) => {
           <Card
             title="유저 정보"
             bordered={false}
-            extra={<Button type="link" onClick={() => setActiveTab('user-management')}>더보기</Button>}
+            extra={<span onClick={() => setActiveTab('user-management')}>더보기</span>} // Button 제거 후 텍스트로 수정
           >
             <AdminAllUser showTopUsers={true} />
           </Card>
@@ -40,26 +80,14 @@ const AdminDash = ({ setActiveTab }) => {
       </Row>
 
       <Row gutter={16} style={{ marginTop: '20px' }}>
-        <Col span={12}>
+        <Col span={24}>
           <Card title="수거 관리 상태" bordered={false}>
-            <Table dataSource={pickupData} columns={pickupColumns} pagination={false} />
-          </Card>
-        </Col>
-
-        <Col span={12}>
-          <Card title={<><MessageOutlined /> 최근 문의 채팅</>} bordered={false}>
-            <List
-              itemLayout="horizontal"
-              dataSource={chatData}
-              renderItem={(item) => (
-                <List.Item>
-                  <List.Item.Meta
-                    avatar={<Avatar icon={<UserOutlined />} />}
-                    title={<Text strong>{item.name} ({item.inquiry})</Text>}
-                    description={item.message}
-                  />
-                </List.Item>
-              )}
+            <Table
+              dataSource={pickupData}
+              columns={pickupColumns}
+              pagination={false}
+              loading={loading}
+              rowKey="pickupId"
             />
           </Card>
         </Col>
