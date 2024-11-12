@@ -63,6 +63,8 @@ const Header = () => {
                 return '문의하기';
             case '/pickup-request':
                 return '수거 신청하기';
+            case '/pickup/result':
+                return '수거 신청하기';
             default:
                 return 'Main Page';
         }
