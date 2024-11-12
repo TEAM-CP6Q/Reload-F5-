@@ -2,10 +2,13 @@ import React, { useState, useEffect } from "react";
 import "../CSS/PickupRequestPage.css";
 import { Calendar, ChevronLeft, ChevronRight, Home } from "lucide-react";
 import Header from "../components/Header";
+import Modal from "react-modal";
+import DaumPostcode from "react-daum-postcode";
 
 const PickupRequestPage = () => {
     const [currentScreen, setCurrentScreen] = useState(1);
     const [slideDirection, setSlideDirection] = useState("none");
+    const [isOpen, setIsOpen] = useState(false); // 주소검색 모달 상태 추가
 
     // Calendar state
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -17,6 +20,35 @@ const PickupRequestPage = () => {
     // Second screen state with default user data
     const [userData, setUserData] = useState("");
 
+    // Modal 스타일 추가
+    const customStyles = {
+        overlay: {
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        content: {
+            left: "0",
+            margin: "auto",
+            width: "100%",
+            height: "80%",
+            padding: "0",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+        },
+    };
+
+    // 주소 검색 완료 핸들러 추가
+    const completeHandler = (data) => {
+        setUserData(prev => ({
+            ...prev,
+            postalCode: data.zonecode,
+            roadNameAddress: data.roadAddress
+        }));
+        setIsOpen(false);
+    };
 
     // 사용자 정보 가져오기
     useEffect(() => {
@@ -50,16 +82,14 @@ const PickupRequestPage = () => {
                     });
                 } else {
                     console.error('사용자 정보를 가져오는데 실패했습니다.');
-                    // 에러 처리를 위한 상태 관리나 사용자 피드백을 추가할 수 있습니다.
                 }
             } catch (error) {
                 console.error('API 호출 중 에러 발생:', error);
-                // 에러 처리를 위한 상태 관리나 사용자 피드백을 추가할 수 있습니다.
             }
         };
 
         fetchUserData();
-    }, []); // 컴포넌트 마운트 시 한 번만 실행
+    }, []);
 
     const generateCalendarDates = () => {
         const firstDay = new Date(currentYear, currentMonth, 1).getDay();
@@ -190,12 +220,12 @@ const PickupRequestPage = () => {
                                     <div
                                         key={idx}
                                         className={`pickupRequest-calendar-date 
-                      ${date ? 'cursor-pointer' : ''} 
-                      ${isToday(date) ? 'today' : ''} 
-                      ${date && selectedDate && date.getDate() === selectedDate.getDate() &&
+                                            ${date ? 'cursor-pointer' : ''} 
+                                            ${isToday(date) ? 'today' : ''} 
+                                            ${date && selectedDate && date.getDate() === selectedDate.getDate() &&
                                                 date.getMonth() === selectedDate.getMonth() ? "selected" : ""}
-                      ${isPastDate(date) ? 'past-date' : ''}
-                    `}
+                                            ${isPastDate(date) ? 'past-date' : ''}
+                                        `}
                                         onClick={() => date && !isPastDate(date) && setSelectedDate(date)}
                                     >
                                         {date?.getDate()}
@@ -237,6 +267,24 @@ const PickupRequestPage = () => {
                         </div>
                     ) : (
                         <div className="pickupRequest-form-section">
+                            <div className="pickupRequest-instruction">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8l-6-6z" />
+                                    <path d="M14 3v5h5M16 13H8M16 17H8M10 9H8" />
+                                </svg>
+                                <span>신청자 정보를 확인해 주세요</span>
+                            </div>
+
                             <div className="pickupRequest-form-group">
                                 <label className="pickupRequest-form-label">이름</label>
                                 <input
@@ -244,6 +292,7 @@ const PickupRequestPage = () => {
                                     value={userData.name}
                                     onChange={(e) => handleInputChange('name', e.target.value)}
                                     className="pickupRequest-form-input"
+                                    placeholder="이름을 입력해주세요."
                                 />
                             </div>
 
@@ -254,6 +303,7 @@ const PickupRequestPage = () => {
                                     value={userData.phoneNumber}
                                     onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
                                     className="pickupRequest-form-input"
+                                    placeholder="연락처를 입력해주세요."
                                 />
                             </div>
 
@@ -268,39 +318,56 @@ const PickupRequestPage = () => {
                             </div>
 
                             <div className="pickupRequest-form-group">
-                                <label className="pickupRequest-form-label">우편번호</label>
+                                <label className="pickupRequest-form-label">수거지 주소</label>
                                 <div className="pickupRequest-postal-code-group">
                                     <input
                                         type="text"
                                         value={userData.postalCode}
                                         className="pickupRequest-form-input postal-code-input"
                                         onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                                        placeholder="우편번호"
+                                        readOnly
                                     />
-                                    <button className="pickupRequest-postal-code-button">
+                                    <button
+                                        className="pickupRequest-postal-code-button"
+                                        onClick={() => setIsOpen(true)}
+                                    >
                                         주소 검색
                                     </button>
                                 </div>
-                            </div>
-
-                            <div className="pickupRequest-form-group">
-                                <label className="pickupRequest-form-label">주소</label>
                                 <input
                                     type="text"
                                     value={userData.roadNameAddress}
                                     onChange={(e) => handleInputChange('roadNameAddress', e.target.value)}
                                     className="pickupRequest-form-input"
+                                    placeholder="주소를 입력해주세요."
+                                    style={{ marginTop: '0.5rem' }}
+                                    readOnly
                                 />
-                            </div>
-
-                            <div className="pickupRequest-form-group">
-                                <label className="pickupRequest-form-label">상세주소</label>
-                                <input
-                                    type="text"
+                                <textarea
                                     value={userData.detailedAddress}
                                     onChange={(e) => handleInputChange('detailedAddress', e.target.value)}
                                     className="pickupRequest-form-input"
+                                    placeholder="상세주소를 입력해주세요. (+ 수거하실 수거원 분께 전달할 지침이나 요구사항을 입력해주세요.)"
+                                    style={{ marginTop: '0.5rem', height: '5rem', resize: 'none' }}
                                 />
                             </div>
+
+                            {/* 주소 검색 모달 추가 */}
+                            <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles}>
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    style={{
+                                        alignSelf: "center",
+                                        padding: "10px 20px",
+                                        fontSize: "16px",
+                                        marginTop: "20px",
+                                    }}
+                                >
+                                    닫기
+                                </button>
+                                <DaumPostcode onComplete={completeHandler} height="100%" />
+                            </Modal>
                         </div>
                     )}
                 </div>
