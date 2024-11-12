@@ -56,7 +56,7 @@ const SideBar = ({ isOpen, onClose }) => {
                             마이페이지
                         </button>
                         <div className="sidebar-menu-divider" />
-                        <button className="sidebar-menu-item" onClick={() => handleNavigation('/')}>
+                        <button className="sidebar-menu-item" onClick={() => handleNavigation('/pickup-request')}>
                             수거 신청
                         </button>
                         <div className="sidebar-menu-divider" />

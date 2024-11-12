@@ -12,6 +12,7 @@ import OrderListDetail from './pages/OrderListDetail';
 import OrderList from './pages/OrderList';
 import AdminMain from './pages/admin/AdminMain';
 import ChattingPage from './pages/ChattingPage';
+import PickupRequestPage from './pages/PickupRequestPage';
 
 function AppContent() {
   const [role, setRole] = useState('user'); // 기본값을 'user'로 설정
@@ -50,6 +51,7 @@ function AppContent() {
             <Route path="/order-list" element={<OrderList />} />
             <Route path="/order-list-detail" element={<OrderListDetail />} />
             <Route path="/chat" element={<ChattingPage />} />
+            <Route path="/pickup-request" element={<PickupRequestPage />} />
           </>
         )}
       </Routes>
