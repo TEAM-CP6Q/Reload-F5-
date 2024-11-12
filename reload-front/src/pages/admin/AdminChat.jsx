@@ -7,7 +7,6 @@ import { Stomp } from '@stomp/stompjs';
 const AdminChat = () => {
   const [messages, setMessages] = useState([]);
   const [stompClient, setStompClient] = useState(null);
-  const [isConnected, setIsConnected] = useState(false);
   const [chatList, setChatList] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const chatContainerRef = useRef(null);
@@ -15,107 +14,93 @@ const AdminChat = () => {
   const inputValueRef = useRef('');
   const adminName = "새로고침";
 
+  // 구독된 채팅방 ID 추적
+  const subscribedChatRooms = useRef(new Set());
+
   useEffect(() => {
     if (stompClient) return;
-  
-    const socket = new SockJS('http://localhost:8080/chat');
+
+    const socket = new SockJS('http://3.37.122.192:14000/ws/chat');
     const client = Stomp.over(socket);
-  
+
     client.connect({}, () => {
       setStompClient(client);
-      setIsConnected(true);
-  
-      client.subscribe('/topic/messages', (message) => {
-        const receivedMessage = JSON.parse(message.body);
-        console.log("Received message:", receivedMessage);
-  
-        // 시간이 없는 수신 메시지에 현재 시간 추가
-        if (!receivedMessage.time) {
-          receivedMessage.time = new Date().toLocaleTimeString('ko-KR', {
-            hour: '2-digit',
-            minute: '2-digit',
+
+      // 새로운 채팅방이 생성될 때마다 구독
+      client.subscribe('/topic/admin/new-room', (message) => {
+        const newRoom = JSON.parse(message.body);
+        console.log('New room created:', newRoom);
+
+        // 중복 구독 방지
+        if (newRoom.chatId && !subscribedChatRooms.current.has(newRoom.chatId)) {
+          subscribedChatRooms.current.add(newRoom.chatId);
+          client.subscribe(`/topic/chat/${newRoom.chatId}`, (message) => {
+            const receivedMessage = JSON.parse(message.body);
+            handleReceivedMessage(receivedMessage);
           });
-        }
-  
-        if (receivedMessage.time || receivedMessage.sender !== adminName) {
-          setMessages((prevMessages) => {
-            if (!prevMessages.some(msg => msg.time === receivedMessage.time && msg.content === receivedMessage.content)) {
-              return [...prevMessages, receivedMessage];
-            }
-            return prevMessages;
-          });
-        }
-  
-        if (receivedMessage.sender !== adminName) {
-          setChatList((prevList) => {
-            if (!prevList.some(chat => chat.sender === receivedMessage.sender)) {
-              return [...prevList, { sender: receivedMessage.sender, content: receivedMessage.content, unread: 1 }];
-            }
-            return prevList.map((chat) =>
-              chat.sender === receivedMessage.sender
-                ? { ...chat, content: receivedMessage.content, unread: chat.unread + 1 }
-                : chat
-            );
-          });
+
+          setChatList((prevList) => [
+            ...prevList,
+            { sender: newRoom.sender, content: '', unread: 0, chatId: newRoom.chatId },
+          ]);
         }
       });
     });
-  
+
     return () => {
       if (stompClient) {
         stompClient.disconnect();
       }
     };
   }, [stompClient]);
-  
 
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const sendMessage = () => {
-    if (inputValueRef.current.trim() && isConnected && stompClient && selectedUser) {
-      const currentTime = new Date().toLocaleTimeString('ko-KR', {
+  const handleReceivedMessage = (receivedMessage) => {
+    if (!receivedMessage.time) {
+      receivedMessage.time = new Date().toLocaleTimeString('ko-KR', {
         hour: '2-digit',
         minute: '2-digit',
       });
+    }
 
+    setMessages((prevMessages) => {
+      if (!prevMessages.some((msg) => msg.content === receivedMessage.content)) {
+        return [...prevMessages, receivedMessage];
+      }
+      return prevMessages;
+    });
+
+    setChatList((prevList) =>
+      prevList.map((chat) =>
+        chat.chatId === receivedMessage.chatId
+          ? { ...chat, content: receivedMessage.content, unread: chat.unread + 1 }
+          : chat
+      )
+    );
+  };
+
+  const sendMessage = () => {
+    if (inputValueRef.current.trim() && stompClient && selectedUser) {
       const message = {
-        sender: adminName,
+        chatId: selectedUser.chatId,
         content: inputValueRef.current,
-        role: 'admin',
-        recipient: selectedUser.sender,
-        time: currentTime,
+        sender: adminName,
       };
 
-      stompClient.send('/app/sendMessage', {}, JSON.stringify(message));
+      stompClient.send('/app/chat', {}, JSON.stringify(message));
       setMessages((prevMessages) => [...prevMessages, message]);
-      inputValueRef.current = ''; // 전송 후 입력값 초기화
-      inputRef.current.value = ''; // input 필드 초기화
-      inputRef.current.focus(); // 포커스를 유지
-    }
-  };
-
-  const handleChange = (e) => {
-    inputValueRef.current = e.target.value;
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
+      inputValueRef.current = '';
+      inputRef.current.value = '';
     }
   };
 
   const selectUser = (user) => {
     setSelectedUser(user);
     setChatList((prevList) =>
-      prevList.map((chat) => (chat.sender === user.sender ? { ...chat, unread: 0 } : chat))
+      prevList.map((chat) => (chat.chatId === user.chatId ? { ...chat, unread: 0 } : chat))
     );
   };
 
+  // 채팅방 목록과 채팅창 UI 그대로 유지
   const ChatList = () => (
     <Card title="채팅 목록" style={styles.chatList} bordered>
       <List
@@ -150,17 +135,17 @@ const AdminChat = () => {
     <Card title={selectedUser ? `${selectedUser.sender}와의 대화` : '유저를 선택하세요'} style={styles.chatWindow} bordered>
       <div style={styles.messageContainer} ref={chatContainerRef}>
         {messages.map((msg, index) => (
-          <div key={index} style={msg.role === 'admin' ? styles.adminMessage : styles.userMessage}>
-            {msg.role !== 'admin' && (
+          <div key={index} style={msg.sender === adminName ? styles.adminMessage : styles.userMessage}>
+            {msg.sender !== adminName && (
               <div style={styles.userAvatarContainer}>
                 <Avatar style={styles.outlineAvatar} />
                 <div style={styles.senderName}>{msg.sender}</div>
               </div>
             )}
-            <div style={msg.role === 'admin' ? styles.adminBubble : styles.userBubble}>
+            <div style={msg.sender === adminName ? styles.adminBubble : styles.userBubble}>
               <div style={styles.messageContent}>{msg.content}</div>
             </div>
-            <span style={styles.timestamp}>{msg.time}</span> {/* 메시지 박스 아래에 시간 표시 */}
+            <span style={styles.timestamp}>{msg.time}</span>
           </div>
         ))}
       </div>
@@ -168,8 +153,13 @@ const AdminChat = () => {
         <input
           className='admin-chat-input'
           type="text"
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
+          onChange={(e) => (inputValueRef.current = e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+            }
+          }}
           placeholder="메시지를 입력하세요"
           style={styles.input}
           ref={inputRef}
@@ -276,7 +266,6 @@ const styles = {
     fontSize: '16px',
     lineHeight: '1.4',
   },
-  
   timestamp: {
     fontSize: '12px',
     color: '#888',
@@ -285,7 +274,6 @@ const styles = {
     display: 'block',
     paddingTop: '4px',
   },
-
   inputContainer: {
     display: 'flex',
     alignItems: 'center',
