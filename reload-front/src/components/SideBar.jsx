@@ -1,4 +1,3 @@
-// SideBar.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,12 +10,20 @@ const SideBar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
 
     const handleNavigation = (path) => {
-        navigate(path);
+        if (!isLogin && path !== '/login') {
+            navigate('/login');
+        } else {
+            navigate(path);
+        }
         onClose();
     };
 
     const handleMyPageClick = () => {
-        navigate('/mypage');
+        if (!isLogin) {
+            navigate('/login');
+        } else {
+            navigate('/mypage');
+        }
         onClose();
     }
 
@@ -35,7 +42,6 @@ const SideBar = ({ isOpen, onClose }) => {
         };
         handleget();
     }, [])
-
 
     return (
         <>
