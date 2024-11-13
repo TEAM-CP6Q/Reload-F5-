@@ -1,0 +1,139 @@
+.pickup-history {
+    height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    padding: 20px;
+}
+
+.pickup-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.pickup-item {
+    border: 1px solid #e6e6e6;
+    border-radius: 12px;
+    padding: 24px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pickup-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.pickup-date {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.pickup-date span {
+    font-size: 15px;
+    color: #666;
+}
+
+.pickup-number {
+    font-family: 'Roboto Mono', monospace;
+    color: #888;
+    font-size: 14px;
+    padding: 4px 8px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.pickup-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 상태와 결제 금액을 다른 줄에 표시 */
+.status-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.amount-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: 600;
+    font-size: 16px;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.status {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.status.pending {
+    background-color: #edf2ff;
+    color: #3b5bdb;
+}
+
+.status.waiting {
+    background-color: #fff3bf;
+    color: #e67700;
+}
+
+.status.completed {
+    background-color: #ebfbee;
+    color: #2b8a3e;
+}
+
+.status.inprogress {
+    background-color: #f3d9fa;
+    color: #862e9c;
+}
+
+.payment-button {
+    width: 100%;
+    padding: 14px;
+    background-color: #fff;
+    color: #388E3C;
+    font-size: 16px;
+    border: 1px solid #388E3C;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.payment-button:hover {
+    background-color: #388E3C;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.payment-button:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 640px) {
+    .pickup-history {
+        padding: 16px;
+    }
+
+    .pickup-item {
+        padding: 16px;
+    }
+
+    .status-row, .amount-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .amount-row {
+        font-size: 15px;
+    }
+}

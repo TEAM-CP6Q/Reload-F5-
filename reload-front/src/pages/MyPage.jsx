@@ -167,7 +167,7 @@ const MyPage = () => {
           </div>
           <div
             className="activity-item"
-            onClick={() => navigate("/pickup-request")}
+            onClick={() => navigate("/pickup-list")}
           >
             <div className="icon-wrapper">
               <i className="fas fa-shipping-fast activity-icon"></i>
