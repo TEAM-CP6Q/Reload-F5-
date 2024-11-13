@@ -1,3 +1,5 @@
+// ChattingPage.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Avatar } from 'antd';
 import { UserOutlined, SendOutlined } from '@ant-design/icons';
@@ -10,17 +12,21 @@ const ChattingPage = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [stompClient, setStompClient] = useState(null);
-  const [userName, setUserName] = useState('Anonymous');
+  const [userName, setName] = useState(); 
   const messageContainerRef = useRef(null);
+
+  const chatId = 1; // 서버와 일치하는 채팅방 ID 설정
 
   // WebSocket 연결 설정
   useEffect(() => {
-    const socket = new SockJS('http://localhost:8080/chat');
+    const socket = new SockJS('http://3.37.122.192:14000/ws/chat');
     const client = Stomp.over(socket);
 
     client.connect({}, () => {
       setStompClient(client);
-      client.subscribe('/topic/messages', (message) => {
+
+      // 서버의 채팅방 구독
+      client.subscribe(`/topic/chat/${chatId}`, (message) => {
         const receivedMessage = JSON.parse(message.body);
 
         if (!receivedMessage.time) {
@@ -30,11 +36,9 @@ const ChattingPage = () => {
           });
         }
 
+        // 수신된 메시지를 messages 상태에 추가
         setMessages((prevMessages) => {
-          const isDuplicate = prevMessages.some(
-            (msg) => msg.time === receivedMessage.time && msg.content === receivedMessage.content
-          );
-          return isDuplicate ? prevMessages : [...prevMessages, receivedMessage];
+          return [...prevMessages, receivedMessage];
         });
       });
     });
@@ -46,27 +50,12 @@ const ChattingPage = () => {
     };
   }, []);
 
-  // 초기 메시지를 추가하는 useEffect
-  useEffect(() => {
-    const initialMessage = {
-      sender: '새로고침',
-      content: '안녕하세요. 새로고침입니다. 어떤 것을 도와드릴까요?',
-      role: 'admin',
-      time: new Date().toLocaleTimeString('ko-KR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-    };
-    setMessages((prevMessages) => [initialMessage, ...prevMessages]);
-  }, []);
-
-  // 서버에서 유저 이름 가져오기
-  useEffect(() => {
-    const handleGetUserName = async () => {
-      const token = localStorage.getItem("token");
-      const email = localStorage.getItem("email");
-
-      try {
+    // 회원정보 조회
+    useEffect(() => {
+      const handleGet = async () => {
+        const token = localStorage.getItem("token");
+        const email = localStorage.getItem("email");
+  
         const response = await fetch(
           `http://3.37.122.192:8000/api/account/search-account/${email}`,
           {
@@ -77,41 +66,28 @@ const ChattingPage = () => {
             },
           }
         );
-
-        if (response.ok) {
-          const result = await response.json();
-          setUserName(result.name);
+  
+        const result = await response.json();
+  
+        if (response.status === 200) {
+          setName(result.name);
         } else {
-          const result = await response.json();
           alert("로그인 부탁: " + result.message);
         }
-      } catch (error) {
-        console.error("Error fetching user name:", error);
-      }
-    };
-    
-    handleGetUserName();
-  }, []);
+      };
+      handleGet();
+    }, []);
 
   const sendMessage = () => {
     if (input.trim() && stompClient) {
-      const currentTime = new Date().toLocaleTimeString('ko-KR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-
       const message = {
-        sender: userName,
+        chatId,
         content: input,
-        role: 'user',
-        time: currentTime,
+        sender: userName, // 유저 이름으로 설정
       };
 
-      if (message.time) {
-        stompClient.send('/app/sendMessage', {}, JSON.stringify(message));
-        setMessages((prevMessages) => [...prevMessages, message]);
-      }
-
+      stompClient.send('/app/chat', {}, JSON.stringify(message));
+      setMessages((prevMessages) => [...prevMessages, message]);
       setInput('');
     }
   };
@@ -127,8 +103,8 @@ const ChattingPage = () => {
       <Header/>
       <div className="message-container" ref={messageContainerRef}>
         {messages.map((msg, index) => (
-          <div key={index} className={msg.role === 'admin' ? 'admin-message' : 'user-message'}>
-            {msg.role === 'admin' ? (
+          <div key={index} className={msg.sender === '새로고침' ? 'admin-message' : 'user-message'}>
+            {msg.sender === '새로고침' ? (
               <>
                 <div className="user-avatar-container">
                   <Avatar icon={<UserOutlined />} className="avatar-icon" />

@@ -1,4 +1,3 @@
-// Header.js
 import React, { useState } from "react";
 import '../CSS/Header.css';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -17,11 +16,23 @@ const Header = () => {
     };
 
     const handleBackClick = () => {
-        navigate(-1);
+        if (location.pathname === '/pickup-request') {
+            if (window.confirm('정말 나가시겠습니까? 현재 진행중인 과정은 초기화됩니다.')) {
+                navigate(-1);
+            }
+        } else {
+            navigate(-1);
+        }
     };
 
     const handleHomeClick = () => {
-        navigate('/');
+        if (location.pathname === '/pickup-request') {
+            if (window.confirm('정말 나가시겠습니까? 현재 진행중인 과정은 초기화됩니다.')) {
+                navigate('/');
+            }
+        } else {
+            navigate('/');
+        }
     }
 
     const handleOpenMenuBar = () => {
@@ -50,6 +61,10 @@ const Header = () => {
                 return '주문 상세 내역';
             case '/chat':
                 return '문의하기';
+            case '/pickup-request':
+                return '수거 신청하기';
+            case '/pickup/result':
+                return '수거 신청하기';
             default:
                 return 'Main Page';
         }

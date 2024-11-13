@@ -13,6 +13,7 @@ import AdminProduct from './AdminProduct';
 import AdminDesigner from './AdminDesigner';
 import AdminAllUser from './AdminAllUser';
 import AdminChat from './AdminChat';
+import AdminPickupManagement from './AdminPickUpManagement';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -79,7 +80,7 @@ const AdminMain = () => {
   const renderContent = () => {
     switch (activeTab) {
       case 'pickup':
-        return <PickupManagementContent />;
+        return <AdminPickupManagement />;
       case 'orders':
         return <OrderManagementContent />;
       case 'product-upload':

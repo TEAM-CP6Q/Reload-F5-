@@ -1,0 +1,212 @@
+/* PickupResultPage.css */
+
+.pickup-result-container {
+    min-height: 100vh;
+    background-color: #f8fafc;
+    padding-bottom: 2rem;
+}
+
+.pickup-result-content {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.pickup-result-card {
+    background-color: white;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 2rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.pickup-result-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.pickup-result-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.pickup-result-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.pickup-result-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.pickup-result-section-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    color: #16a34a;
+}
+
+.pickup-result-section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: -0.025em;
+}
+
+.pickup-result-subsection-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 1rem;
+}
+
+.pickup-result-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1rem;
+    font-size: 0.9375rem;
+}
+
+.pickup-result-grid-row {
+    display: contents;
+}
+
+.pickup-result-label {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.pickup-result-value {
+    color: #1e293b;
+}
+
+.pickup-result-address {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.pickup-result-address-detail {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.pickup-result-price {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+.pickup-result-waste-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.pickup-result-waste-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #f8fafc;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease-in-out;
+}
+
+.pickup-result-waste-item:hover {
+    background-color: #f1f5f9;
+    transform: translateX(4px);
+}
+
+.pickup-result-waste-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pickup-result-waste-type {
+    font-size: 0.9375rem;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.pickup-result-waste-quantity {
+    font-size: 0.875rem;
+    color: #64748b;
+    font-weight: 400;
+    width: 35px;
+}
+
+.pickup-result-waste-price {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #16a34a;
+    width: 70px;;
+}
+
+.pickup-result-submit-button {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #16a34a;
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.pickup-result-submit-button:hover {
+    background-color: #15803d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.pickup-result-submit-button:active {
+    transform: translateY(0);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 640px) {
+    .pickup-result-content {
+        padding: 1rem 0.75rem;
+    }
+
+    .pickup-result-card {
+        padding: 1.25rem;
+        border-radius: 0.75rem;
+    }
+
+    .pickup-result-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .pickup-result-grid-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .pickup-result-waste-item {
+        padding: 0.75rem;
+    }
+
+    .pickup-result-section-title {
+        font-size: 1.125rem;
+    }
+}
