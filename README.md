@@ -1,4 +1,7 @@
+<p align="center">
+  <img width="200px;" src="../Reload_F5/reload-front/src/images/mainLogo.png" alt="메인페이지"/>
 </p>
+
 <h1 align="middle">RELOAD_F5</h1>
 <h3 align="middle">지구를 다시 새로고칠 때까지, 새로고침</h3>
 
@@ -15,9 +18,9 @@
 
 ## 📌 팀 구성
 
-| 이름 |  [한동균](https://github.com/DonggyunHan) | [박상우](https://github.com/Babsang0826) |[손경락](https://github.com/rudfkr) | [서동섭](https://github.com/dongsubnambuk) |
+| 이름 |  [한동균](https://github.com/hdg5639) | [박상우](https://github.com/Babsang0826) |[손경락](https://github.com/rudfkr) | [서동섭](https://github.com/dongsubnambuk) |
 | :-: | :-: | :-: | :-: | :-: |
-| 프로필 |![동균](https://avatars.githubusercontent.com/u/181503644?v=4) | ![상우](https://avatars.githubusercontent.com/u/109581758?v=4)  | ![경락](https://avatars.githubusercontent.com/u/182853185?v=4)| ![동섭](https://avatars.githubusercontent.com/u/105368619?v=40559e2f4-9356-4df9-b373-a06030bc0abb) | 
+| 프로필 |![동균](https://avatars.githubusercontent.com/u/107734276?v=4) | ![상우](https://avatars.githubusercontent.com/u/109581758?v=4)  | ![경락](https://avatars.githubusercontent.com/u/182853185?v=4)| ![동섭](https://avatars.githubusercontent.com/u/105368619?v=40559e2f4-9356-4df9-b373-a06030bc0abb) | 
 | 기술 스택 | <a href="https://spring.io/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="40" height="40"/> </a> | <a href="https://spring.io/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="40" height="40"/> </a>  | <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> | <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> |
 | 분류 | 백엔드 | 백엔드  | 프론트엔드 | 프론트엔드 | 
 
@@ -45,5 +48,3 @@
 - **즉각적인 소통**: 사용자는 문의 사항을 실시간으로 전달하고 신속하게 응답을 받을 수 있습니다.
 - **알림 기능**: 배송 상태나 수거 완료 같은 중요한 알림을 실시간으로 받아볼 수 있습니다.
 
-### 6. 🎨 개인 주문제작 문의 기능
-- **맞춤형 제품 제작**: 사용자가 디자이너와 소통하며 원하는 형태와 디자인으로 맞춤 제작이 가능합니다.
