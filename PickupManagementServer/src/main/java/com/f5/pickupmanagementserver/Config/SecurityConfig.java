@@ -21,7 +21,8 @@ public class SecurityConfig {
 
                                 // POST 요청만 허용
                                 .requestMatchers(HttpMethod.POST,
-                                        "/api/pickup/new-pickup")
+                                        "/api/pickup/new-pickup",
+                                        "/api/pickup/update-location")
                                 .permitAll()
 
                                 // GET 요청만 허용
@@ -29,7 +30,8 @@ public class SecurityConfig {
                                         "/api/pickup/waste/type-list",
                                         "/api/pickup/my-pickup/**",
                                         "/api/pickup/get-details",
-                                        "/api/pickup/get-all-pickups")
+                                        "/api/pickup/get-all-pickups",
+                                        "/api/pickup/get-location")
                                 .permitAll()
 
                                 .requestMatchers(HttpMethod.PATCH,

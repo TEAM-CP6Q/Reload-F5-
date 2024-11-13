@@ -2,6 +2,7 @@ package com.f5.pickupmanagementserver.Service;
 
 import com.f5.pickupmanagementserver.DAO.PickupDAO;
 import com.f5.pickupmanagementserver.DTO.*;
+import com.f5.pickupmanagementserver.DTO.Request.LocationDTO;
 import com.f5.pickupmanagementserver.DTO.Request.UpdatePickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.MyPickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.PickupDetailsDTO;
@@ -68,6 +69,24 @@ public class PickupServiceImpl implements PickupService {
         try{
             pickupDAO.removePickup(pickupId);
         } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void updateLocation(LocationDTO locationDTO) throws IllegalStateException{
+        try{
+            pickupDAO.changeLocation(locationDTO);
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    public LocationDTO getLocation(Long pickupId){
+        try{
+            return pickupDAO.getPickupLocation(pickupId);
+        } catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }
     }

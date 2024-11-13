@@ -22,5 +22,6 @@ public class PickupDetailsDTO {
     private Long price;
     private Boolean payment;
     private Boolean pickupProgress;
+    private Boolean accepted;
     private List<DetailsResponseDTO> details;
 }

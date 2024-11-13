@@ -1,6 +1,7 @@
 package com.f5.pickupmanagementserver.Service;
 
 import com.f5.pickupmanagementserver.DTO.*;
+import com.f5.pickupmanagementserver.DTO.Request.LocationDTO;
 import com.f5.pickupmanagementserver.DTO.Request.UpdatePickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.MyPickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.PickupDetailsDTO;
@@ -15,4 +16,6 @@ public interface PickupService {
     PickupDetailsDTO getDetails(Long pickupId);
     void updatePickup(UpdatePickupDTO updatePickupDTO);
     void deletePickup(Long pickupId);
+    void updateLocation(LocationDTO locationDTO);
+    LocationDTO getLocation(Long pickupId);
 }

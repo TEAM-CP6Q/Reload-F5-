@@ -16,5 +16,6 @@ public class UpdatePickupDTO {
     private Long price;
     private Boolean payment;
     private Boolean pickupProgress;
+    private Boolean accepted;
     private List<UpdateDetailsDTO> details;
 }

@@ -17,4 +17,5 @@ public class MyPickupDTO {
     private Boolean pickupProgress;
     private Long pricePreview;
     private Long price;
+    private Boolean accepted;
 }

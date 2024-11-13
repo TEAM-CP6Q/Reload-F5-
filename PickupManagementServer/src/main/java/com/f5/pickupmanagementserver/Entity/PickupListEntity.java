@@ -37,4 +37,7 @@ public class PickupListEntity {
 
     @Column(nullable = false)
     private Boolean pickupProgress;
+
+    @Column
+    private Boolean accepted;
 }

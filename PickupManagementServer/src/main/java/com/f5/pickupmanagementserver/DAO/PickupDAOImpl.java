@@ -1,6 +1,7 @@
 package com.f5.pickupmanagementserver.DAO;
 
 import com.f5.pickupmanagementserver.DTO.*;
+import com.f5.pickupmanagementserver.DTO.Request.LocationDTO;
 import com.f5.pickupmanagementserver.DTO.Request.UpdateDetailsDTO;
 import com.f5.pickupmanagementserver.DTO.Request.UpdatePickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.DetailsResponseDTO;
@@ -9,9 +10,11 @@ import com.f5.pickupmanagementserver.DTO.Respons.PickupDetailsDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.PickupInfoMsgDTO;
 import com.f5.pickupmanagementserver.Entity.AddressEntity;
 import com.f5.pickupmanagementserver.Entity.DetailsEntity;
+import com.f5.pickupmanagementserver.Entity.LocationEntity;
 import com.f5.pickupmanagementserver.Entity.PickupListEntity;
 import com.f5.pickupmanagementserver.Repository.AddressRepository;
 import com.f5.pickupmanagementserver.Repository.DetailsRepository;
+import com.f5.pickupmanagementserver.Repository.LocationRepository;
 import com.f5.pickupmanagementserver.Repository.PickupListRepository;
 import com.netflix.spectator.impl.PatternMatcher;
 import jakarta.transaction.Transactional;
@@ -26,6 +29,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Component
@@ -34,11 +38,13 @@ public class PickupDAOImpl implements PickupDAO {
     private final PickupListRepository pickupListRepository;
     private final DetailsRepository detailsRepository;
     private final AddressRepository addressRepository;
+    private final LocationRepository locationRepository;
 
-    public PickupDAOImpl(PickupListRepository pickupListRepository, DetailsRepository detailsRepository, AddressRepository addressRepository) {
+    public PickupDAOImpl(PickupListRepository pickupListRepository, DetailsRepository detailsRepository, AddressRepository addressRepository, LocationRepository locationRepository) {
         this.pickupListRepository = pickupListRepository;
         this.detailsRepository = detailsRepository;
         this.addressRepository = addressRepository;
+        this.locationRepository = locationRepository;
     }
 
     @Override
@@ -52,6 +58,7 @@ public class PickupDAOImpl implements PickupDAO {
         pickupList.setPickupDate(formatLocalDateTime);
         pickupList.setRequestDate(LocalDate.now());
         pickupList.setPickupProgress(false);
+        pickupList.setAccepted(false);
         List<String> userInfo;
         try {
             pickupListRepository.save(pickupList);
@@ -154,6 +161,7 @@ public class PickupDAOImpl implements PickupDAO {
                     .pickupProgress(addressEntity.getPickupList().getPickupProgress())
                     .pricePreview(addressEntity.getPickupList().getPricePreview())
                     .price(addressEntity.getPickupList().getPrice())
+                    .accepted(addressEntity.getPickupList().getAccepted())
                     .build();
             myPickupDTOList.add(myPickupDTO);
         }
@@ -178,6 +186,7 @@ public class PickupDAOImpl implements PickupDAO {
             pickupDetails.setPricePreview(pickupList.getPricePreview());
             pickupDetails.setPrice(pickupList.getPrice());
             pickupDetails.setPayment(pickupList.getPayment());
+            pickupDetails.setAccepted(pickupList.getAccepted());
             pickupDetails.setPickupProgress(pickupList.getPickupProgress());
         } catch (Exception e) {
             throw new RuntimeException("주소 정보 로드 실패");
@@ -197,6 +206,7 @@ public class PickupDAOImpl implements PickupDAO {
             pickupList.setPrice(pickupDTO.getPrice());
             pickupList.setPayment(pickupDTO.getPayment());
             pickupList.setPickupProgress(pickupDTO.getPickupProgress());
+            pickupList.setAccepted(pickupDTO.getAccepted());
         } catch (Exception e) {
             throw new RuntimeException("수거 정보 업데이트 실패");
         } try {
@@ -321,6 +331,30 @@ public class PickupDAOImpl implements PickupDAO {
 
         } catch (Exception e) {
             throw new IllegalStateException("수거 정보 삭제에 실패했습니다.", e);
+        }
+    }
+
+    private final LinkedHashMap<Long, LocationDTO> locationMap = new LinkedHashMap<>();
+
+    @Override
+    public void changeLocation(LocationDTO locationDTO) {
+        try{
+            if(!locationMap.containsKey(locationDTO.getPickupId())) {
+                locationMap.put(locationDTO.getPickupId(), locationDTO);
+            } else {
+                locationMap.replace(locationDTO.getPickupId(), locationDTO);
+            }
+        } catch (Exception e) {
+            throw new IllegalStateException("위치 정보 업데이트에 실패했습니다.");
+        }
+    }
+
+    @Override
+    public LocationDTO getPickupLocation(Long pickupId) {
+        try{
+            return locationMap.get(pickupId);
+        }catch (Exception e) {
+            throw new IllegalStateException("위치 정보 검색에 실패하였습니다.");
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.f5.pickupmanagementserver.Controller;
 
 import com.f5.pickupmanagementserver.DTO.*;
+import com.f5.pickupmanagementserver.DTO.Request.LocationDTO;
 import com.f5.pickupmanagementserver.DTO.Request.UpdatePickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.StatusCodeDTO;
 import com.f5.pickupmanagementserver.Service.PickupService;
@@ -105,6 +106,34 @@ public class PickupController {
                             .code(200L)
                             .msg("수거 신청 삭제 성공")
                             .build());
+        } catch (Exception e){
+            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                            .code(404L)
+                            .msg(e.getMessage())
+                            .build());
+        }
+    }
+
+    @PostMapping("/update-location")
+    public ResponseEntity<?> updateLocation(@RequestBody LocationDTO request) {
+        try{
+            pickupService.updateLocation(request);
+            return ResponseEntity.ok(StatusCodeDTO.builder()
+                            .code(200L)
+                            .msg("위치 업데이트 성공")
+                            .build());
+        }catch (Exception e){
+            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                            .code(404L)
+                            .msg(e.getMessage())
+                            .build());
+        }
+    }
+
+    @GetMapping("/get-location")
+    public ResponseEntity<?> getLocation(@RequestParam("pickupId") Long pickupId) {
+        try{
+            return ResponseEntity.ok(pickupService.getLocation(pickupId));
         } catch (Exception e){
             return ResponseEntity.status(404).body(StatusCodeDTO.builder()
                             .code(404L)

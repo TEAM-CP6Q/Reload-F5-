@@ -1,6 +1,7 @@
 package com.f5.pickupmanagementserver.DAO;
 
 import com.f5.pickupmanagementserver.DTO.*;
+import com.f5.pickupmanagementserver.DTO.Request.LocationDTO;
 import com.f5.pickupmanagementserver.DTO.Request.UpdatePickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.MyPickupDTO;
 import com.f5.pickupmanagementserver.DTO.Respons.PickupDetailsDTO;
@@ -15,4 +16,6 @@ public interface PickupDAO {
     PickupDetailsDTO findPickupDetails(Long pickupId);
     void updatePickup(UpdatePickupDTO updatePickup);
     void removePickup(Long pickupId);
+    void changeLocation(LocationDTO locationDTO);
+    LocationDTO getPickupLocation(Long pickupId);
 }
