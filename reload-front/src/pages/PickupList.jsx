@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 import '../CSS/PickupList.css';
 import Header from '../components/Header';
 
 const PickupList = () => {
   const [pickupData, setPickupData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPickupData = async () => {
       const token = localStorage.getItem("token");
       const email = localStorage.getItem("email");
-      
+
       try {
         setLoading(true);
         const response = await fetch(`http://3.37.122.192:8000/api/pickup/my-pickup?email=${email}`, {
@@ -37,13 +41,8 @@ const PickupList = () => {
     fetchPickupData();
   }, []);
 
-  const handlePayment = (pickupId, isPaymentPending) => {
-    if (isPaymentPending) {
-      alert("관리자가 금액을 입력하지 않았습니다. 금액이 입력된 후 결제를 진행해주세요.");
-    } else {
-      console.log('결제 처리:', pickupId);
-      // 실제 결제 처리 로직 추가
-    }
+  const handleViewDetails = (pickupId, pickupDate) => {
+    navigate(`/pickup-list-detail/${pickupId}`, { state: { pickupDate } });
   };
 
   const getStatusDisplay = (pickup) => {
@@ -89,23 +88,43 @@ const PickupList = () => {
     );
   }
 
+  const handleRequestPickup = () => {
+    navigate('/pickup-request');
+  };
+
+
   return (
     <>
       <Header />
       <div className="pickup-history">
         {pickupData.length === 0 ? (
-          <div className="no-data">아직 신청 내역이 없습니다.</div>
+         <div className="no-data">
+         <FontAwesomeIcon icon={faBoxOpen} size="3x" className="no-data-icon" />
+         <p>아직 신청하신 수거 내역이 없어요!</p>
+         <p>지금 바로 첫 수거를 신청해 보세요.</p>
+         <button className="request-button" onClick={handleRequestPickup}>
+           신청하기
+         </button>
+       </div>
         ) : (
           <div className="pickup-list">
             {pickupData.map((pickup) => {
               const statusText = getStatusDisplay(pickup);
               const isPaymentPending = pickup.price == null || pickup.price === 0;
-              
+
               return (
                 <div key={pickup.pickupId} className="pickup-item">
                   <div className="pickup-date">
                     <span>{formatDate(pickup.requestDate)}</span>
-                    <span className="pickup-number">No.{pickup.pickupId}</span>
+                    <div className="pickup-number-container">
+                      <span className="pickup-number">No.{pickup.pickupId}</span>
+                      <span 
+                        className="details-link"
+                        onClick={() => handleViewDetails(pickup.pickupId, pickup.requestDate)}
+                      >
+                        상세보기
+                      </span>
+                    </div>
                   </div>
 
                   <div className="pickup-details">
@@ -114,6 +133,7 @@ const PickupList = () => {
                         {statusText}
                       </span>
                     </div>
+
                     <div className="amount-row">
                       <span className="amount">
                         {statusText === '수거 완료 - 결제 대기'
@@ -128,7 +148,7 @@ const PickupList = () => {
                   {statusText === '수거 완료 - 결제 대기' && (
                     <button 
                       className="payment-button"
-                      onClick={() => handlePayment(pickup.pickupId, isPaymentPending)}
+                      onClick={() => handleViewDetails(pickup.pickupId, pickup.requestDate)}
                     >
                       결제하기
                     </button>
