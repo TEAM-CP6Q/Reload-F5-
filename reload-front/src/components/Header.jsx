@@ -44,6 +44,10 @@ const Header = () => {
     };
 
     const getPageTitle = () => {
+        const path = location.pathname;
+        if (path.startsWith('/pickup-list-detail/')) {
+            return '수거 상세 내역';
+        }
         switch (location.pathname) {
             case '/login':
                 return '로그인';
@@ -67,6 +71,7 @@ const Header = () => {
                 return '수거 신청하기';
             case '/pickup-list':
                 return '수거 내역 확인';
+  
             default:
                 return 'Main Page';
         }
