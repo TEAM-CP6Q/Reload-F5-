@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="200px;" src="../Reload_F5/reload-front/src/images/mainLogo.png" alt="메인페이지"/>
+  <img width="200px;" src="./reload-front/src/images/mainLogo.png" alt="메인페이지"/>
 </p>
 
 <h1 align="middle">RELOAD_F5</h1>
