@@ -30,13 +30,18 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 path.startsWith("/api/auth/register") ||
                 path.startsWith("/api/auth/register/exist-email") ||
                 path.startsWith("/api/auth/admin/login") ||
-                path.startsWith("/api/account/dormant-accounts") ||
-                path.startsWith("/api/auth/dormant-accounts") ||
                 path.startsWith("/api/get-secret") ||
                 path.startsWith("/api/auth/login/kakao/token") ||
                 path.startsWith("/api/auth/admin/register") ||
                 path.startsWith("/api/auth/kakao/login") ||
-                path.startsWith("/api/auth/kakao/register")){
+                path.startsWith("/api/auth/kakao/register") ||
+                path.startsWith("/api/auth/kakao/integration") ||
+                path.startsWith("/api/account/user-list") ||
+                path.startsWith("/api/auth/user-info") ||
+                path.startsWith("/api/auth/email") ||
+                path.startsWith("/api/pickup/waste/type-list") ||
+                path.startsWith("/api/pickup/update-location") ||
+                path.startsWith("/api/pickup/get-location")){
             return chain.filter(exchange);  // 위의 경로는 JWT 검증 생략
         }
 
@@ -59,40 +64,4 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     public int getOrder() {
         return -1; // 필터 우선순위 설정
     }
-
-//    이거 밑에는 도메인 단에서 아예 제한 거는 코드 포스트맨도 안먹힘
-//    private final JwtUtil jwtUtil;
-//    private static final List<String> ALLOWED_ORIGINS = Arrays.asList("http://121.182.42.161", "http://allowed-domain2.com");
-//
-//    @Override
-//    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-//        // 도메인 검증 로직
-//        String origin = exchange.getRequest().getHeaders().getFirst(HttpHeaders.ORIGIN);
-//        if (origin != null && !ALLOWED_ORIGINS.contains(origin)) {
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Origin not allowed");
-//        }
-//
-//        // JWT 검증 로직
-//        String path = exchange.getRequest().getPath().toString();
-//        if (path.equals("/api/auth/login") || path.equals("/api/auth/register")) {
-//            return chain.filter(exchange);  // 로그인/회원가입 경로는 JWT 검증 생략
-//        }
-//
-//        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-//        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "JWT Token is missing");
-//        }
-//
-//        String token = authHeader.substring(7);
-//        if (!jwtUtil.isTokenValid(token)) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT Token");
-//        }
-//
-//        return chain.filter(exchange);
-//    }
-//
-//    @Override
-//    public int getOrder() {
-//        return -1; // 필터 우선순위 설정
-//    }
 }

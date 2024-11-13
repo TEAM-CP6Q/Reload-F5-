@@ -25,9 +25,16 @@ public class SecurityConfig {
                                 "/api/auth/register/exist-email/**",
                                 "/api/account/search-account/**",
                                 "/api/auth/user-info/**",
-                                "/api/account/dormant-accounts",
-                                "/api/auth/dormant-accounts",
-                                "/api/auth/login/kakao/page").permitAll()
+                                "/api/auth/login/kakao/page",
+                                "/api/account/user-list",
+                                "/api/auth/email/**",
+                                "/api/pickup/waste/type-list",
+                                "/api/pickup/my-pickup/**",
+                                "/api/pickup/get-details",
+                                "/api/pickup/get-all-pickups",
+                                "/api/chat/all",
+                                "/api/chat/user-chats",
+                                "/api/pickup/get-location").permitAll()
 
                         // POST 요청 허용
                         .pathMatchers(HttpMethod.POST,
@@ -39,15 +46,21 @@ public class SecurityConfig {
                                 "/api/auth/login/kakao/token",
                                 "/api/account/designer/add-designer",
                                 "/api/auth/kakao/login",
-                                "/api/auth/kakao/register").permitAll()
+                                "/api/auth/kakao/register",
+                                "/api/pickup/new-pickup",
+                                "/api/chat/create-chat",
+                                "/api/pickup/update-location").permitAll()
 
                         // PATCH 요청 허용
                         .pathMatchers(HttpMethod.PATCH,
                                 "/api/account/update-account",
-                                "/api/auth/withdraw").permitAll()
+                                "/api/auth/kakao/integration",
+                                "/api/pickup/update-pickup").permitAll()
 
                         .pathMatchers(HttpMethod.DELETE,
-                                "/api/account/designer/remove-designer/**").permitAll()
+                                "/api/account/designer/remove-designer/**",
+                                "/api/pickup/delete-pickup",
+                                "/api/auth/withdraw").permitAll()
 
                         .anyExchange().authenticated() // 그 외의 요청은 인증 필요
                 )
