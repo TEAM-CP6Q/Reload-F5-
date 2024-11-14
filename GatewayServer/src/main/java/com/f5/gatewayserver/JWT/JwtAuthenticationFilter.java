@@ -41,7 +41,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
                 path.startsWith("/api/auth/email") ||
                 path.startsWith("/api/pickup/waste/type-list") ||
                 path.startsWith("/api/pickup/update-location") ||
-                path.startsWith("/api/pickup/get-location")){
+                path.startsWith("/api/pickup/get-location") ||
+                path.startsWith("/api/account/designer/get-designer") ||
+                path.startsWith("/api/account/designer/all-designer")){
             return chain.filter(exchange);  // 위의 경로는 JWT 검증 생략
         }
 
