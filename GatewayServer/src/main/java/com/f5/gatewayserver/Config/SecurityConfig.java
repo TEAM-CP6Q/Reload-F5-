@@ -34,7 +34,9 @@ public class SecurityConfig {
                                 "/api/pickup/get-all-pickups",
                                 "/api/chat/all",
                                 "/api/chat/user-chats",
-                                "/api/pickup/get-location").permitAll()
+                                "/api/pickup/get-location",
+                                "/api/account/designer/get-designer",
+                                "/api/account/designer/all-designer").permitAll()
 
                         // POST 요청 허용
                         .pathMatchers(HttpMethod.POST,
@@ -55,10 +57,11 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.PATCH,
                                 "/api/account/update-account",
                                 "/api/auth/kakao/integration",
-                                "/api/pickup/update-pickup").permitAll()
+                                "/api/pickup/update-pickup",
+                                "/api/account/designer/update-designer").permitAll()
 
                         .pathMatchers(HttpMethod.DELETE,
-                                "/api/account/designer/remove-designer/**",
+                                "/api/account/designer/remove-designer",
                                 "/api/pickup/delete-pickup",
                                 "/api/auth/withdraw").permitAll()
 
