@@ -18,9 +18,9 @@
 
 ## 📌 팀 구성
 
-| 이름 |  [한동균](https://github.com/hdg5639) | [박상우](https://github.com/Babsang0826) |[손경락](https://github.com/rudfkr) | [서동섭](https://github.com/dongsubnambuk) |
+| 이름 |  [한동균](https://github.com/hdg5639) | [박상우](https://github.com/Babsang0826) |[손경락](https://github.com/ganglike248) | [서동섭](https://github.com/dongsubnambuk) |
 | :-: | :-: | :-: | :-: | :-: |
-| 프로필 |![동균](https://avatars.githubusercontent.com/u/107734276?v=4) | ![상우](https://avatars.githubusercontent.com/u/109581758?v=4)  | ![경락](https://avatars.githubusercontent.com/u/182853185?v=4)| ![동섭](https://avatars.githubusercontent.com/u/105368619?v=40559e2f4-9356-4df9-b373-a06030bc0abb) | 
+| 프로필 |![동균](https://avatars.githubusercontent.com/u/107734276?v=4) | ![상우](https://avatars.githubusercontent.com/u/109581758?v=4)  | ![경락](https://avatars.githubusercontent.com/u/81566899?v=4)| ![동섭](https://avatars.githubusercontent.com/u/105368619?v=40559e2f4-9356-4df9-b373-a06030bc0abb) | 
 | 기술 스택 | <a href="https://spring.io/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="40" height="40"/> </a> | <a href="https://spring.io/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/springio/springio-icon.svg" alt="spring" width="40" height="40"/> </a>  | <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> | <a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/> </a> |
 | 분류 | 백엔드 | 백엔드  | 프론트엔드 | 프론트엔드 | 
 
