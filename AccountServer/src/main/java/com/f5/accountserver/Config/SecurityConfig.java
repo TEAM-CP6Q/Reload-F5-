@@ -32,18 +32,21 @@ public class SecurityConfig {
                                 // GET 요청만 허용
                                 .requestMatchers(HttpMethod.GET,
                                         "/api/account/search-account/**",
-                                        "/api/account/user-list")
+                                        "/api/account/user-list",
+                                        "/api/account/designer/get-designer",
+                                        "/api/account/designer/all-designer")
                                 .permitAll()
 
                                 // PATCH 요청만 허용
                                 .requestMatchers(HttpMethod.PATCH,
-                                        "/api/account/update-account")
+                                        "/api/account/update-account",
+                                        "/api/account/designer/update-designer")
                                 .permitAll()
 
                                 // DELETE 요청만 허용
                                 .requestMatchers(HttpMethod.DELETE,
                                         "/api/account/withdraw/**",
-                                        "/api/account/designer/remove-designer/**")
+                                        "/api/account/designer/remove-designer")
                                 .permitAll()
 
                                 // 그 외의 요청은 인증 필요
