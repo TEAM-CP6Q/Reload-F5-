@@ -1,4 +1,4 @@
-package com.f5.accountserver.Config;
+package com.f5.pickupserver.Config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -8,11 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -23,32 +18,29 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
+
                                 // POST 요청만 허용
                                 .requestMatchers(HttpMethod.POST,
-                                        "/api/account/add-details",
-                                        "/api/account/designer/add-designer")
+                                        "/api/pickup/new-pickup",
+                                        "/api/pickup/update-location")
                                 .permitAll()
 
                                 // GET 요청만 허용
                                 .requestMatchers(HttpMethod.GET,
-                                        "/api/account/search-account/**",
-                                        "/api/account/user-list",
-                                        "/api/account/designer/get-designer",
-                                        "/api/account/designer/all-designer")
+                                        "/api/pickup/waste/type-list",
+                                        "/api/pickup/my-pickup/**",
+                                        "/api/pickup/get-details",
+                                        "/api/pickup/get-all-pickups",
+                                        "/api/pickup/get-location")
                                 .permitAll()
 
-                                // PATCH 요청만 허용
                                 .requestMatchers(HttpMethod.PATCH,
-                                        "/api/account/update-account",
-                                        "/api/account/designer/update-designer")
+                                        "/api/pickup/update-pickup")
                                 .permitAll()
 
-                                // DELETE 요청만 허용
                                 .requestMatchers(HttpMethod.DELETE,
-                                        "/api/account/withdraw/**",
-                                        "/api/account/designer/remove-designer")
+                                        "/api/pickup/delete-pickup")
                                 .permitAll()
-
                                 // 그 외의 요청은 인증 필요
                                 .anyRequest().authenticated()
                 )

@@ -6,6 +6,8 @@ import com.f5.accountserver.Service.Designer.DesignerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/account/designer")
 public class DesignerController {
@@ -31,13 +33,52 @@ public class DesignerController {
         }
     }
 
-    @DeleteMapping("/remove-designer/{designerName}")
-    public ResponseEntity<?> removeDesigner(@PathVariable("designerName") String designerName) {
+    @DeleteMapping("/remove-designer")
+    public ResponseEntity<?> removeDesigner(@RequestParam("id") Long id) {
         try {
-            designerService.deleteDesigner(designerName);
-            return ResponseEntity.ok("디자이너 삭제 성공");
+            designerService.deleteDesigner(id);
+            return ResponseEntity.ok(StatusCodeDTO.builder()
+                            .Code(200L)
+                            .Msg("삭제 성공")
+                            .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
+        }
+    }
+
+    @GetMapping("/get-designer")
+    public ResponseEntity<?> getDesigner(@RequestParam("id") Long id) {
+        try{
+            return ResponseEntity.ok(designerService.getDesigner(id));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
+        }
+    }
+
+    @GetMapping("/all-designer")
+    public ResponseEntity<?> getAllDesigner() {
+        try{
+            return ResponseEntity.ok(Objects.requireNonNull(designerService.getDesignerList()));
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
+        }
+    }
+
+    @PatchMapping("/update-designer")
+    public ResponseEntity<?> updateDesigner(@RequestBody DesignerDTO designerDTO) {
+        try{
+            return ResponseEntity.ok(designerService.updateDesigner(designerDTO));
+        } catch (Exception e){
+            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
                             .Code(404L)
                             .Msg(e.getMessage())
                             .build());

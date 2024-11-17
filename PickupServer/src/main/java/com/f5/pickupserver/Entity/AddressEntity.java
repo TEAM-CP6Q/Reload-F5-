@@ -1,32 +1,38 @@
-package com.f5.accountserver.Entity;
+package com.f5.pickupserver.Entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-public class DesignerEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+public class AddressEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "pickup_id", referencedColumnName = "pickupId", nullable = false)
+    private PickupListEntity pickupList;
+
     @Column(nullable = false)
-    private String image;
-    @Column(unique = true, nullable = false)
     private String name;
+
     @Column(nullable = false)
     private String email;
+
     @Column(nullable = false)
     private String phone;
+
     @Column(nullable = false)
-    private String career;
+    private Long postalCode;
+
     @Column(nullable = false)
-    private String category;
+    private String roadNameAddress;
+
     @Column(nullable = false)
-    private String pr;
-    @Column(nullable = false)
-    private Boolean empStatus = (false);
+    private String detailedAddress;
 }
