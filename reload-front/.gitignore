@@ -8,6 +8,8 @@
 # testing
 /coverage
 
+*.pem
+
 # production
 /build
 
