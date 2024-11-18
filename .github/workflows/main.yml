@@ -1,4 +1,3 @@
----
 name: Deploy to AWS
 
 on:
@@ -16,6 +15,13 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
+      - name: Verify file structure
+        run: ls -R
+
+      - name: Set working directory
+        run: cd reload-front
+        shell: bash
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
@@ -23,14 +29,17 @@ jobs:
 
       - name: Install dependencies
         run: npm install --production
+        working-directory: ./reload-front
 
       - name: Build application
         run: npm run build
+        working-directory: ./reload-front
 
       - name: Create deployment package
         run: |
           zip -qq -r build.zip build appspec.yml deploy.sh
         shell: bash
+        working-directory: ./reload-front
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -42,6 +51,7 @@ jobs:
       - name: Upload to S3
         run: |
           aws s3 cp build.zip s3://refresh-f5-bucket/build.zip
+        working-directory: ./reload-front
 
       - name: Deploy with CodeDeploy
         run: |
@@ -50,3 +60,4 @@ jobs:
             --deployment-config-name CodeDeployDefault.AllAtOnce \
             --deployment-group-name f5-codedeploy-group \
             --s3-location bucket=refresh-f5-bucket,bundleType=zip,key=build.zip
+        working-directory: ./reload-front
