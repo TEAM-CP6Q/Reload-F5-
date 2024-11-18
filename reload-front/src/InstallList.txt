@@ -27,3 +27,5 @@ PRTEST2
 
 //소켓 설치
 npm install @stomp/stompjs sockjs-client
+
+//cicd
