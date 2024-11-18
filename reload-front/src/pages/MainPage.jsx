@@ -75,6 +75,7 @@ const MainPage = () => {
         }
     };
 
+    // 일단 하드코딩
     const newProducts = [
         {
             id: 1,
