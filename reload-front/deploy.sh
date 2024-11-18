@@ -11,7 +11,7 @@ npm ci --only=production
 
 # PM2로 애플리케이션 실행/재시작
 if pm2 list | grep -q "F5"; then
-  pm2 reload F5
+  pm2 restart F5
 else
   pm2 start npx --name F5 serve -s $BUILD_DIR -l 3000
 fi
