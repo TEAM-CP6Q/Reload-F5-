@@ -2,25 +2,25 @@ name: Deploy
 on:
   push:
     branches:
-      - develop 
+      - develop
 jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout source code.
+      - name: Checkout source code
         uses: actions/checkout@v2
 
       - name: Check Node.js version
         run: node -v
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install --production
 
       - name: Build
         run: npm run build
 
       - name: Create ZIP file
-        run: zip -qq -r ./build.zip .
+        run: zip -qq -r build.zip build appspec.yml deploy.sh
         shell: bash
 
       - name: Configure AWS credentials
@@ -32,7 +32,7 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 cp --region ap-northeast-2 ./build.zip s3://refresh-f5-bucket/build.zip 
+          aws s3 cp --region ap-northeast-2 build.zip s3://refresh-f5-bucket/build.zip
 
       - name: Deploy to AWS CodeDeploy
         run: |
