@@ -10,6 +10,8 @@
 
 *.pem
 
+.env
+
 # production
 /build
 
