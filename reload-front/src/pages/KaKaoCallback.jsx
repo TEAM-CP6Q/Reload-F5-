@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import '../CSS/KakaoCallback.css'; // 스피너 스타일을 정의한 CSS 파일
 
 const KakaoCallback = () => {
   const location = useLocation();
@@ -24,43 +25,42 @@ const KakaoCallback = () => {
     }
   }, [location, navigate]);
 
-const handleLogin = async (authCode) => {
-  try {
-    const response = await fetch('http://3.37.122.192:8000/api/auth/kakao/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ code: authCode }),
-    });
+  const handleLogin = async (authCode) => {
+    try {
+      const response = await fetch('http://3.37.122.192:8000/api/auth/kakao/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: authCode }),
+      });
 
-    if (response.status === 405) {
-      const confirmIntegration = window.confirm('통합하시겠습니까?');
-      if (confirmIntegration) {
-        await handleIntegration(authCode);
-      }
-    } else if (response.status === 200) {
-      const result = await response.json();
-      if (result.token) {
-        console.log(result);
-        console.log(result.user.email);
-        localStorage.setItem('token', result.token);
-        localStorage.setItem('email', result.user.email);
-        navigate('/');
+      if (response.status === 405) {
+        const confirmIntegration = window.confirm('통합하시겠습니까?');
+        if (confirmIntegration) {
+          await handleIntegration(authCode);
+        }
+      } else if (response.status === 200) {
+        const result = await response.json();
+        if (result.token) {
+          console.log(result);
+          console.log(result.user.email);
+          localStorage.setItem('token', result.token);
+          localStorage.setItem('email', result.user.email);
+          navigate('/');
+        } else {
+          console.error('로그인 응답에 토큰이 없습니다:', result);
+        }
       } else {
-        console.error('로그인 응답에 토큰이 없습니다:', result);
+        const errorData = await response.json();
+        console.error(`로그인 실패 - 상태 코드 ${response.status}:`, errorData);
       }
-    } else {
-      const errorData = await response.json();
-      console.error(`로그인 실패 - 상태 코드 ${response.status}:`, errorData);
+    } catch (error) {
+      console.error('로그인 요청 오류:', error);
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('로그인 요청 오류:', error);
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   const handleIntegration = async (authCode) => {
     try {
@@ -93,13 +93,13 @@ const handleLogin = async (authCode) => {
         },
         body: JSON.stringify({ code: authCode }),
       });
-  
+
       if (response.status === 200) {
         const result = await response.json();
-        localStorage.setItem('token', result.token);
-        navigate('/');
+        alert('회원가입이 완료되었습니다. 로그인 해주세요');
+        navigate('/login');
       } else if (response.status === 405) {
-        alert("이미 회원가입되었습니다.");
+        alert('이미 회원가입되었습니다.');
         navigate('/login');
       } else {
         console.error('회원가입 실패:', await response.json());
