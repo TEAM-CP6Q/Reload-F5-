@@ -9,6 +9,9 @@ cd $REPOSITORY
 # 의존성 설치
 npm ci --only=production
 
+# 새 코드로 빌드
+npm run build
+
 # PM2로 애플리케이션 실행/재시작
 if pm2 list | grep -q "F5"; then
   pm2 restart F5
