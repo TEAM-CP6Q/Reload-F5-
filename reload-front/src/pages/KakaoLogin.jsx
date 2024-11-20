@@ -9,7 +9,7 @@ const KakaoLogin = () => {
 
   const handleKakaoLogin = () => {
     const clientId = process.env.REACT_APP_KAKAO_CLIENT_ID_TEST;
-    const redirectUri = process.env.REACT_APP_KAKAO_REDIRECT_URI_TEST;
+    const redirectUri = process.env.REACT_APP_KAKAO_REDIRECT_URI_DOMAIN;
 
     const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
 
