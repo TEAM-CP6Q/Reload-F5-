@@ -11,7 +11,7 @@ const SignupType = () => {
 
     const handleKakaoSignup = () => {
         const clientId = process.env.REACT_APP_KAKAO_CLIENT_ID_TEST;
-        const redirectUri = process.env.REACT_APP_KAKAO_REDIRECT_URI_TEST;
+        const redirectUri = process.env.REACT_APP_KAKAO_REDIRECT_URI_DOMAIN;
         const state = "signup"; // 회원가입 여부를 나타내는 state 값
     
         const kakaoAuthUrl = `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&state=${state}`;
