@@ -1,6 +1,5 @@
 package com.f5.accountserver.Controller;
 
-import com.f5.accountserver.DTO.StatusCodeDTO;
 import com.f5.accountserver.DTO.UserDetailDTO;
 import com.f5.accountserver.Service.UserDetails.UserDetailsService;
 import org.springframework.http.HttpStatus;
