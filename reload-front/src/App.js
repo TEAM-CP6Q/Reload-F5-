@@ -17,6 +17,7 @@ import PickupResultPage from './pages/PickupResultPage';
 import PickupCompletePage from './pages/PickupCompletePage';
 import PickupList from './pages/PickupList';
 import PickupListDetail from './pages/PickupListDetail';
+import PickupLocation from './pages/PickupLocation';
 
 function AppContent() {
   const [role, setRole] = useState('user'); // 기본값을 'user'로 설정
@@ -60,6 +61,7 @@ function AppContent() {
             <Route path="/pickup/complete" element={<PickupCompletePage />} />
             <Route path="/pickup-list" element={<PickupList />} />
             <Route path="/pickup-list-detail/:pickupId" element={<PickupListDetail />} />
+            <Route path="/pickup-location" element={<PickupLocation />} />
           </>
         )}
       </Routes>

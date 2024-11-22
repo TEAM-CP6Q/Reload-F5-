@@ -71,7 +71,11 @@ const Header = () => {
                 return '수거 신청하기';
             case '/pickup-list':
                 return '수거 내역 확인';
+            case '/pickup-location':
+                return '수거 기사님 위치 확인';
   
+
+              
             default:
                 return 'Main Page';
         }
