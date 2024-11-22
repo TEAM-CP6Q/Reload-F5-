@@ -18,4 +18,47 @@
   .permission-denied p {
     font-size: 16px;
   }
+
+  .permission-request {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #fff3cd;
+    color: #856404;
+    text-align: center;
+  }
+  
+  .permission-request h3 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  
+  .permission-request p {
+    font-size: 16px;
+  }
+  
+  .permission-denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8d7da;
+    color: #721c24;
+    text-align: center;
+  }
+  
+  .unsupported {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #d1ecf1;
+    color: #0c5460;
+    text-align: center;
+  }
+  
   
