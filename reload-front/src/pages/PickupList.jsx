@@ -45,6 +45,11 @@ const PickupList = () => {
     navigate(`/pickup-list-detail/${pickupId}`, { state: { pickupDate } });
   };
 
+  const handleViewDriverLocation = (pickupId) => {
+    alert(`기사님 위치를 확인합니다. (Pickup ID: ${pickupId})`);
+    // 위치 확인 로직 추가
+  };
+
   const getStatusDisplay = (pickup) => {
     if (pickup.payment) return '결제 완료';
     if (pickup.approved) return '승인 완료';
@@ -92,25 +97,23 @@ const PickupList = () => {
     navigate('/pickup-request');
   };
 
-
   return (
     <>
       <Header />
       <div className="pickup-history">
         {pickupData.length === 0 ? (
-         <div className="no-data">
-         <FontAwesomeIcon icon={faBoxOpen} size="3x" className="no-data-icon" />
-         <p>아직 신청하신 수거 내역이 없어요!</p>
-         <p>지금 바로 첫 수거를 신청해 보세요.</p>
-         <button className="request-button" onClick={handleRequestPickup}>
-           신청하기
-         </button>
-       </div>
+          <div className="no-data">
+            <FontAwesomeIcon icon={faBoxOpen} size="3x" className="no-data-icon" />
+            <p>아직 신청하신 수거 내역이 없어요!</p>
+            <p>지금 바로 첫 수거를 신청해 보세요.</p>
+            <button className="request-button" onClick={handleRequestPickup}>
+              신청하기
+            </button>
+          </div>
         ) : (
           <div className="pickup-list">
             {pickupData.map((pickup) => {
               const statusText = getStatusDisplay(pickup);
-              const isPaymentPending = pickup.price == null || pickup.price === 0;
 
               return (
                 <div key={pickup.pickupId} className="pickup-item">
@@ -118,7 +121,7 @@ const PickupList = () => {
                     <span>{formatDate(pickup.requestDate)}</span>
                     <div className="pickup-number-container">
                       <span className="pickup-number">No.{pickup.pickupId}</span>
-                      <span 
+                      <span
                         className="details-link"
                         onClick={() => handleViewDetails(pickup.pickupId, pickup.requestDate)}
                       >
@@ -146,11 +149,20 @@ const PickupList = () => {
                   </div>
 
                   {statusText === '수거 완료 - 결제 대기' && (
-                    <button 
+                    <button
                       className="payment-button"
                       onClick={() => handleViewDetails(pickup.pickupId, pickup.requestDate)}
                     >
                       결제하기
+                    </button>
+                  )}
+
+                  {statusText === '수거 진행 중' && (
+                    <button
+                      className="location-button"
+                      onClick={() => navigate('/pickup-location')}
+                    >
+                      수거 기사님 위치 확인하기
                     </button>
                   )}
                 </div>
