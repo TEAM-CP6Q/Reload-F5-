@@ -9,6 +9,7 @@ const PickupLocation = () => {
     lng: 126.570667,
   });
   const [path, setPath] = useState([]); // 경로 좌표 배열
+  const [permission, setPermission] = useState(null); // 위치 권한 상태 (null, "granted", "denied")
 
   useEffect(() => {
     if (!js_key) {
@@ -40,13 +41,13 @@ const PickupLocation = () => {
           polyline = new window.kakao.maps.Polyline({
             map: map, // 지도에 표시
             path: [new window.kakao.maps.LatLng(userLocation.lat, userLocation.lng)], // 초기 경로
-            strokeWeight: 5, // 선 두께
-            strokeColor: "#FF0000", // 선 색상
-            strokeOpacity: 0.8, // 선 투명도
-            strokeStyle: "solid", // 선 스타일
+            strokeWeight: 5,
+            strokeColor: "#FF0000",
+            strokeOpacity: 0.8,
+            strokeStyle: "solid",
           });
 
-          // 위치 업데이트 설정
+          // 위치 추적 시작
           startTracking(map, marker, polyline);
         });
       } else {
@@ -79,7 +80,12 @@ const PickupLocation = () => {
             marker.setPosition(newPosition);
           },
           (error) => {
-            console.error("위치 정보를 가져오는 데 실패했습니다:", error);
+            if (error.code === error.PERMISSION_DENIED) {
+              setPermission("denied");
+              console.error("위치 권한이 거부되었습니다.");
+            } else {
+              console.error("위치 정보를 가져오는 데 실패했습니다:", error);
+            }
           },
           {
             enableHighAccuracy: true,
@@ -126,14 +132,23 @@ const PickupLocation = () => {
   return (
     <div className="pickup-container">
       <Header />
-      <div id="map" className="pickup-map"></div>
-      <div className="pickup-details">
-        <h3>내 위치 정보</h3>
-        <p>
-          현재 위치: {userLocation.lat.toFixed(5)}, {userLocation.lng.toFixed(5)}
-        </p>
-        <span className="pickup-status">실시간 위치 추적 중</span>
-      </div>
+      {permission === "denied" ? (
+        <div className="permission-denied">
+          <h3>위치 권한이 필요합니다</h3>
+          <p>앱의 설정에서 위치 권한을 허용해주세요.</p>
+        </div>
+      ) : (
+        <>
+          <div id="map" className="pickup-map"></div>
+          <div className="pickup-details">
+            <h3>내 위치 정보</h3>
+            <p>
+              현재 위치: {userLocation.lat.toFixed(5)}, {userLocation.lng.toFixed(5)}
+            </p>
+            <span className="pickup-status">실시간 위치 추적 중</span>
+          </div>
+        </>
+      )}
     </div>
   );
 };

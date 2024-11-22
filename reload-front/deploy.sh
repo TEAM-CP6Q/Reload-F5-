@@ -18,19 +18,9 @@ cd $REPOSITORY || { echo "Directory not found: $REPOSITORY"; exit 1; }
 # 최신 코드 가져오기
 echo "Pulling latest code from develop branch..."
 git pull origin develop || {
-    echo "Merge conflict occurred during pull. Resolving with merge --no-ff..."
-    
-    # 병합 시도
-    git merge --no-ff origin/develop || {
-        echo "Manual conflict resolution required."
-        echo "1. Resolve conflicts in the following files:"
-        git status --short | grep '^UU'
-        echo "2. After resolving conflicts, run the following commands:"
-        echo "   git add ."
-        echo "   git commit -m 'Resolve merge conflicts'"
-        exit 1
-    }
-    echo "Conflicts resolved using merge --no-ff."
+    echo "Pull failed. Attempting to resolve conflicts with merge --no-ff..."
+    git merge --no-ff || { echo "Merge failed."; exit 1; }
+    echo "Merge conflicts resolved using merge --no-ff."
 }
 
 # 의존성 설치

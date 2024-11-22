@@ -1,60 +1,21 @@
-/* 전체 페이지 컨테이너 */
-.pickup-container {
+.permission-denied {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
-    background-color: #f7f7f7;
+    background-color: #f8d7da;
+    color: #721c24;
+    text-align: center;
     font-family: Arial, sans-serif;
   }
   
-  /* 헤더 스타일 */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background-color: #0078d7;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
+  .permission-denied h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
   }
   
-  /* 지도 영역 */
-  .pickup-map {
-    flex: 1;
-    width: 100%;
-    border: none;
-  }
-  
-  /* 상세 정보 영역 */
-  .pickup-details {
-    padding: 15px;
-    background-color: white;
-    border-top: 1px solid #ddd;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .pickup-details h3 {
-    margin: 0;
+  .permission-denied p {
     font-size: 16px;
-    color: #333;
-  }
-  
-  .pickup-details p {
-    margin: 5px 0;
-    color: #666;
-    font-size: 14px;
-  }
-  
-  /* 상태 텍스트 */
-  .pickup-status {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background-color: #e7f5ff;
-    color: #0078d7;
-    font-size: 14px;
-    font-weight: bold;
-    border-radius: 4px;
-    display: inline-block;
   }
   
