@@ -19,7 +19,9 @@ const PickupLocation = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [estimatedTime, setEstimatedTime] = useState(null);
-  const [isPermissionModalOpen, setPermissionModalOpen] = useState(false); // 위치 권한 모달 상태
+  const [isPermissionModalOpen, setPermissionModalOpen] = useState(false);
+
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
   const initializeMap = (lat, lng) => {
     if (!window.kakao || !window.kakao.maps) {
@@ -65,6 +67,29 @@ const PickupLocation = () => {
   };
 
   const requestLocationPermission = () => {
+    if (!navigator.geolocation) {
+      setError("이 브라우저는 위치 추적을 지원하지 않습니다.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setDriverLocation({ lat: latitude, lng: longitude });
+        initializeMap(latitude, longitude); // 맵 초기화
+      },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+          setError("위치 권한이 거부되었습니다.");
+        } else {
+          setError("위치를 가져오는 데 실패했습니다.");
+        }
+        setPermissionModalOpen(true); // 위치 권한 요청 모달 열기
+      }
+    );
+  };
+
+  const requestMobileLocationPermission = () => {
     if (!navigator.geolocation) {
       setError("이 브라우저는 위치 추적을 지원하지 않습니다.");
       return;
@@ -234,7 +259,13 @@ const PickupLocation = () => {
 
   useEffect(() => {
     loadKakaoScript()
-      .then(() => requestLocationPermission())
+      .then(() => {
+        if (isMobile) {
+          requestMobileLocationPermission();
+        } else {
+          requestLocationPermission();
+        }
+      })
       .catch((error) => setError(error));
   }, []);
 
