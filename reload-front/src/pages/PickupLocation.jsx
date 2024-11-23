@@ -7,7 +7,7 @@ import "../CSS/PickupLocation.css";
 const PickupLocation = () => {
   const location = useLocation();
   const { pickupId } = location.state || {};
-  const js_key = process.env.REACT_APP_KAKAO_MAP_JS_KEY;
+  const jsKey = "YOUR_JAVASCRIPT_KEY"; // JavaScript 키를 직접 설정
 
   const [map, setMap] = useState(null);
   const [pickupMarker, setPickupMarker] = useState(null);
@@ -19,7 +19,7 @@ const PickupLocation = () => {
   const [error, setError] = useState(null);
   const [isPermissionModalOpen, setPermissionModalOpen] = useState(false);
 
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent); // 모바일 여부 확인
 
   // 지도 초기화
   const initializeMap = (lat, lng) => {
@@ -46,41 +46,39 @@ const PickupLocation = () => {
         resolve();
         return;
       }
-  
-      const jsKey = process.env.REACT_APP_KAKAO_MAP_JS_KEY;
+
       const scriptUrl = `http://dapi.kakao.com/v2/maps/sdk.js?appkey=${jsKey}&libraries=services&autoload=false`;
-  
+
       const existingScript = document.querySelector(`script[src="${scriptUrl}"]`);
-  
+
       if (existingScript) {
         existingScript.onload = () => {
           window.kakao.maps.load(resolve);
         };
         existingScript.onerror = () => {
           console.error("카카오맵 스크립트 로드 실패: 기존 스크립트 오류");
-          reject("카카오맵 API 스크립트를 로드할 수 없습니다.");
+          reject(new Error("카카오맵 API 스크립트를 로드할 수 없습니다. 도메인 등록 또는 네트워크 상태를 확인하세요."));
         };
         return;
       }
-  
+
       const script = document.createElement("script");
       script.src = scriptUrl;
       script.async = true;
-  
+
       script.onload = () => {
         console.log("카카오맵 스크립트 로드 성공");
         window.kakao.maps.load(resolve);
       };
-  
+
       script.onerror = () => {
         console.error("카카오맵 스크립트 로드 실패: 새로운 스크립트 오류");
-        reject("카카오맵 API 스크립트를 로드할 수 없습니다.");
+        reject(new Error("카카오맵 API 스크립트를 로드할 수 없습니다. 도메인 등록 또는 네트워크 상태를 확인하세요."));
       };
-  
+
       document.body.appendChild(script);
     });
   };
-  
 
   // 위치 권한 요청 및 지도 초기화
   const requestLocationPermission = () => {
@@ -99,8 +97,10 @@ const PickupLocation = () => {
       },
       (error) => {
         if (error.code === error.PERMISSION_DENIED) {
-          setError("위치 권한이 거부되었습니다. 권한을 허용해주세요.");
+          setError("위치 권한이 거부되었습니다. 브라우저 설정에서 권한을 허용해주세요.");
           setPermissionModalOpen(true);
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          setError("현재 위치 정보를 사용할 수 없습니다. 네트워크를 확인해주세요.");
         } else {
           setError("위치를 가져오는 데 실패했습니다.");
         }
@@ -214,41 +214,9 @@ const PickupLocation = () => {
     });
   };
 
-  // 수거지 정보 가져오기
-  const fetchPickupDetails = async () => {
-    if (!pickupId || !map) return;
-
-    const token = localStorage.getItem("token");
-
-    try {
-      setLoading(true);
-      const response = await fetch(
-        `http://3.37.122.192:8000/api/pickup/get-details?pickupId=${pickupId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        const fullAddress = `${data.roadNameAddress} ${data.detailedAddress}`;
-        geocodePickupAddress(fullAddress);
-      } else {
-        setError("수거 상세 정보를 불러오는 데 실패했습니다.");
-      }
-    } catch (error) {
-      setError("데이터 로드 중 오류가 발생했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   // 지도 초기화 완료 후 동작
   useEffect(() => {
     if (map) {
-      fetchPickupDetails();
       updateDriverLocation();
     }
   }, [map]);
@@ -263,7 +231,7 @@ const PickupLocation = () => {
           requestLocationPermission();
         }
       })
-      .catch((error) => setError(error));
+      .catch((error) => setError(error.message));
   }, []);
 
   return (
