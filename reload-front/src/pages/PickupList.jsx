@@ -46,8 +46,7 @@ const PickupList = () => {
   };
 
   const handleViewDriverLocation = (pickupId) => {
-    alert(`기사님 위치를 확인합니다. (Pickup ID: ${pickupId})`);
-    // 위치 확인 로직 추가
+    navigate('/pickup-location', { state: { pickupId } });
   };
 
   const getStatusDisplay = (pickup) => {
@@ -160,7 +159,7 @@ const PickupList = () => {
                   {statusText === '수거 진행 중' && (
                     <button
                       className="location-button"
-                      onClick={() => navigate('/pickup-location')}
+                      onClick={() => handleViewDriverLocation(pickup.pickupId)}
                     >
                       수거 기사님 위치 확인하기
                     </button>

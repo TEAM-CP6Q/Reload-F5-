@@ -1,188 +1,293 @@
 import React, { useEffect, useState } from "react";
-import "../CSS/PickupLocation.css";
+import { useLocation } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import Header from "../components/Header";
+import "../CSS/PickupLocation.css";
 
 const PickupLocation = () => {
+  const location = useLocation();
+  const { pickupId } = location.state || {};
   const js_key = process.env.REACT_APP_KAKAO_MAP_JS_KEY;
-  const [userLocation, setUserLocation] = useState({
-    lat: 33.450701, // 초기 위치
-    lng: 126.570667,
-  });
-  const [path, setPath] = useState([]); // 경로 좌표 배열
-  const [permissionStatus, setPermissionStatus] = useState(null); // 권한 상태 관리 ("pending", "granted", "denied")
 
-  useEffect(() => {
-    if (!js_key) {
-      console.error("카카오 지도 API 키가 설정되지 않았습니다. .env 파일을 확인하세요.");
+  const [map, setMap] = useState(null);
+  const [pickupMarker, setPickupMarker] = useState(null);
+  const [driverMarker, setDriverMarker] = useState(null);
+  const [driverLocation, setDriverLocation] = useState(null);
+  const [pickupLocation, setPickupLocation] = useState(null);
+  const [path, setPath] = useState([]);
+  const [polyline, setPolyline] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [estimatedTime, setEstimatedTime] = useState(null);
+  const [isPermissionModalOpen, setPermissionModalOpen] = useState(false); // 위치 권한 모달 상태
+
+  const initializeMap = (lat, lng) => {
+    if (!window.kakao || !window.kakao.maps) {
+      setError("카카오맵 API가 로드되지 않았습니다.");
       return;
     }
 
-    let map, marker, polyline;
-    let watchId;
+    window.kakao.maps.load(() => {
+      const container = document.getElementById("map");
+      const options = {
+        center: new window.kakao.maps.LatLng(lat, lng),
+        level: 3,
+      };
 
-    const requestPermission = async () => {
-      if (!navigator.geolocation) {
-        setPermissionStatus("unsupported");
-        console.error("Geolocation API가 지원되지 않는 브라우저입니다.");
+      const newMap = new window.kakao.maps.Map(container, options);
+      setMap(newMap);
+    });
+  };
+
+  const loadKakaoScript = () => {
+    return new Promise((resolve, reject) => {
+      if (window.kakao && window.kakao.maps) {
+        resolve();
         return;
       }
 
-      try {
-        // 권한 상태 확인 (navigator.permissions는 일부 브라우저에서만 지원됨)
-        if (navigator.permissions) {
-          const permission = await navigator.permissions.query({ name: "geolocation" });
-          if (permission.state === "granted") {
-            setPermissionStatus("granted");
-            initializeTracking();
-          } else if (permission.state === "prompt") {
-            setPermissionStatus("pending");
-          } else {
-            setPermissionStatus("denied");
-          }
-        } else {
-          // 권한 상태를 확인할 수 없는 경우 기본값으로 요청
-          setPermissionStatus("pending");
-        }
-      } catch (error) {
-        console.error("권한 상태를 확인하는 데 실패했습니다:", error);
-        setPermissionStatus("denied");
+      const existingScript = document.querySelector(
+        `script[src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${js_key}&libraries=services&autoload=false"]`
+      );
+
+      if (existingScript) {
+        existingScript.onload = resolve;
+        return;
       }
-    };
 
-    const initializeTracking = () => {
-      const loadKakaoMap = () => {
-        if (window.kakao && window.kakao.maps) {
-          window.kakao.maps.load(() => {
-            const container = document.getElementById("map");
-            const options = {
-              center: new window.kakao.maps.LatLng(userLocation.lat, userLocation.lng),
-              level: 3,
-            };
+      const script = document.createElement("script");
+      script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${js_key}&libraries=services&autoload=false`;
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = () => reject("카카오맵 API 스크립트를 로드할 수 없습니다.");
+      document.body.appendChild(script);
+    });
+  };
 
-            map = new window.kakao.maps.Map(container, options);
+  const requestLocationPermission = () => {
+    if (!navigator.geolocation) {
+      setError("이 브라우저는 위치 추적을 지원하지 않습니다.");
+      return;
+    }
 
-            // 마커 초기화
-            marker = new window.kakao.maps.Marker({
-              position: new window.kakao.maps.LatLng(userLocation.lat, userLocation.lng),
-            });
-            marker.setMap(map);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setDriverLocation({ lat: latitude, lng: longitude });
+        initializeMap(latitude, longitude); // 맵 초기화
+      },
+      () => {
+        setPermissionModalOpen(true); // 위치 권한 요청 모달 열기
+      }
+    );
+  };
 
-            // Polyline 초기화
-            polyline = new window.kakao.maps.Polyline({
+  const updateDriverLocation = () => {
+    if (!navigator.geolocation) {
+      setError("이 브라우저는 위치 추적을 지원하지 않습니다.");
+      return;
+    }
+
+    navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        const currentDriverLocation = {
+          lat: latitude,
+          lng: longitude,
+        };
+        setDriverLocation(currentDriverLocation);
+
+        if (map) {
+          const coords = new window.kakao.maps.LatLng(latitude, longitude);
+
+          if (!driverMarker) {
+            const driverImage = new window.kakao.maps.MarkerImage(
+              "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+              new window.kakao.maps.Size(24, 35)
+            );
+            const newDriverMarker = new window.kakao.maps.Marker({
+              position: coords,
               map: map,
-              path: [new window.kakao.maps.LatLng(userLocation.lat, userLocation.lng)],
-              strokeWeight: 5,
-              strokeColor: "#FF0000",
-              strokeOpacity: 0.8,
-              strokeStyle: "solid",
+              image: driverImage,
             });
-
-            startTracking(map, marker, polyline);
-          });
-        } else {
-          console.error("카카오 지도 API를 로드하는 데 실패했습니다.");
-        }
-      };
-
-      const injectKakaoMapScript = () => {
-        const existingScript = document.querySelector(
-          `script[src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=${js_key}&libraries=services&autoload=false"]`
-        );
-        if (!existingScript) {
-          const script = document.createElement("script");
-          script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${js_key}&libraries=services&autoload=false`;
-          script.async = true;
-          script.onload = loadKakaoMap;
-          document.body.appendChild(script);
-        } else {
-          existingScript.onload = loadKakaoMap;
-        }
-      };
-
-      injectKakaoMapScript();
-    };
-
-    const startTracking = (map, marker, polyline) => {
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-
-          const newPosition = new window.kakao.maps.LatLng(latitude, longitude);
-
-          // 상태 업데이트
-          setUserLocation({
-            lat: latitude,
-            lng: longitude,
-          });
-
-          setPath((prevPath) => {
-            const updatedPath = [...prevPath, newPosition];
-            polyline.setPath(updatedPath);
-            return updatedPath;
-          });
-
-          // 지도 및 마커 업데이트
-          map.setCenter(newPosition);
-          marker.setPosition(newPosition);
-        },
-        (error) => {
-          if (error.code === error.PERMISSION_DENIED) {
-            setPermissionStatus("denied");
-            console.error("위치 권한이 거부되었습니다.");
+            setDriverMarker(newDriverMarker);
           } else {
-            console.error("위치 정보를 가져오는 데 실패했습니다:", error);
+            driverMarker.setPosition(coords);
           }
-        },
+
+          if (pickupLocation) {
+            calculateEstimatedTime(currentDriverLocation, pickupLocation);
+            updatePolyline(coords);
+          }
+        }
+      },
+      () => {
+        setError("기사 위치를 가져오는 데 실패했습니다.");
+      }
+    );
+  };
+
+  const updatePolyline = (newCoords) => {
+    const updatedPath = [...path, newCoords];
+    setPath(updatedPath);
+
+    if (polyline) {
+      polyline.setMap(null);
+    }
+
+    const newPolyline = new window.kakao.maps.Polyline({
+      path: updatedPath,
+      strokeWeight: 4,
+      strokeColor: "#4A90E2",
+      strokeOpacity: 0.7,
+      strokeStyle: "solid",
+    });
+
+    newPolyline.setMap(map);
+    setPolyline(newPolyline);
+  };
+
+  const calculateEstimatedTime = (driverLoc, pickupLoc) => {
+    if (!driverLoc || !pickupLoc) return;
+
+    const R = 6371;
+    const dLat = (pickupLoc.lat - driverLoc.lat) * (Math.PI / 180);
+    const dLon = (pickupLoc.lng - driverLoc.lng) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(driverLoc.lat * (Math.PI / 180)) *
+        Math.cos(pickupLoc.lat * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+
+    const estimatedMinutes = Math.round((distance / 2) * 60); // 2km/h 기준
+    setEstimatedTime(estimatedMinutes);
+  };
+
+  const fetchPickupDetails = async () => {
+    if (!pickupId || !map) return;
+
+    const token = localStorage.getItem("token");
+
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `http://3.37.122.192:8000/api/pickup/get-details?pickupId=${pickupId}`,
         {
-          enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 5000,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-    };
 
-    requestPermission();
-
-    return () => {
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId);
+      if (response.ok) {
+        const data = await response.json();
+        const fullAddress = `${data.roadNameAddress} ${data.detailedAddress}`;
+        geocodePickupAddress(fullAddress);
+      } else {
+        setError("수거 상세 정보를 불러오는 데 실패했습니다.");
       }
-    };
-  }, [js_key]);
+    } catch (error) {
+      setError("데이터 로드 중 오류가 발생했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const geocodePickupAddress = (address) => {
+    if (!window.kakao || !window.kakao.maps || !map) {
+      setError("지도 서비스를 초기화하는 데 실패했습니다.");
+      return;
+    }
+
+    window.kakao.maps.load(() => {
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      geocoder.addressSearch(address, (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+          const newPickupLocation = {
+            lat: parseFloat(result[0].y),
+            lng: parseFloat(result[0].x),
+          };
+          setPickupLocation(newPickupLocation);
+
+          const pickupMarkerImage = new window.kakao.maps.MarkerImage(
+            "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
+            new window.kakao.maps.Size(24, 35)
+          );
+
+          if (pickupMarker) pickupMarker.setMap(null);
+
+          const newPickupMarker = new window.kakao.maps.Marker({
+            position: coords,
+            map: map,
+            image: pickupMarkerImage,
+          });
+          setPickupMarker(newPickupMarker);
+        } else {
+          setError("주소를 찾을 수 없습니다.");
+        }
+      });
+    });
+  };
+
+  useEffect(() => {
+    loadKakaoScript()
+      .then(() => requestLocationPermission())
+      .catch((error) => setError(error));
+  }, []);
+
+  useEffect(() => {
+    if (map) {
+      updateDriverLocation();
+      fetchPickupDetails();
+    }
+  }, [map]);
+
+  const handlePermissionRetry = () => {
+    setPermissionModalOpen(false);
+    requestLocationPermission();
+  };
 
   return (
-    <div className="pickup-container">
+    <div className="pickuplocation-container">
       <Header />
-      {permissionStatus === "pending" && (
-        <div className="permission-request">
-          <h3>위치 권한 요청</h3>
-          <p>위치를 추적하려면 권한을 허용해주세요.</p>
-        </div>
-      )}
-      {permissionStatus === "granted" && (
-        <>
-          <div id="map" className="pickup-map"></div>
-          <div className="pickup-details">
-            <h3>내 위치 정보</h3>
-            <p>
-              현재 위치: {userLocation.lat.toFixed(5)}, {userLocation.lng.toFixed(5)}
-            </p>
-            <span className="pickup-status">실시간 위치 추적 중</span>
+      <main className="pickuplocation-main-content">
+        <div className="pickuplocation-map-section">
+          {error && <div className="pickuplocation-error-message">{error}</div>}
+          <div className="pickuplocation-map-container">
+            <div id="map" className="pickuplocation-map"></div>
+            {loading && (
+              <div className="pickuplocation-loading-overlay">
+                <div className="pickuplocation-loading-content">
+                  <Loader2 className="pickuplocation-loading-spinner" />
+                  <span>로딩 중...</span>
+                </div>
+              </div>
+            )}
           </div>
-        </>
-      )}
-      {permissionStatus === "denied" && (
-        <div className="permission-denied">
-          <h3>위치 권한이 필요합니다</h3>
-          <p>앱의 설정에서 위치 권한을 허용해주세요.</p>
         </div>
-      )}
-      {permissionStatus === "unsupported" && (
-        <div className="unsupported">
-          <h3>지원되지 않는 브라우저</h3>
-          <p>이 브라우저는 위치 추적을 지원하지 않습니다.</p>
-        </div>
-      )}
+        {estimatedTime && (
+          <div className="pickuplocation-info-section">
+            <h3 className="pickuplocation-info-heading">예상 도착 시간</h3>
+            <p className="pickuplocation-info-text">약 {estimatedTime}분 소요 예정</p>
+          </div>
+        )}
+
+        {/* 위치 권한 요청 모달 */}
+        {isPermissionModalOpen && (
+          <div className="permission-modal-overlay">
+            <div className="permission-modal">
+              <h3>위치 권한 필요</h3>
+              <p>서비스를 사용하려면 위치 권한을 허용해야 합니다.</p>
+              <button onClick={handlePermissionRetry} className="retry-button">
+                다시 시도
+              </button>
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 };

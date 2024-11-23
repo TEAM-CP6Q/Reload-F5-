@@ -1,64 +1,239 @@
-.permission-denied {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f8d7da;
-    color: #721c24;
-    text-align: center;
-    font-family: Arial, sans-serif;
+/* 전체 컨테이너 스타일 */
+.pickuplocation-container {
+  min-height: 100vh;
+}
+
+/* 메인 콘텐츠 스타일 */
+.pickuplocation-main-content {
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+/* 지도 섹션 스타일 */
+.pickuplocation-map-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.pickuplocation-map-container {
+  position: relative;
+  width: 100%;
+  height: 600px;
+}
+
+.pickuplocation-map {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+/* 에러 메시지 스타일 */
+.pickuplocation-error-message {
+  background-color: #fee2e2;
+  border-left: 4px solid #ef4444;
+  padding: 12px;
+  margin-bottom: 16px;
+  color: #991b1b;
+  font-size: 14px;
+}
+
+/* 로딩 오버레이 스타일 */
+.pickuplocation-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pickuplocation-loading-content {
+  background-color: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pickuplocation-loading-spinner {
+  animation: pickuplocation-spin 1s linear infinite;
+  width: 24px;
+  height: 24px;
+  color: #3b82f6;
+}
+
+/* 정보 섹션 스타일 */
+.pickuplocation-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pickuplocation-info-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pickuplocation-info-heading {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.pickuplocation-info-text {
+  font-size: 16px;
+}
+
+.pickuplocation-eta-card {
+  background: #10b981;
+  color: white;
+}
+
+.pickuplocation-info-window {
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.pickuplocation-info-window-strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #1f2937;
+}
+
+.pickuplocation-info-window-text {
+  color: #4b5563;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* 위치 권한 모달 스타일 */
+.permission-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.permission-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.permission-modal h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.permission-modal p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.retry-button {
+  padding: 10px 20px;
+  background: #3b82f6;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.retry-button:hover {
+  background: #2563eb;
+}
+
+.retry-button:active {
+  background: #1d4ed8;
+}
+
+.retry-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+/* 애니메이션 */
+@keyframes pickuplocation-spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  .permission-denied h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
+  to {
+    transform: rotate(360deg);
   }
-  
-  .permission-denied p {
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1024px) {
+  .pickuplocation-main-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .permission-modal {
+    padding: 16px;
+  }
+
+  .retry-button {
+    width: 100%;
+    padding: 12px;
     font-size: 16px;
   }
 
-  .permission-request {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #fff3cd;
-    color: #856404;
-    text-align: center;
+  .pickuplocation-map-container {
+    height: 400px;
   }
-  
-  .permission-request h3 {
-    font-size: 22px;
-    margin-bottom: 10px;
+}
+
+@media (max-width: 640px) {
+  .pickuplocation-main-content {
+    padding: 12px;
   }
-  
-  .permission-request p {
+
+  .pickuplocation-map-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .permission-modal h3 {
     font-size: 16px;
   }
-  
-  .permission-denied {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f8d7da;
-    color: #721c24;
-    text-align: center;
+
+  .permission-modal p {
+    font-size: 13px;
   }
-  
-  .unsupported {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #d1ecf1;
-    color: #0c5460;
-    text-align: center;
+
+  .retry-button {
+    font-size: 14px;
   }
-  
-  
+}
