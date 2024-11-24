@@ -15,7 +15,7 @@ import java.util.Arrays;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
-
+// 2차 CI/CD 테스트
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
