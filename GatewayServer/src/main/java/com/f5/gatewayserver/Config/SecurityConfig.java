@@ -36,7 +36,9 @@ public class SecurityConfig {
                                 "/api/chat/user-chats",
                                 "/api/pickup/get-location",
                                 "/api/account/designer/get-designer",
-                                "/api/account/designer/all-designer").permitAll()
+                                "/api/account/designer/all-designer",
+                                "/api/product/product-list",
+                                "/api/**").permitAll()
 
                         // POST 요청 허용
                         .pathMatchers(HttpMethod.POST,
@@ -51,19 +53,22 @@ public class SecurityConfig {
                                 "/api/auth/kakao/register",
                                 "/api/pickup/new-pickup",
                                 "/api/chat/create-chat",
-                                "/api/pickup/update-location").permitAll()
+                                "/api/pickup/update-location",
+                                "/api/**").permitAll()
 
                         // PATCH 요청 허용
                         .pathMatchers(HttpMethod.PATCH,
                                 "/api/account/update-account",
                                 "/api/auth/kakao/integration",
                                 "/api/pickup/update-pickup",
-                                "/api/account/designer/update-designer").permitAll()
+                                "/api/account/designer/update-designer",
+                                "/api/**").permitAll()
 
                         .pathMatchers(HttpMethod.DELETE,
                                 "/api/account/designer/remove-designer",
                                 "/api/pickup/delete-pickup",
-                                "/api/auth/withdraw").permitAll()
+                                "/api/auth/withdraw",
+                                "/api/**").permitAll()
 
                         .anyExchange().authenticated() // 그 외의 요청은 인증 필요
                 )
@@ -76,7 +81,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://refresh-f5.store", "http://127.0.0.1:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.addAllowedHeader("*");
         configuration.addAllowedOriginPattern("*");
