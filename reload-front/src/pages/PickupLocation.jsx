@@ -7,7 +7,8 @@ import "../CSS/PickupLocation.css";
 const PickupLocation = () => {
   const location = useLocation();
   const { pickupId } = location.state || {};
-  const jsKey = f7f8de4a1581a131a576ac4b46a55f35;
+  const jsKey = "f7f8de4a1581a131a576ac4b46a55f35"; // 문자열로 키 값 정의
+
 
   const [map, setMap] = useState(null);
   const [pickupMarker, setPickupMarker] = useState(null);
