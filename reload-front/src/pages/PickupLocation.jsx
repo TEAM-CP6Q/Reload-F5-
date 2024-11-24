@@ -7,7 +7,7 @@ import "../CSS/PickupLocation.css";
 const PickupLocation = () => {
   const location = useLocation();
   const { pickupId } = location.state || {};
-  const jsKey = "YOUR_JAVASCRIPT_KEY"; // JavaScript 키를 직접 설정
+  const jsKey = f7f8de4a1581a131a576ac4b46a55f35;
 
   const [map, setMap] = useState(null);
   const [pickupMarker, setPickupMarker] = useState(null);
