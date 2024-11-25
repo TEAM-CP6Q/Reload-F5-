@@ -14,6 +14,9 @@ import product03 from '../images/product03.png';
 import product04 from '../images/product04.png';
 import product05 from '../images/product05.png';
 import product06 from '../images/product06.png';
+import mainBanner01 from '../images/mainBanner01.png';
+import mainBanner02 from '../images/mainBanner02.png';
+import mainBanner03 from '../images/mainBanner03.png';
 
 const { Search } = Input;
 
@@ -135,10 +138,11 @@ const MainPage = () => {
                 modules={[Navigation, Pagination, Autoplay]}
                 style={{ height: '200px' }}
             >
-                <SwiperSlide className="slide-content">1</SwiperSlide>
-                <SwiperSlide className="slide-content">2</SwiperSlide>
-                <SwiperSlide className="slide-content">3</SwiperSlide>
-                <SwiperSlide className="slide-content">4</SwiperSlide>
+                <SwiperSlide className="slide-content"><img src={mainBanner01} className="main-banner-image" /></SwiperSlide>
+                <SwiperSlide className="slide-content"><img src={mainBanner02} className="main-banner-image" /></SwiperSlide>
+                <SwiperSlide className="slide-content"><img src={mainBanner03} className="main-banner-image" /></SwiperSlide>
+                {/* <SwiperSlide className="slide-content">3</SwiperSlide>
+                <SwiperSlide className="slide-content">4</SwiperSlide> */}
             </Swiper>
 
             <div className="search-container">

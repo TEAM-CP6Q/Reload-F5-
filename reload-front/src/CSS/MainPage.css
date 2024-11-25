@@ -36,7 +36,7 @@ html::-webkit-scrollbar {
   left: auto !important;    /* 기본 left 위치 제거 */
   width: auto !important;   /* 기본 width 값 제거 */
   color: #000;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
 }
 
