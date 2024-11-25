@@ -15,7 +15,7 @@ const AdminPickupManagement = () => {
       const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch('http://3.37.122.192:8000/api/pickup/get-all-pickups', {
+        const response = await fetch('https://refresh-f5-server.o-r.kr/api/pickup/get-all-pickups', {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -94,7 +94,7 @@ const AdminPickupManagement = () => {
   const handleRowClick = async (record) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await fetch(`http://3.37.122.192:8000/api/pickup/get-details?pickupId=${record.pickupId}`, {
+      const response = await fetch(`https://refresh-f5-server.o-r.kr/api/pickup/get-details?pickupId=${record.pickupId}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +149,7 @@ const AdminPickupManagement = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch('http://3.37.122.192:8000/api/pickup/update-pickup', {
+      const response = await fetch('https://refresh-f5-server.o-r.kr/api/pickup/update-pickup', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

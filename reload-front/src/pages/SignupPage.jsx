@@ -62,7 +62,7 @@ const SignupPage = () => {
   const checkEmailExists = async () => {
     try {
       const response = await fetch(
-        `http://3.37.122.192:8000/api/auth/register/exist-email/${email}`,
+        `https://refresh-f5-server.o-r.kr/api/auth/register/exist-email/${email}`,
         {
           method: "GET",
           headers: {
@@ -96,7 +96,7 @@ const SignupPage = () => {
   const handleSignup = async (event) => {
     event.preventDefault();
 
-    const response = await fetch("http://3.37.122.192:8000/api/auth/register", {
+    const response = await fetch("https://refresh-f5-server.o-r.kr/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

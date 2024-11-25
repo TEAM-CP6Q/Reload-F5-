@@ -64,7 +64,7 @@ const PickupRequestPage = () => {
                     return;
                 }
 
-                const response = await fetch(`http://3.37.122.192:8000/api/account/search-account/${email}`, {
+                const response = await fetch(`https://refresh-f5-server.o-r.kr/api/account/search-account/${email}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -248,7 +248,7 @@ const PickupRequestPage = () => {
     useEffect(() => {
         const fetchWasteTypes = async () => {
             try {
-                const response = await fetch('http://3.37.122.192:8000/api/pickup/waste/type-list', {
+                const response = await fetch('https://refresh-f5-server.o-r.kr/api/pickup/waste/type-list', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'

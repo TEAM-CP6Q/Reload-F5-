@@ -13,7 +13,7 @@ const AdminDash = ({ setActiveTab }) => {
     const fetchPickupData = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch('http://3.37.122.192:8000/api/pickup/get-all-pickups', {
+        const response = await fetch('https://refresh-f5-server.o-r.kr/api/pickup/get-all-pickups', {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

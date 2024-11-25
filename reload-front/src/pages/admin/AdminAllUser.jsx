@@ -10,7 +10,7 @@ const AdminAllUser = ({ showTopUsers }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://3.37.122.192:8000/api/account/user-list');
+        const response = await fetch('https://refresh-f5-server.o-r.kr/api/account/user-list');
         const data = await response.json();
         const formattedData = Object.values(data).map((user) => ({
           key: user.id,
