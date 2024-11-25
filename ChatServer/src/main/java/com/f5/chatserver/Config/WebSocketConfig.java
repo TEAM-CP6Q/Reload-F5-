@@ -23,7 +23,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws/chat") // 엔드포인트 URL
                 .setAllowedOrigins("http://127.0.0.1:3000",
                         "http://3.37.122.192:8000",
-                        "http://localhost:8000")  // 모든 출처 허용
+                        "http://15.165.174.146:3000",
+                        "http://localhost:8000",
+                        "https://refresh-f5.store")  // 모든 출처 허용
                 .withSockJS();           // SockJS 지원 활성화 (웹소켓 미지원 브라우저를 위한 대체 옵션)
     }
 }
