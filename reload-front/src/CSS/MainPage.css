@@ -246,3 +246,49 @@ html::-webkit-scrollbar {
   font-weight: 600;
   margin-top: 4px;
 }
+
+/* MainPage.css에 추가할 스타일 */
+.main-product-card {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.main-product-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-pressed {
+  transform: scale(0.98);
+}
+
+/* ProductDetailPage.css 수정 */
+.productDetail-main-container {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(249, 250, 251);
+  min-height: 100vh;
+}
+
+.productDetail-main {
+  flex: 1;
+  padding: 20px;
+}
+
+.product-detail-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 800px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-detail-content h2 {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.product-detail-content p {
+  margin: 8px 0;
+  font-size: 16px;
+}

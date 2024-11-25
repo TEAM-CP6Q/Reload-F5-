@@ -73,9 +73,11 @@ const Header = () => {
                 return '수거 내역 확인';
             case '/pickup-location':
                 return '수거 기사님 위치 확인';
-  
+            case '/product-detail':
+                return '상품 상세';
 
-              
+
+
             default:
                 return 'Main Page';
         }

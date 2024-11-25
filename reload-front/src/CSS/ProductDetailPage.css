@@ -1,0 +1,10 @@
+.productDetail-main-container {
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(249, 250, 251);
+    height: 100vh;
+}
+
+.productDetail-main {
+    height: 100%;
+}

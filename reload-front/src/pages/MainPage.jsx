@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useNavigate } from 'react-router-dom';
 import 'swiper/css'; // Swiper 기본 CSS
 import 'swiper/css/navigation'; // Navigation 모듈의 CSS
 import 'swiper/css/pagination'; // Pagination 모듈의 CSS
@@ -48,9 +49,24 @@ const CategoryButtons = () => {
     );
 };
 
-const NewProductCard = ({ image, designer, name, price }) => {
+const NewProductCard = ({ image, designer, name, price, id }) => {
+    const navigate = useNavigate();
+    const [isPressed, setIsPressed] = useState(false);
+
+    const handleClick = () => {
+        navigate('/product-detail', { 
+            state: { id, name } 
+        });
+    };
+
     return (
-        <div className="main-product-card">
+        <div 
+            className={`main-product-card ${isPressed ? 'card-pressed' : ''}`}
+            onClick={handleClick}
+            onMouseDown={() => setIsPressed(true)}
+            onMouseUp={() => setIsPressed(false)}
+            onMouseLeave={() => setIsPressed(false)}
+        >
             <div className="main-product-card-image-container">
                 <div className="new-product-card">
                     <img src={image} alt={name} className="new-product-image" />
@@ -185,6 +201,7 @@ const MainPage = () => {
                         {newProducts.map((product) => (
                             <NewProductCard
                                 key={product.id}
+                                id={product.id}         // id prop 추가
                                 image={product.image}
                                 designer={product.designer}
                                 name={product.name}
