@@ -59,6 +59,8 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.1'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.14.1'
 
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2' // H2 의존성 추가
 }
 
 dependencyManagement {
