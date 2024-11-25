@@ -134,7 +134,7 @@ const MainPage = () => {
                 pagination={{
                     type: "fraction"
                 }}
-                autoplay={{ delay: 3000, disableOnInteraction: false }}
+                autoplay={{ delay: 5000, disableOnInteraction: false }}
                 modules={[Navigation, Pagination, Autoplay]}
                 style={{ height: '200px' }}
             >
