@@ -54,13 +54,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     //Jackson
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.14.1'
     implementation 'com.fasterxml.jackson.core:jackson-core:2.14.1'
 
+    // JUnit 5 (Jupiter)
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.3'
+
+    // Spring Boot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'com.h2database:h2' // H2 의존성 추가
+
+    // In-memory H2 Database (if applicable)
+    testImplementation 'com.h2database:h2'
 }
 
 dependencyManagement {
@@ -69,6 +75,7 @@ dependencyManagement {
     }
 }
 
-tasks.named('test') {
+tasks.withType(Test) {
     useJUnitPlatform()
 }
+
