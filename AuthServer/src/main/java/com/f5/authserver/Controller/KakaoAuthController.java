@@ -108,8 +108,8 @@ public class KakaoAuthController {
                         .build());
             }
         } catch (URISyntaxException e) {
-            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
-                            .Code(404L)
+            return ResponseEntity.status(406).body(StatusCodeDTO.builder()
+                            .Code(406L)
                             .Msg("카카오톡 회원가입 실패")
                             .build());
         }
