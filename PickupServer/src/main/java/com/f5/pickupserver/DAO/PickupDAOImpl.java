@@ -26,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -353,6 +354,45 @@ public class PickupDAOImpl implements PickupDAO {
             return locationMap.get(pickupId);
         }catch (Exception e) {
             throw new IllegalStateException("위치 정보 검색에 실패하였습니다.");
+        }
+    }
+
+    public static LocalDate convertStringToLocalDate(String dateStr, String format) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+            return LocalDate.parse(dateStr, formatter);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format or value: " + dateStr, e);
+        }
+    }
+
+    @Override
+    public List<DeliverPickupDTO> getTodayList(String today){
+        String format = "yyyy-MM-dd";
+        try{
+            LocalDate pickupDate = convertStringToLocalDate(today, format);
+            List<PickupListEntity> pickupLists = pickupListRepository.findByPickupDateOnly(pickupDate);
+            if(pickupLists.isEmpty()) {
+                throw new IllegalStateException("당일 수거 리스트가 없음");
+            }
+            List<DeliverPickupDTO> deliverPickupDTOList = new ArrayList<>();
+            for(PickupListEntity pickupList : pickupLists){
+                DeliverPickupDTO deliverPickupDTO = new DeliverPickupDTO();
+                deliverPickupDTO.setPickupId(pickupList.getPickupId());
+                AddressEntity addressEntity = addressRepository.findByPickupList(pickupList);
+                deliverPickupDTO.setAddress(AddressDTO.builder()
+                                .name(addressEntity.getName())
+                                .email(addressEntity.getEmail())
+                                .phone(addressEntity.getPhone())
+                                .postalCode(addressEntity.getPostalCode())
+                                .roadNameAddress(addressEntity.getRoadNameAddress())
+                                .detailedAddress(addressEntity.getDetailedAddress())
+                                .build());
+                deliverPickupDTOList.add(deliverPickupDTO);
+            }
+            return deliverPickupDTOList;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("당일 수거 리스트 조회 실패");
         }
     }
 }
