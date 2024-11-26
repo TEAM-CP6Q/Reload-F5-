@@ -159,6 +159,7 @@ public class PickupDAOImpl implements PickupDAO {
                     .payment(addressEntity.getPickupList().getPayment())
                     .pickupProgress(addressEntity.getPickupList().getPickupProgress())
                     .pricePreview(addressEntity.getPickupList().getPricePreview())
+                    .pickupDate(addressEntity.getPickupList().getPickupDate())
                     .price(addressEntity.getPickupList().getPrice())
                     .accepted(addressEntity.getPickupList().getAccepted())
                     .build();
@@ -379,6 +380,7 @@ public class PickupDAOImpl implements PickupDAO {
             for(PickupListEntity pickupList : pickupLists){
                 DeliverPickupDTO deliverPickupDTO = new DeliverPickupDTO();
                 deliverPickupDTO.setPickupId(pickupList.getPickupId());
+                deliverPickupDTO.setPickupDate(pickupList.getPickupDate());
                 AddressEntity addressEntity = addressRepository.findByPickupList(pickupList);
                 deliverPickupDTO.setAddress(AddressDTO.builder()
                                 .name(addressEntity.getName())
