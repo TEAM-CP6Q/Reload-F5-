@@ -54,6 +54,7 @@ public class SecurityConfig {
                                 "/api/pickup/new-pickup",
                                 "/api/chat/create-chat",
                                 "/api/pickup/update-location",
+                                "/api/auth/register/deliver",
                                 "/api/**").permitAll()
 
                         // PATCH 요청 허용
