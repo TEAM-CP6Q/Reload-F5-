@@ -18,6 +18,7 @@ import PickupCompletePage from './pages/PickupCompletePage';
 import PickupList from './pages/PickupList';
 import PickupListDetail from './pages/PickupListDetail';
 import PickupLocation from './pages/PickupLocation';
+import PickupDeliverPage from './pages/PickupDeliverPage';
 
 function AppContent() {
   const [role, setRole] = useState('user'); // 기본값을 'user'로 설정
@@ -29,6 +30,8 @@ function AppContent() {
       setRole(storedRole);
       if (storedRole === 'admin') {
         navigate("/admin-main");
+      } else if (storedRole === 'Deliver') {
+        navigate("/deliver-main");
       }
     }
   }, [navigate]);
@@ -36,14 +39,18 @@ function AppContent() {
   useEffect(() => {
     if (role === 'admin') {
       navigate("/admin-main");
+    } else if (role === 'Deliver') {
+      navigate("/deliver-main");
     }
   }, [role, navigate]);
 
   return (
-    <div className={role === 'admin' ? 'web-container' : 'mobile-container'}>
+    <div className={role === 'admin' ? 'web-container' : role === 'Deliver' ? 'mobile-container' : 'mobile-container'}>
       <Routes>
         {role === 'admin' ? (
           <Route path="/admin-main" element={<AdminMain setRole={setRole} />} />
+        ) : role === 'Deliver' ? (
+          <Route path="/deliver-main" element={<PickupDeliverPage setRole={setRole} />} />
         ) : (
           <>
             <Route path="/" element={<MainPage />} />
