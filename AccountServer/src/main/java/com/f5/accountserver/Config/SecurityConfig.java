@@ -28,7 +28,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET,
                                         "/api/account/search-account/**",
                                         "/api/account/user-list",
-                                        "/api/account/designer/get-designer",
+                                        "/api/account/designer/get-designer/**",
                                         "/api/account/designer/all-designer")
                                 .permitAll()
 
