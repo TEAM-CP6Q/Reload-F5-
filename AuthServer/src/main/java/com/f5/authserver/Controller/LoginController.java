@@ -45,6 +45,7 @@ public class LoginController {
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("user", loggedInUser);
+            response.put("role", loggedInUser.getRole());
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.ok().body(StatusCodeDTO.builder()

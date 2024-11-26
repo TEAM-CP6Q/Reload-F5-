@@ -10,6 +10,7 @@ import com.f5.authserver.Repository.UserRepository;
 import com.f5.authserver.Service.Communication.AccountCommunicationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,7 @@ public class UserDAOImpl implements UserDAO {
                     .email(registerDTO.getEmail())
                     .password(passwordEncoder.encode(registerDTO.getPassword()))
                     .kakao(false)
+                    .role("User")
                     .build();
             userRepository.save(userEntity);
             UserDetailDTO userDetailDTO = UserDetailDTO.builder()
@@ -131,6 +133,7 @@ public class UserDAOImpl implements UserDAO {
                 .email(registerDTO.getEmail())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
                 .kakao(true)
+                .role("User")
                 .build();
         userRepository.save(userEntity);
         UserDetailDTO userDetailDTO = UserDetailDTO.builder()
@@ -150,4 +153,19 @@ public class UserDAOImpl implements UserDAO {
         return userRepository.getEmailById(id);
     }
 
+    @Override
+    public UserDTO saveDeliver(UserDTO userDTO) {
+        try{
+            UserEntity userEntity = UserEntity.builder()
+                    .email(userDTO.getEmail())
+                    .password(passwordEncoder.encode(userDTO.getPassword()))
+                    .kakao(false)
+                    .role("Deliver")
+                    .build();
+            userRepository.save(userEntity);
+            return entityToDTO(userEntity);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("배송기사 저장 실패");
+        }
+    }
 }
