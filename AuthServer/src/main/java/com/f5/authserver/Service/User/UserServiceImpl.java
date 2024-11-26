@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO registerDeliver(UserDTO userDTO) {
         try{
-            return userDAO.saveDeliver(userDTO);;
+            return userDAO.saveDeliver(userDTO);
         } catch (Exception e){
             throw new IllegalArgumentException(e);
         }
