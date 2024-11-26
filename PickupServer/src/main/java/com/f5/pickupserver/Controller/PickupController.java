@@ -141,4 +141,16 @@ public class PickupController {
                             .build());
         }
     }
+
+    @GetMapping("/get-today-pickup")
+    public ResponseEntity<?> getTodayPickup(@RequestParam("today") String today) {
+        try{
+            return ResponseEntity.ok(pickupService.getTodayPickups(today));
+        } catch (Exception e){
+            return ResponseEntity.status(402).body(StatusCodeDTO.builder()
+                            .code(402L)
+                            .msg(e.getMessage())
+                            .build());
+        }
+    }
 }

@@ -18,4 +18,5 @@ public interface PickupDAO {
     void removePickup(Long pickupId);
     void changeLocation(LocationDTO locationDTO);
     LocationDTO getPickupLocation(Long pickupId);
+    List<DeliverPickupDTO> getTodayList(String today);
 }
