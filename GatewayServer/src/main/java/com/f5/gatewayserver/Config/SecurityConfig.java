@@ -35,14 +35,13 @@ public class SecurityConfig {
                                 "/api/chat/all",
                                 "/api/chat/user-chats",
                                 "/api/pickup/get-location",
-                                "/api/account/designer/get-designer",
+                                "/api/account/designer/get-designer/**",
                                 "/api/account/designer/all-designer",
                                 "/api/product/product-list",
                                 "/api/**").permitAll()
 
                         // POST 요청 허용
                         .pathMatchers(HttpMethod.POST,
-                                "/api/auth/admin/register",
                                 "/api/auth/login",
                                 "/api/auth/register",
                                 "/api/auth/admin/login",
