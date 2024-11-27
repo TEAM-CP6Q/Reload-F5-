@@ -49,18 +49,18 @@ const CategoryButtons = () => {
     );
 };
 
-const NewProductCard = ({ image, designer, name, price, id }) => {
+const NewProductCard = ({ product, image, designer, name, price, id }) => {
     const navigate = useNavigate();
     const [isPressed, setIsPressed] = useState(false);
 
     const handleClick = () => {
-        navigate('/product-detail', { 
-            state: { id, name } 
+        navigate('/product-detail', {
+            state: { product }
         });
     };
 
     return (
-        <div 
+        <div
             className={`main-product-card ${isPressed ? 'card-pressed' : ''}`}
             onClick={handleClick}
             onMouseDown={() => setIsPressed(true)}
@@ -99,42 +99,42 @@ const MainPage = () => {
         {
             id: 1,
             image: product01,
-            designer: 'Designer A',
+            designer: 'D.김철수',
             name: '데스커 기본형 테이블 6인',
             price: '53,000'
         },
         {
             id: 2,
             image: product02,
-            designer: 'Designer B',
+            designer: 'D.박지성',
             name: '폴인퍼니 미엘 세라믹 식탁',
             price: '42,000'
         },
         {
             id: 3,
             image: product03,
-            designer: 'Designer C',
+            designer: 'D.홍박사',
             name: '스칸디무드 접이식 식탁 테이블',
             price: '89,000'
         },
         {
             id: 4,
             image: product04,
-            designer: 'Designer D',
+            designer: 'D.새로고침',
             name: '썸앤데코 라곰 고무나무 원목식탁',
             price: '75,000'
         },
         {
             id: 5,
             image: product05,
-            designer: 'Designer E',
+            designer: 'D.디자이너',
             name: '레트로하우스 원목 원형 테이블',
             price: '42,000'
         },
         {
             id: 6,
             image: product06,
-            designer: 'Designer F',
+            designer: 'D.샤넬',
             name: '라움에스알 빈티지 원형 식탁',
             price: '35,000'
         },
@@ -200,6 +200,7 @@ const MainPage = () => {
                     <div className="main-new-products-grid">
                         {newProducts.map((product) => (
                             <NewProductCard
+                                product={product}
                                 key={product.id}
                                 id={product.id}         // id prop 추가
                                 image={product.image}
