@@ -68,7 +68,8 @@ public class SecurityConfig {
                                 "/api/account/designer/remove-designer",
                                 "/api/pickup/delete-pickup",
                                 "/api/auth/withdraw",
-                                "/api/**").permitAll()
+                                "/api/**",
+                                "/api/pickup/delete-location").permitAll()
 
                         .anyExchange().authenticated() // 그 외의 요청은 인증 필요
                 )
