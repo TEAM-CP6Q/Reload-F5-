@@ -27,7 +27,7 @@ const KakaoCallback = () => {
 
   const handleLogin = async (authCode) => {
     try {
-      const response = await fetch('http://3.37.122.192:8000/api/auth/kakao/login', {
+      const response = await fetch('https://refresh-f5-server.o-r.kr/api/auth/kakao/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ const KakaoCallback = () => {
 
   const handleIntegration = async (authCode) => {
     try {
-      const response = await fetch('http://3.37.122.192:8000/api/auth/kakao/integration', {
+      const response = await fetch('https://refresh-f5-server.o-r.kr/api/auth/kakao/integration', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ const KakaoCallback = () => {
 
   const handleRegister = async (authCode) => {
     try {
-      const response = await fetch('http://3.37.122.192:8000/api/auth/kakao/register', {
+      const response = await fetch('https://refresh-f5-server.o-r.kr/api/auth/kakao/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

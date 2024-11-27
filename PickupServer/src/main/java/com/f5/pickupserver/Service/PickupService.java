@@ -18,4 +18,5 @@ public interface PickupService {
     void deletePickup(Long pickupId);
     void updateLocation(LocationDTO locationDTO);
     LocationDTO getLocation(Long pickupId);
+    List<DeliverPickupDTO> getTodayPickups(String today);
 }

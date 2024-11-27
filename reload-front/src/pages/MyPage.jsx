@@ -53,7 +53,7 @@ const MyPage = () => {
       const email = localStorage.getItem("email");
 
       const response = await fetch(
-        `http://3.37.122.192:8000/api/account/search-account/${email}`,
+        `https://refresh-f5-server.o-r.kr/api/account/search-account/${email}`,
         {
           method: "GET",
           headers: {
@@ -89,7 +89,7 @@ const MyPage = () => {
 
     try {
       const response = await fetch(
-        "http://3.37.122.192:8000/api/auth/withdraw",
+        "https://refresh-f5-server.o-r.kr/api/auth/withdraw",
         {
           method: "PATCH",
           headers: {

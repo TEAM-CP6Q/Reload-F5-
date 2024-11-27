@@ -20,7 +20,7 @@ const AdminChat = () => {
   useEffect(() => {
     if (stompClient) return;
 
-    const socket = new SockJS('http://3.37.122.192:14000/ws/chat');
+    const socket = new SockJS('https://refresh-f5-server.o-r.kr/ws/chat');
     const client = Stomp.over(socket);
 
     client.connect({}, () => {

@@ -90,4 +90,13 @@ public class PickupServiceImpl implements PickupService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    @Override
+    public List<DeliverPickupDTO> getTodayPickups(String today){
+        try{
+            return pickupDAO.getTodayList(today);
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }

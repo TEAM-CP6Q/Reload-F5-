@@ -31,7 +31,8 @@ public class SecurityConfig {
                                         "/api/pickup/my-pickup/**",
                                         "/api/pickup/get-details",
                                         "/api/pickup/get-all-pickups",
-                                        "/api/pickup/get-location")
+                                        "/api/pickup/get-location",
+                                        "/api/pickup/get-today-pickup")
                                 .permitAll()
 
                                 .requestMatchers(HttpMethod.PATCH,

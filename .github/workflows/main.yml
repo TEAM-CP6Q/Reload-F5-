@@ -2,7 +2,10 @@ name: Deploy to AWS
 
 on:
   push:
-    branches: [develop]
+    branches:
+      - develop
+    paths:
+      - 'front-reload/**' 
 
 permissions:
   contents: write
