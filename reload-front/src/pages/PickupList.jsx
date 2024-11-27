@@ -17,7 +17,7 @@ const PickupList = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://3.37.122.192:8000/api/pickup/my-pickup?email=${email}`, {
+        const response = await fetch(`https://refresh-f5-server.o-r.kr/api/pickup/my-pickup?email=${email}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

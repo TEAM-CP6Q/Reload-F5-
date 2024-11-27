@@ -25,7 +25,7 @@ const LoginPage = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://3.37.122.192:8000/api/auth/login', {
+      const response = await fetch('https://refresh-f5-server.o-r.kr/api/auth/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +60,7 @@ const LoginPage = () => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://3.37.122.192:8000/api/auth/admin/login', {
+      const response = await fetch('https://refresh-f5-server.o-r.kr/api/auth/admin/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

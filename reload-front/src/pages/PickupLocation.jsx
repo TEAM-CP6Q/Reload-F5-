@@ -182,7 +182,7 @@ const PickupLocation = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://3.37.122.192:8000/api/pickup/get-details?pickupId=${pickupId}`,
+        `https://refresh-f5-server.o-r.kr/api/pickup/get-details?pickupId=${pickupId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

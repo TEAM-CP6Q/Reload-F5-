@@ -19,7 +19,7 @@ const ChattingPage = () => {
 
   // WebSocket 연결 설정
   useEffect(() => {
-    const socket = new SockJS('http://3.37.122.192:14000/ws/chat');
+    const socket = new SockJS('https://refresh-f5-server.o-r.kr/ws/chat');
     const client = Stomp.over(socket);
 
     client.connect({}, () => {
@@ -57,7 +57,7 @@ const ChattingPage = () => {
         const email = localStorage.getItem("email");
   
         const response = await fetch(
-          `http://3.37.122.192:8000/api/account/search-account/${email}`,
+          `https://refresh-f5-server.o-r.kr/api/account/search-account/${email}`,
           {
             method: "GET",
             headers: {

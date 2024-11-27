@@ -57,7 +57,7 @@ const PickupResultPage = () => {
 
             console.log('Request Data:', requestData);
 
-            const response = await fetch('http://3.37.122.192:8000/api/pickup/new-pickup', {
+            const response = await fetch('https://refresh-f5-server.o-r.kr/api/pickup/new-pickup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

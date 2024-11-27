@@ -15,7 +15,7 @@ const AdminDesigner = () => {
   useEffect(() => {
     const fetchDesigners = async () => {
       try {
-        const response = await fetch('http://3.37.122.192:8000/api/account/designer/all-designer', {
+        const response = await fetch('https://refresh-f5-server.o-r.kr/api/account/designer/all-designer', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const AdminDesigner = () => {
   // 디자이너 등록 핸들러
   const handleAddDesigner = async (values) => {
     try {
-      const response = await fetch('http://3.37.122.192:8000/api/account/designer/add-designer', {
+      const response = await fetch('https://refresh-f5-server.o-r.kr/api/account/designer/add-designer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const AdminDesigner = () => {
 const handleEditDesigner = async (values) => {
   const token = localStorage.getItem('token'); // 액세스 토큰 가져오기
   try {
-    const response = await fetch(`http://3.37.122.192:8000//api/pickup/update-pickup`, {
+    const response = await fetch(`https://refresh-f5-server.o-r.kr//api/pickup/update-pickup`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
