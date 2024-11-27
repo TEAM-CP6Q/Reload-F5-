@@ -402,6 +402,7 @@ public class PickupDAOImpl implements PickupDAO {
     @Override
     public void removeLocation(Long pickupId) {
         try {
+            locationMap.remove(pickupId);
             locationRepository.deleteByPickupList(pickupListRepository.findByPickupId(pickupId));
         } catch (Exception e) {
             throw new IllegalStateException("위치 삭제 실패");
