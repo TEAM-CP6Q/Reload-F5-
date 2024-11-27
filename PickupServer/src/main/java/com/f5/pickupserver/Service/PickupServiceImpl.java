@@ -99,4 +99,13 @@ public class PickupServiceImpl implements PickupService {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    @Override
+    public void deleteLocation(Long pickupId){
+        try{
+            pickupDAO.removeLocation(pickupId);
+        } catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 }
