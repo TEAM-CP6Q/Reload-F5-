@@ -48,13 +48,16 @@ public class JwtUtil {
     }
 
     // 초기화 메서드에서 호출하여 secretKey 설정
-    @PostMapping("/get-secret")
     @PostConstruct
     public void initializeSecretKey() {
         if (this.secretKey == null) {
             fetchSecretKeyFromAuthServer();
         }
 //        fetchSecretKeyFromAuthServer();
+    }
+    @PostMapping("/get-secret")
+    public void updateSecretKey() {
+        fetchSecretKeyFromAuthServer();
     }
 
     // JWT 토큰에서 클레임 추출
