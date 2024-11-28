@@ -33,23 +33,30 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO user) throws AuthenticationException {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
 
-        final UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
-        final String token = jwtTokenUtil.generateToken(userDetails.getUsername());
+            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getEmail());
+            final String token = jwtTokenUtil.generateToken(userDetails.getUsername());
 
-        // UserEntity를 서비스 메서드를 통해 가져옴
-        UserEntity loggedInUser = userService.getLoggedInUserEntity(user.getEmail());
+            // UserEntity를 서비스 메서드를 통해 가져옴
+            UserEntity loggedInUser = userService.getLoggedInUserEntity(user.getEmail());
 
-        if(!loggedInUser.getKakao()) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", token);
-            response.put("user", loggedInUser);
-            return ResponseEntity.ok(response);
-        } else {
-            return ResponseEntity.ok().body(StatusCodeDTO.builder()
-                            .Code(400L)
-                            .Msg("카카오 계정으로 로그인 해주세요.")
+            if (!loggedInUser.getKakao()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("token", token);
+                response.put("user", loggedInUser);
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.ok().body(StatusCodeDTO.builder()
+                        .Code(400L)
+                        .Msg("카카오 계정으로 로그인 해주세요.")
+                        .build());
+            }
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(402).body(StatusCodeDTO.builder()
+                            .Code(402L)
+                            .Msg("계정이 없음")
                             .build());
         }
     }

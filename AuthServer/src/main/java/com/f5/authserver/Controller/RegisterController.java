@@ -34,6 +34,22 @@ public class RegisterController {
         }
     }
 
+    @PostMapping("/deliver")
+    public ResponseEntity<?> deliver(@RequestParam("email") String email, @RequestParam("password") String password) {
+        try{
+            UserDTO saveDeliver = userService.registerDeliver(UserDTO.builder()
+                            .email(email)
+                            .password(password)
+                            .build());
+            return ResponseEntity.ok(saveDeliver);
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg(e.getMessage())
+                            .build());
+        }
+    }
+
     @GetMapping("/exist-email/{email}")
     public ResponseEntity<?> existEmail(@PathVariable String email) {
         if(userDAO.existsByEmail(email)) {

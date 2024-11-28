@@ -59,4 +59,13 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException(e);
         }
     }
+
+    @Override
+    public UserDTO registerDeliver(UserDTO userDTO) {
+        try{
+            return userDAO.saveDeliver(userDTO);
+        } catch (Exception e){
+            throw new IllegalArgumentException(e);
+        }
+    }
 }

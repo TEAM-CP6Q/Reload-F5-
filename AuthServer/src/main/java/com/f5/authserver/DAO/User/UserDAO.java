@@ -19,4 +19,5 @@ public interface UserDAO {
     void integrationInfo(IntegrationDTO integrationDTO);
     UserDTO kakaoSave(RegisterDTO registerDTO) throws IllegalArgumentException;
     String getEmail(Long id);
+    UserDTO saveDeliver(UserDTO userDTO);
 }
