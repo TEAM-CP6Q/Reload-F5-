@@ -50,7 +50,10 @@ function AppContent() {
         {role === 'admin' ? (
           <Route path="/admin-main" element={<AdminMain setRole={setRole} />} />
         ) : role === 'Deliver' ? (
+          <>
           <Route path="/deliver-main" element={<PickupDeliverPage setRole={setRole} />} />
+          </>
+          
         ) : (
           <>
             <Route path="/" element={<MainPage />} />

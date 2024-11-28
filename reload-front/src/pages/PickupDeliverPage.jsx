@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Clock, MapPin, Truck } from "lucide-react";
 import "../CSS/PickupDeliverPage.css";
 import makerlogo from "../images/makerlogo.png";
+import { useNavigate } from "react-router-dom";
+
+
 
 const formatTime = (seconds) => {
   const hours = Math.floor(seconds / 3600);
@@ -48,11 +51,18 @@ const PickupDeliverPage = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const js_key = process.env.REACT_APP_KAKAO_MAP_JS_KEY;
   const navi_key = process.env.REACT_APP_KAKAO_NAVI_KEY;
+  const [watchId, setWatchId] = useState(null); // watchPosition ID 저장
+  const navigate = useNavigate(); // useNavigate 훅 사용
+
 
   const getToday = () => {
     const today = new Date();
-    return today.toISOString().split("T")[0];
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
+  
 
   // 위치 전송 함수
   const sendLocationUpdate = async (pickupId, latitude, longitude) => {
@@ -298,7 +308,7 @@ const addPickupMarkers = () => {
     });
   };
   
-  // 수거 시작 시 위치 전송
+
   const startTracking = () => {
     if (!selectedPickup) {
       console.error("수거지를 선택해야 위치 전송을 시작할 수 있습니다.");
@@ -307,31 +317,43 @@ const addPickupMarkers = () => {
   
     setTracking(true);
     setModalVisible(false);
+  
     const timerId = setInterval(() => {
       setElapsedTime((prev) => prev + 1);
     }, 1000);
     setTimer(timerId);
   
-    navigator.geolocation.watchPosition(
+    const id = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         updateDriverMarker(latitude, longitude);
   
         // 클릭한 마커의 픽업 ID로 위치 전송
         sendLocationUpdate(selectedPickup.pickupId, latitude, longitude);
+  
+        // 폴리라인 업데이트
+        if (selectedPickup) {
+          const { roadNameAddress, detailedAddress } = selectedPickup.address;
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          geocoder.addressSearch(
+            `${roadNameAddress} ${detailedAddress}`,
+            (result, status) => {
+              if (status === window.kakao.maps.services.Status.OK) {
+                const endCoords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+                const startCoords = new window.kakao.maps.LatLng(latitude, longitude);
+                updatePolylineWithNaviAPI(startCoords, endCoords);
+              }
+            }
+          );
+        }
       },
       (error) => {
         console.error("위치 추적 중 오류 발생:", error);
       },
       { enableHighAccuracy: true }
     );
-  };
   
-  const stopTracking = () => {
-    setTracking(false);
-    clearInterval(timer);
-    setTimer(null);
-    console.log("위치 전송이 중단되었습니다.");
+    setWatchId(id); // watchPosition ID 저장
   };
   
 
@@ -395,6 +417,61 @@ const addPickupMarkers = () => {
     if (map && pickups.length > 0) addPickupMarkers();
   }, [map, pickups]);
 
+  // 로그아웃 함수
+const handleLogout = () => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("email");
+  localStorage.removeItem("role");
+  localStorage.removeItem("id");
+  window.location.href = '/login';
+};
+
+
+
+// 위치 추적 중지 및 삭제
+const stopTracking = async (pickupId) => {
+  if (!pickupId) {
+    console.error("픽업 ID가 제공되지 않았습니다.");
+    return;
+  }
+
+  setTracking(false);
+  clearInterval(timer);
+  setTimer(null);
+
+  if (watchId !== null) {
+    navigator.geolocation.clearWatch(watchId); // 위치 추적 중단
+    console.log("위치 추적이 중단되었습니다.");
+    setWatchId(null); // watchId 초기화
+  }
+
+  console.log(`픽업 ID ${pickupId}에 대한 위치 전송이 중단되었습니다.`);
+
+  // 위치 삭제 API 호출
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`https://refresh-f5-server.o-r.kr/api/pickup/delete-location?pickupId=${pickupId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("위치 삭제에 실패했습니다.");
+    }
+    console.log(`픽업 ID ${pickupId}의 위치가 성공적으로 삭제되었습니다.`);
+  } catch (error) {
+    console.error("위치 삭제 오류:", error);
+  }
+};
+
+
+
+
+
   return (
     <div className="pickup-page-wrapper">
       <div className="pickup-container">
@@ -402,6 +479,9 @@ const addPickupMarkers = () => {
           <div className="header-content">
             <Truck size={36} strokeWidth={2} className="truck-icon" />
             <h1 className="page-title">수거지 현황</h1>
+            <button onClick={handleLogout} className="logout-button">
+            로그아웃
+          </button>
           </div>
         </header>
 
@@ -437,7 +517,7 @@ const addPickupMarkers = () => {
             )}
             {tracking && (
               <button
-                onClick={stopTracking}
+              onClick={() => stopTracking(selectedPickup.pickupId)} // 동일한 pickupId로 위치 삭제
                 className="action-button stop-button"
               >
                 수거 종료하기
