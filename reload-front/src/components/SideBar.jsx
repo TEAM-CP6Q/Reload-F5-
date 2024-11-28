@@ -27,6 +27,23 @@ const SideBar = ({ isOpen, onClose }) => {
         onClose();
     }
 
+    // 로그아웃 함수
+    const handleLogout = () => {
+        // 사용자에게 확인 요청
+        const isConfirmed = window.confirm("정말 로그아웃 하시겠습니까?");
+        
+        // 사용자가 확인을 클릭한 경우에만 로그아웃 진행
+        if (isConfirmed) {
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+            localStorage.removeItem("email");
+            localStorage.removeItem("username");
+            localStorage.removeItem("id");
+            localStorage.removeItem("access_token");
+            window.location.reload();
+        }
+    };
+
     useEffect(() => {
         const handleget = async () => {
             const token = localStorage.getItem("token");
@@ -65,12 +82,12 @@ const SideBar = ({ isOpen, onClose }) => {
                         <button className="sidebar-menu-item" onClick={() => handleNavigation('/pickup-request')}>
                             수거 신청
                         </button>
-                        <div className="sidebar-menu-divider" />
+                        {/* <div className="sidebar-menu-divider" />
                         <button className="sidebar-menu-item" onClick={() => handleNavigation('/')}>
                             기업 파트너십 신청
-                        </button>
+                        </button> */}
                         <div className="sidebar-menu-divider" />
-                        <button className="sidebar-menu-item" onClick={() => handleNavigation('/')}>
+                        <button className="sidebar-menu-item" onClick={() => handleNavigation('/chat')}>
                             상품 문의
                         </button>
                     </div>
@@ -81,7 +98,9 @@ const SideBar = ({ isOpen, onClose }) => {
                             로그인
                         </button>
                         :
-                        <div className="sidebar-bottom-text">환영합니다.</div>
+                        <button className="sidebar-logout-button" onClick={handleLogout}>
+                            로그아웃
+                        </button>
                     }
                 </div>
             </div>
