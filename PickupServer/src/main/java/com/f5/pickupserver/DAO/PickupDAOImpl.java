@@ -10,6 +10,7 @@ import com.f5.pickupserver.DTO.Respons.PickupDetailsDTO;
 import com.f5.pickupserver.DTO.Respons.PickupInfoMsgDTO;
 import com.f5.pickupserver.Entity.AddressEntity;
 import com.f5.pickupserver.Entity.DetailsEntity;
+import com.f5.pickupserver.Entity.LocationEntity;
 import com.f5.pickupserver.Entity.PickupListEntity;
 import com.f5.pickupserver.Repository.AddressRepository;
 import com.f5.pickupserver.Repository.DetailsRepository;
@@ -159,6 +160,7 @@ public class PickupDAOImpl implements PickupDAO {
                     .payment(addressEntity.getPickupList().getPayment())
                     .pickupProgress(addressEntity.getPickupList().getPickupProgress())
                     .pricePreview(addressEntity.getPickupList().getPricePreview())
+                    .pickupDate(addressEntity.getPickupList().getPickupDate())
                     .price(addressEntity.getPickupList().getPrice())
                     .accepted(addressEntity.getPickupList().getAccepted())
                     .build();
@@ -379,6 +381,7 @@ public class PickupDAOImpl implements PickupDAO {
             for(PickupListEntity pickupList : pickupLists){
                 DeliverPickupDTO deliverPickupDTO = new DeliverPickupDTO();
                 deliverPickupDTO.setPickupId(pickupList.getPickupId());
+                deliverPickupDTO.setPickupDate(pickupList.getPickupDate());
                 AddressEntity addressEntity = addressRepository.findByPickupList(pickupList);
                 deliverPickupDTO.setAddress(AddressDTO.builder()
                                 .name(addressEntity.getName())
@@ -393,6 +396,16 @@ public class PickupDAOImpl implements PickupDAO {
             return deliverPickupDTOList;
         } catch (Exception e) {
             throw new IllegalArgumentException("당일 수거 리스트 조회 실패");
+        }
+    }
+
+    @Override
+    public void removeLocation(Long pickupId) {
+        try {
+            locationMap.remove(pickupId);
+            locationRepository.deleteByPickupList(pickupListRepository.findByPickupId(pickupId));
+        } catch (Exception e) {
+            throw new IllegalStateException("위치 삭제 실패");
         }
     }
 }

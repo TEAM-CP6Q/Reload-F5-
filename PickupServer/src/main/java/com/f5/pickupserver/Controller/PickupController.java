@@ -153,4 +153,20 @@ public class PickupController {
                             .build());
         }
     }
+
+    @DeleteMapping("/delete-location")
+    public ResponseEntity<?> deleteLocation(@RequestParam("pickupId") Long pickupId) {
+        try{
+            pickupService.deleteLocation(pickupId);
+            return ResponseEntity.ok(StatusCodeDTO.builder()
+                            .code(200L)
+                            .msg("기사 위치 삭제 성공")
+                            .build());
+        } catch (Exception e){
+            return ResponseEntity.status(402).body(StatusCodeDTO.builder()
+                            .code(402L)
+                            .msg(e.getMessage())
+                            .build());
+        }
+    }
 }
