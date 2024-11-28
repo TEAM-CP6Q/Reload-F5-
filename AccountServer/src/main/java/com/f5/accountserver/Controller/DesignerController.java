@@ -52,8 +52,8 @@ public class DesignerController {
         }
     }
 
-    @GetMapping("/get-designer")
-    public ResponseEntity<?> getDesigner(@RequestParam("id") Long id) {
+    @GetMapping("/get-designer/{id}")
+    public ResponseEntity<?> getDesigner(@PathVariable("id") Long id) {
         try{
             return ResponseEntity.ok(designerService.getDesigner(id));
         } catch (Exception e) {
