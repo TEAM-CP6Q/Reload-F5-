@@ -12,6 +12,7 @@ import lombok.*;
 public class ChatDTO {
     private Long chatId;
     private String email;
+    private String sender;
 
     // 클라이언트의 행동을 처리하는 메서드
     public void handleActions(MessageDTO messageDTO, ChatService chatService) {

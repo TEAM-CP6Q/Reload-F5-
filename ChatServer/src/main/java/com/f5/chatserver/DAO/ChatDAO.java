@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public interface ChatDAO {
-    ChatDTO createChat(String email);
+    ChatDTO createChat(String email, String sender);
     LinkedHashMap<Long, String> findAllChat();
     List<ChatDTO> getAllUserChat(String email);
 }

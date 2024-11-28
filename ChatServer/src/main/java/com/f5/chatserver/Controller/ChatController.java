@@ -27,9 +27,9 @@ public class ChatController {
     }
 
     @PostMapping("/create-chat")
-    public ResponseEntity<?> createChat(@RequestParam("email") String email){
+    public ResponseEntity<?> createChat(@RequestParam("email") String email, @RequestParam("sender") String sender){
         try{
-            return ResponseEntity.ok(chatService.createRoom(email));
+            return ResponseEntity.ok(chatService.createRoom(email, sender));
         } catch (Exception e) {
             return ResponseEntity.status(404).body(StatusCodeDTO.builder()
                             .code(404L)

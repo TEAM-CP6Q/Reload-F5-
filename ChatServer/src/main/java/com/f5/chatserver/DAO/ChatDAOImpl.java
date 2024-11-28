@@ -18,14 +18,16 @@ public class ChatDAOImpl implements ChatDAO {
     }
 
     @Override
-    public ChatDTO createChat(String email) {
+    public ChatDTO createChat(String email, String sender) {
         try{
             ChatEntity chatEntity = new ChatEntity();
             chatEntity.setEmail(email);
+            chatEntity.setSender(sender);
             chatRepository.save(chatEntity);
             ChatDTO chatDTO = new ChatDTO();
             chatDTO.setChatId(chatEntity.getChatId());
             chatDTO.setEmail(email);
+            chatDTO.setSender(sender);
             return chatDTO;
         } catch (Exception e) {
             throw new IllegalStateException("방 생성 실패");
