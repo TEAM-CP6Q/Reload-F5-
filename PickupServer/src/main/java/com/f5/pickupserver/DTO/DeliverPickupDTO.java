@@ -2,6 +2,8 @@ package com.f5.pickupserver.DTO;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,5 +12,6 @@ import lombok.*;
 @Setter
 public class DeliverPickupDTO {
     private Long pickupId;
+    private LocalDateTime pickupDate;
     private AddressDTO address;
 }

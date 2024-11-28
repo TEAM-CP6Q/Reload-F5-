@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
     Boolean existsByPickupList(PickupListEntity pickupList);
     LocationEntity findByPickupList(PickupListEntity pickupList);
+    void deleteByPickupList(PickupListEntity pickupList);
 }

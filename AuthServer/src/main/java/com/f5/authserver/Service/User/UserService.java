@@ -12,4 +12,5 @@ public interface UserService {
     void deleteAccount(UserDTO user);
     UserDTO getByEmail(String email);
     String getEmailById(Long id);
+    UserDTO registerDeliver(UserDTO userDTO);
 }

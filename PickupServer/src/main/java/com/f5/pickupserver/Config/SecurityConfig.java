@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 .permitAll()
 
                                 .requestMatchers(HttpMethod.DELETE,
-                                        "/api/pickup/delete-pickup")
+                                        "/api/pickup/delete-pickup",
+                                        "/api/pickup/delete-location")
                                 .permitAll()
                                 // 그 외의 요청은 인증 필요
                                 .anyRequest().authenticated()
