@@ -2,6 +2,7 @@ package com.f5.accountserver.Controller;
 
 import com.f5.accountserver.DTO.DesignerDTO;
 import com.f5.accountserver.DTO.StatusCodeDTO;
+import com.f5.accountserver.Repository.DesignerRepository;
 import com.f5.accountserver.Service.Designer.DesignerService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +13,11 @@ import java.util.Objects;
 @RequestMapping("/api/account/designer")
 public class DesignerController {
     private final DesignerService designerService;
+    private final DesignerRepository designerRepository;
 
-    public DesignerController(DesignerService designerService) {
+    public DesignerController(DesignerService designerService, DesignerRepository designerRepository) {
         this.designerService = designerService;
+        this.designerRepository = designerRepository;
     }
 
     @PostMapping("/add-designer")
@@ -49,8 +52,8 @@ public class DesignerController {
         }
     }
 
-    @GetMapping("/get-designer")
-    public ResponseEntity<?> getDesigner(@RequestParam("id") Long id) {
+    @GetMapping("/get-designer/{id}")
+    public ResponseEntity<?> getDesigner(@PathVariable("id") Long id) {
         try{
             return ResponseEntity.ok(designerService.getDesigner(id));
         } catch (Exception e) {

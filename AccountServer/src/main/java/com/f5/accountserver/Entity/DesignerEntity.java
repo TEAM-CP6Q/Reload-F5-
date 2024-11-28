@@ -28,5 +28,5 @@ public class DesignerEntity {
     @Column(nullable = false)
     private String pr;
     @Column(nullable = false)
-    private Boolean empStatus = (false);
+    private Boolean empStatus;
 }
