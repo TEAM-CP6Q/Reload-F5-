@@ -13,11 +13,9 @@ import java.util.Objects;
 @RequestMapping("/api/account/designer")
 public class DesignerController {
     private final DesignerService designerService;
-    private final DesignerRepository designerRepository;
 
-    public DesignerController(DesignerService designerService, DesignerRepository designerRepository) {
+    public DesignerController(DesignerService designerService){
         this.designerService = designerService;
-        this.designerRepository = designerRepository;
     }
 
     @PostMapping("/add-designer")
