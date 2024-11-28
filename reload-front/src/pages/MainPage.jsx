@@ -9,12 +9,6 @@ import Header from '../components/Header';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'; // 모듈을 swiper/modules에서 가져오기
 import { Input } from 'antd'; // Ant Design의 Input 모듈을 가져오기
 
-import product01 from '../images/product01.png';
-import product02 from '../images/product02.png';
-import product03 from '../images/product03.png';
-import product04 from '../images/product04.png';
-import product05 from '../images/product05.png';
-import product06 from '../images/product06.png';
 import mainBanner01 from '../images/mainBanner01.png';
 import mainBanner02 from '../images/mainBanner02.png';
 import mainBanner03 from '../images/mainBanner03.png';
@@ -82,10 +76,24 @@ const NewProductCard = ({ product }) => {
 };
 
 const MainPage = () => {
+    const navigate = useNavigate();
+
     const [searchValue, setSearchValue] = useState('');
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isLogin, setIsLogin] = useState(false);
+
+    const handleImageClick = () => {
+        if (window.confirm('수거신청 페이지로 이동하시겠습니까?')) {
+            if(isLogin) {
+                navigate('/pickup-request');
+            }
+            else {
+                navigate('/login');
+            }
+        }
+      };
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -114,6 +122,20 @@ const MainPage = () => {
             }
         };
 
+        const handleget = async () => {
+            const token = localStorage.getItem("token");
+            const email = localStorage.getItem("email");
+
+            if (token && email) {
+                console.log("로그인 성공");
+                setIsLogin(true);
+            } else {
+                console.log("로그인 실패");
+                setIsLogin(false);
+            }
+        };
+        handleget();
+
         fetchProducts();
     }, []);
 
@@ -141,9 +163,9 @@ const MainPage = () => {
                 modules={[Navigation, Pagination, Autoplay]}
                 style={{ height: '200px' }}
             >
-                <SwiperSlide className="slide-content"><img src={mainBanner01} className="main-banner-image" /></SwiperSlide>
-                <SwiperSlide className="slide-content"><img src={mainBanner02} className="main-banner-image" /></SwiperSlide>
                 <SwiperSlide className="slide-content"><img src={mainBanner03} className="main-banner-image" /></SwiperSlide>
+                <SwiperSlide className="slide-content"><img src={mainBanner01} onClick={handleImageClick} className="main-banner-image" style={{cursor: 'pointer'}}/></SwiperSlide>
+                <SwiperSlide className="slide-content"><img src={mainBanner02} onClick={handleImageClick} className="main-banner-image" style={{cursor: 'pointer'}}/></SwiperSlide>
             </Swiper>
 
             <div className="search-container">
