@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import kakaoStart from '../images/kakao_signup_large_wide.png';
 import Header from '../components/Header';
 import logo from '../images/Logo.png';
+import mainLogo from '../images/mainLogo.png';
 import '../CSS/SignupType.css';
 
 const SignupType = () => {
@@ -26,7 +27,7 @@ const SignupType = () => {
     return (
         <div className="social-login-container" style={{height: '100vh'}}>
             <Header />
-            <img src={logo} className="signup-type-logo" alt="로고" />
+            <img src={mainLogo} className="signup-type-logo" alt="로고" />
             <div className="tab-buttons">
                 <button
                     className={`tab-button ${activeTab === "personal" ? "active" : ""}`}

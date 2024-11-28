@@ -3,6 +3,7 @@ import "../CSS/Mypage.css";
 import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import logo from "../images/Logo.png";
+import mainLogo from '../images/mainLogo.png';
 
 const MyPage = () => {
   const [name, setName] = useState("");
@@ -123,7 +124,7 @@ const MyPage = () => {
   };
 
   return (
-    <div className="my-page"  style={{height: '100vh'}}>
+    <div className="my-page">
       <Header />
 
       <div className="my-page-inner">
@@ -136,7 +137,7 @@ const MyPage = () => {
 
           <div className="user-actions">
             <div className="refresh-section">
-              <img src={logo} className="mypage-logo" alt="로고" />
+              <img src={mainLogo} className="mypage-logo" alt="로고" />
               <span className="refresh-text">새로고침</span>
             </div>
             <span

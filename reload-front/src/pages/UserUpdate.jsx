@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import DaumPostcode from "react-daum-postcode";
 import { useNavigate } from "react-router-dom";
 import logo from "../images/Logo.png";
+import mainLogo from '../images/mainLogo.png';
 
 const UserUpdate = () => {
   const [email, setEmail] = useState("");
@@ -122,10 +123,10 @@ const UserUpdate = () => {
   };
 
   return (
-    <>
+    <div style={{height: '100vh'}}>
       <Header />
       <div className="user-update-logo">
-        <img src={logo} className="user-update-logo" alt="로그인로고" />
+        <img src={mainLogo} className="user-update-logo-image" alt="로그인로고" />
       </div>
       <div className="user-update-inner">
         {/* 이름 입력 */}
@@ -198,7 +199,7 @@ const UserUpdate = () => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

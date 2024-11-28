@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Modal from "react-modal";
 import DaumPostcode from "react-daum-postcode";
 import signuplogo from "../images/Logo.png";
+import mainLogo from '../images/mainLogo.png';
 
 const SignupPage = () => {
   const [userID, serUserID] = useState("");
@@ -129,7 +130,7 @@ const SignupPage = () => {
       <Header />
       <div className="signup-inner">
         <div className="signuplogo-con">
-          <img src={signuplogo} className="signuplogo" alt="로그인로고" />
+          <img src={mainLogo} className="signuplogo" alt="로그인로고" />
         </div>
 
        {/* 이메일 입력과 중복확인 버튼 */}

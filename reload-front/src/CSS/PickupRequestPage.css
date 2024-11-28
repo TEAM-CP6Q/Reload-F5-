@@ -2,7 +2,7 @@
 .pickupRequest-main-container {
     display: flex;
     flex-direction: column;
-    background-color: rgb(249, 250, 251);
+    background-color: white;
     height: 100vh;
 }
 

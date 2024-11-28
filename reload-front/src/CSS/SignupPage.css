@@ -9,12 +9,12 @@
 .signuplogo-con {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .signuplogo {
-    width: 150px;
-    height: 150px;
+    width: 230px;
+    height: 100px
 }
 
 /* 폼 그룹 간의 여백 */

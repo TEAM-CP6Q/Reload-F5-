@@ -3,6 +3,7 @@ import '../CSS/LoginPage.css';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import loginlogo from '../images/Logo.png';
+import mainLogo from '../images/mainLogo.png';
 import KakaoLogin from '../pages/KakaoLogin';
 
 const LoginPage = () => {
@@ -89,7 +90,7 @@ const LoginPage = () => {
       <Header />
       <div className="login-page">
         <div className='loginlogo-con'>
-          <img src={loginlogo} className='loginlogo' alt="로그인로고" />
+          <img src={mainLogo} className='loginlogo' alt="로그인로고" />
         </div>
     
         <div className="login-tabs">
@@ -136,7 +137,7 @@ const LoginPage = () => {
             <button type="submit" className="login-button">로그인</button>
 
             <div className="link-group">
-              <Link to="/signup-type">회원가입</Link> | <Link to="/find-account">아이디/비밀번호 찾기</Link>
+              <Link to="/signup-type">회원가입</Link> | <Link >아이디/비밀번호 찾기</Link>
             </div>
 
             <div className="social-login">

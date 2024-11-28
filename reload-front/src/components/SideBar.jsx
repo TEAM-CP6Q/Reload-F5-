@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import loginlogo from '../images/Logo.png';
+import mainLogo from '../images/mainLogo.png';
 import '../CSS/SideBar.css';
 
 const SideBar = ({ isOpen, onClose }) => {
@@ -66,8 +67,8 @@ const SideBar = ({ isOpen, onClose }) => {
             <div className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
                 <div className="sidebar-header">
                     <div className="sidebar-header-content">
-                        <img src={loginlogo} className='sidebar-logo' alt="로그인로고" />
-                        <div style={{ fontWeight: '600', fontSize: '18px' }}>새로고침 - F5</div>
+                        <img src={mainLogo} className='sidebar-logo' alt="로그인로고" />
+                        {/* <div style={{ fontWeight: '600', fontSize: '18px' }}>새로고침 - F5</div> */}
                     </div>
                     <button className="sidebar-header-close-button" onClick={onClose}>
                         <FontAwesomeIcon icon={faXmark} />

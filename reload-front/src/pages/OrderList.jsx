@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import { useNavigate } from "react-router-dom";
 import '../CSS/OrderList.css';
 import logo from "../images/Logo.png";
+import mainLogo from '../images/mainLogo.png';
 
 const { Title, Text } = Typography;
 
@@ -56,7 +57,7 @@ const OrderList = () => {
                 <Row align="middle">
                   <Col span={4}>
                     <img
-                      src={logo}
+                      src={mainLogo}
                       alt={order.name}
                       className="order-image"
                     />
