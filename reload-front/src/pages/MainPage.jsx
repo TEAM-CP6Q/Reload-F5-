@@ -49,7 +49,7 @@ const CategoryButtons = () => {
     );
 };
 
-const NewProductCard = ({ product, image, designer, name, price, id }) => {
+const NewProductCard = ({ product }) => {
     const navigate = useNavigate();
     const [isPressed, setIsPressed] = useState(false);
 
@@ -69,13 +69,13 @@ const NewProductCard = ({ product, image, designer, name, price, id }) => {
         >
             <div className="main-product-card-image-container">
                 <div className="new-product-card">
-                    <img src={image} alt={name} className="new-product-image" />
+                    <img src={`/api/images/${product.pid}`} alt={product.name} className="new-product-image" />
                 </div>
             </div>
             <div className="main-product-card-content">
-                <div className="new-product-designer">{designer}</div>
-                <div className="new-product-name">{name}</div>
-                <div className="new-product-price">{price}원</div>
+                <div className="new-product-designer">D.디자이너</div>
+                <div className="new-product-name">{product.name}</div>
+                <div className="new-product-price">{product.price.toLocaleString()}원</div>
             </div>
         </div>
     );
@@ -83,6 +83,39 @@ const NewProductCard = ({ product, image, designer, name, price, id }) => {
 
 const MainPage = () => {
     const [searchValue, setSearchValue] = useState('');
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                // Get access token from localStorage or your auth management system
+                const accessToken = localStorage.getItem('accessToken');
+                
+                const response = await fetch('https://refresh-f5-server.o-r.kr/api/product/latest-product-list', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
+
+                const data = await response.json();
+                setProducts(data);
+                setLoading(false);
+            } catch (err) {
+                setError(err.message);
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
 
     const onSearch = () => {
         console.log(searchValue);
@@ -93,52 +126,6 @@ const MainPage = () => {
             onSearch();
         }
     };
-
-    // 일단 하드코딩
-    const newProducts = [
-        {
-            id: 1,
-            image: product01,
-            designer: 'D.김철수',
-            name: '데스커 기본형 테이블 6인',
-            price: '53,000'
-        },
-        {
-            id: 2,
-            image: product02,
-            designer: 'D.박지성',
-            name: '폴인퍼니 미엘 세라믹 식탁',
-            price: '42,000'
-        },
-        {
-            id: 3,
-            image: product03,
-            designer: 'D.홍박사',
-            name: '스칸디무드 접이식 식탁 테이블',
-            price: '89,000'
-        },
-        {
-            id: 4,
-            image: product04,
-            designer: 'D.새로고침',
-            name: '썸앤데코 라곰 고무나무 원목식탁',
-            price: '75,000'
-        },
-        {
-            id: 5,
-            image: product05,
-            designer: 'D.디자이너',
-            name: '레트로하우스 원목 원형 테이블',
-            price: '42,000'
-        },
-        {
-            id: 6,
-            image: product06,
-            designer: 'D.샤넬',
-            name: '라움에스알 빈티지 원형 식탁',
-            price: '35,000'
-        },
-    ];
 
     return (
         <>
@@ -157,8 +144,6 @@ const MainPage = () => {
                 <SwiperSlide className="slide-content"><img src={mainBanner01} className="main-banner-image" /></SwiperSlide>
                 <SwiperSlide className="slide-content"><img src={mainBanner02} className="main-banner-image" /></SwiperSlide>
                 <SwiperSlide className="slide-content"><img src={mainBanner03} className="main-banner-image" /></SwiperSlide>
-                {/* <SwiperSlide className="slide-content">3</SwiperSlide>
-                <SwiperSlide className="slide-content">4</SwiperSlide> */}
             </Swiper>
 
             <div className="search-container">
@@ -197,19 +182,20 @@ const MainPage = () => {
 
             <div className="main-new-products-container">
                 <div className="main-products-subContanier">
-                    <div className="main-new-products-grid">
-                        {newProducts.map((product) => (
-                            <NewProductCard
-                                product={product}
-                                key={product.id}
-                                id={product.id}         // id prop 추가
-                                image={product.image}
-                                designer={product.designer}
-                                name={product.name}
-                                price={product.price}
-                            />
-                        ))}
-                    </div>
+                    {loading ? (
+                        <div>Loading...</div>
+                    ) : error ? (
+                        <div>Error: {error}</div>
+                    ) : (
+                        <div className="main-new-products-grid">
+                            {products.map((product) => (
+                                <NewProductCard
+                                    key={product.pid}
+                                    product={product}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </>
