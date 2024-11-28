@@ -1,5 +1,6 @@
 package com.f5.authserver.Controller;
 
+import com.f5.authserver.DAO.User.UserDAO;
 import com.f5.authserver.DTO.Auth.RegisterDTO;
 import com.f5.authserver.DTO.StatusCodeDTO;
 import com.f5.authserver.DTO.Kakao.KakaoAuthRequestDTO;
@@ -31,16 +32,18 @@ public class KakaoAuthController {
     private final UserService userService;
     private final JwtTokenUtil jwtTokenUtil;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserDAO userDAO;
 
 
     private static final Logger logger = LoggerFactory.getLogger(KakaoAuthController.class);
 
     private final KakaoAuthService kakaoAuthService;
 
-    public KakaoAuthController(UserService userService, JwtTokenUtil jwtTokenUtil, CustomUserDetailsService customUserDetailsService, KakaoAuthService kakaoAuthService) {
+    public KakaoAuthController(UserService userService, JwtTokenUtil jwtTokenUtil, CustomUserDetailsService customUserDetailsService, UserDAO userDAO, KakaoAuthService kakaoAuthService) {
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.customUserDetailsService = customUserDetailsService;
+        this.userDAO = userDAO;
         this.kakaoAuthService = kakaoAuthService;
     }
 
@@ -51,6 +54,12 @@ public class KakaoAuthController {
 
             KakaoLoginDTO status = kakaoAuthService.loginKakao(request.getCode());
             String email = status.getEmail();
+            if(!userDAO.existsByEmail(email)) {
+                return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                                .Code(404L)
+                                .Msg("카카오 회원가입을 진행해주세요.")
+                                .build());
+            }
 
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
             final String token = jwtTokenUtil.generateToken(userDetails.getUsername());
