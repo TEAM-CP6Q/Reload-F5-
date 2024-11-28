@@ -43,7 +43,7 @@ const LoginPage = () => {
         localStorage.setItem("token", result.token);
         localStorage.setItem("email", result.user.email);
         localStorage.setItem("id", result.user.id);
-        localStorage.setItem("role", "user"); // 역할을 로컬 스토리지에 저장
+        localStorage.setItem("role", result.user.role); 
         console.log("로그인 성공");
         navigate('/');
       } else {
@@ -75,7 +75,7 @@ const LoginPage = () => {
       if (response.status === 200) {
         console.log(result);
         localStorage.setItem("token", result.token);
-        localStorage.setItem("role", "admin"); // 역할을 로컬 스토리지에 저장
+        localStorage.setItem("role", "admin");
         localStorage.setItem("adminname", result.admin.adminName);
       
         console.log("로그인 성공");
