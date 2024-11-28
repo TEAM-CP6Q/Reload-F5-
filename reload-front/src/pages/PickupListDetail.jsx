@@ -54,7 +54,7 @@ const PickupListDetail = () => {
 
   return (
     <>
-      <Header />
+      <Header/>
       <div className="pickup-detail-container">
         {/* 신청자 정보 */}
         <Descriptions title="신청자 정보" bordered column={1} className="pickup-section">

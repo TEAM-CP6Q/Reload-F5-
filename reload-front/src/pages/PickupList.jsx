@@ -27,6 +27,7 @@ const PickupList = () => {
 
         if (response.ok) {
           const data = await response.json();
+          const sortedData = data.sort((a, b) => new Date(b.requestDate) - new Date(a.requestDate));
           setPickupData(data);
         } else {
           console.error('수거 데이터를 불러오는 데 실패했습니다.');
