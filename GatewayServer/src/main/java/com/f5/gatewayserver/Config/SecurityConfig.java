@@ -35,7 +35,7 @@ public class SecurityConfig {
                                 "/api/chat/all",
                                 "/api/chat/user-chats",
                                 "/api/pickup/get-location",
-                                "/api/account/designer/get-designer/**",
+                                "/api/account/designer/get-designer",
                                 "/api/account/designer/all-designer",
                                 "/api/product/product-list",
                                 "/api/**").permitAll()
