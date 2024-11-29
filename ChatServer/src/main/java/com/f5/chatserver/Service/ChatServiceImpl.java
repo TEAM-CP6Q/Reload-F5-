@@ -50,9 +50,9 @@ public class ChatServiceImpl implements ChatService {
     }
 
     @Override
-    public ChatDTO createRoom(String email) {
+    public ChatDTO createRoom(String email, String sender) {
         try {
-            ChatDTO chatDTO = chatDAO.createChat(email);
+            ChatDTO chatDTO = chatDAO.createChat(email, sender);
             chatRooms.put(chatDTO.getChatId(), chatDTO);
             messagingTemplate.convertAndSend("/topic/admin/new-room", chatDTO);
             return chatDTO;

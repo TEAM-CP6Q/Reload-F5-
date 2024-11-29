@@ -16,4 +16,7 @@ public class ChatEntity {
 
     @Column(nullable = false)
     private String email;
+
+    @Column
+    private String sender;
 }

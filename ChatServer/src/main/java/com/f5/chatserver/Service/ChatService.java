@@ -9,7 +9,7 @@ import java.util.List;
 public interface ChatService {
     LinkedHashMap<Long, ChatDTO> findAllRoom();
     ChatDTO findChatId(Long chatId);
-    ChatDTO createRoom(String email);
+    ChatDTO createRoom(String email, String sender);
     List<ChatDTO> findUserChatAll(String email);
     <T> void sendMessage(Long chatId, T message);
 }
