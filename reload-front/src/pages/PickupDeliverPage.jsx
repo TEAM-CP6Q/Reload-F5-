@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Clock, MapPin, Truck } from "lucide-react";
+import { Clock, MapPin, Truck, ListChecks, Check, X } from "lucide-react";
 import "../CSS/PickupDeliverPage.css";
 import makerlogo from "../images/makerlogo.png";
 import { useNavigate } from "react-router-dom";
+import { List, Avatar, Button ,Card, Descriptions} from "antd"; // 안트디자인 컴포넌트
 
-
-
+// 시간 포맷 함수 (기존과 동일)
 const formatTime = (seconds) => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -15,27 +15,9 @@ const formatTime = (seconds) => {
     .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 };
 
-const Modal = ({ message, onConfirm, onClose }) => (
-  <div className="modal-overlay">
-    <div className="modal-container">
-      <div className="modal-header">
-        <h2 className="modal-title">{message}</h2>
-      </div>
-      <div className="modal-actions">
-        {onConfirm && (
-          <button onClick={onConfirm} className="modal-btn modal-btn-confirm">
-            예
-          </button>
-        )}
-        <button onClick={onClose} className="modal-btn modal-btn-cancel">
-          닫기
-        </button>
-      </div>
-    </div>
-  </div>
-);
 
 const PickupDeliverPage = () => {
+  // 모든 기존 상태 변수 유지
   const [map, setMap] = useState(null);
   const [driverMarker, setDriverMarker] = useState(null);
   const [pickupMarkers, setPickupMarkers] = useState([]);
@@ -49,12 +31,18 @@ const PickupDeliverPage = () => {
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [watchId, setWatchId] = useState(null);
+  const [pickupList, setPickupList] = useState([]);
+  const [selectedPickupStatus, setSelectedPickupStatus] = useState({});
+  const [trackingId, setTrackingId] = useState(null); // 현재 수거 중인 픽업 ID
+
+
+  // 카카오맵 API 키
   const js_key = process.env.REACT_APP_KAKAO_MAP_JS_KEY;
   const navi_key = process.env.REACT_APP_KAKAO_NAVI_KEY;
-  const [watchId, setWatchId] = useState(null); // watchPosition ID 저장
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  
 
-
+  // 오늘 날짜 가져오기 함수
   const getToday = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -62,9 +50,7 @@ const PickupDeliverPage = () => {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-  
 
-  // 위치 전송 함수
   const sendLocationUpdate = async (pickupId, latitude, longitude) => {
     try {
       const response = await fetch(`https://refresh-f5-server.o-r.kr/api/pickup/update-location`, {
@@ -143,8 +129,7 @@ const PickupDeliverPage = () => {
       return updatedPositions;
     });
   };
-  
-  // 페이지 로드 시 현재 위치 마커 표시
+
   useEffect(() => {
     if (map && !driverMarker) {
       navigator.geolocation.getCurrentPosition(
@@ -159,8 +144,8 @@ const PickupDeliverPage = () => {
       );
     }
   }, [map, driverMarker]);
-  
 
+  // 픽업 정보 가져오기 함수 (픽업 리스트 추가)
   const fetchPickups = async () => {
     try {
       const response = await fetch(
@@ -170,11 +155,20 @@ const PickupDeliverPage = () => {
       if (!response.ok) throw new Error("수거지 정보를 불러올 수 없습니다.");
       const data = await response.json();
       setPickups(data);
+      setPickupList(data);
+
+      // 픽업 상태 초기화
+      const initialStatus = data.reduce((acc, pickup) => {
+        acc[pickup.pickupId] = false;
+        return acc;
+      }, {});
+      setSelectedPickupStatus(initialStatus);
     } catch (error) {
       console.error("수거지 정보 가져오기 오류:", error);
     }
   };
 
+  // 픽업 상세 정보 가져오기 함수 (기존과 동일)
   const fetchPickupDetails = async (pickupId) => {
     try {
       setLoading(true);
@@ -192,6 +186,197 @@ const PickupDeliverPage = () => {
     }
   };
 
+  
+
+  // 픽업 리스트 아이템 클릭 핸들러 (새로 추가)
+  const handlePickupListItemClick = (pickup) => {
+    // 수거 중일 때 다른 항목 클릭 불가
+    if (trackingId && trackingId !== pickup.pickupId) {
+      console.log("다른 항목을 클릭할 수 없습니다.");
+      return;
+    }
+  
+    // 선택한 픽업 정보를 상태에 저장
+    setSelectedPickup(pickup);
+  
+    // 선택한 픽업의 상세 정보를 가져옴
+    fetchPickupDetails(pickup.pickupId);
+  
+    // 선택 상태 업데이트
+    setSelectedPickupStatus((prev) => {
+      const newStatus = { ...prev };
+      Object.keys(newStatus).forEach((key) => {
+        newStatus[key] = key === pickup.pickupId.toString();
+      });
+      return newStatus;
+    });
+  
+    // 지도 중심을 선택된 픽업 위치로 이동
+    if (map) {
+      const geocoder = new window.kakao.maps.services.Geocoder();
+      const fullAddress = `${pickup.address.roadNameAddress} ${pickup.address.detailedAddress}`;
+      
+      geocoder.addressSearch(fullAddress, (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+          map.setCenter(coords); // 지도 중심 이동
+          map.setLevel(3); // 확대 수준 설정
+        }
+      });
+    }
+  };
+  
+
+  // 마커 추가 함수 (기존과 동일)
+  const addPickupMarkers = () => {
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    const newMarkers = {}; // 새롭게 추가될 마커 객체
+  
+    pickups.forEach((pickup) => {
+      const fullAddress = `${pickup.address.roadNameAddress} ${pickup.address.detailedAddress}`;
+      geocoder.addressSearch(fullAddress, (result, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+          const marker = new window.kakao.maps.Marker({
+            position: coords,
+            map: map,
+          });
+  
+          // 마커 클릭 이벤트
+          window.kakao.maps.event.addListener(marker, "click", () => {
+            setSelectedPickup(pickup); // 클릭한 픽업 정보를 상태로 설정
+            fetchPickupDetails(pickup.pickupId); // 픽업 상세 정보 가져오기
+            console.log(`선택된 픽업 ID: ${pickup.pickupId}`);
+  
+            // 기사 위치와 수거지 위치 기반으로 폴리라인 업데이트
+            if (driverMarker) {
+              updatePolylineWithNaviAPI(driverMarker.getPosition(), coords);
+            }
+          });
+  
+          // 새 마커 저장: pickupId를 키로 사용
+          newMarkers[pickup.pickupId] = marker;
+        }
+      });
+    });
+  
+    // 기존 상태와 병합
+    setPickupMarkers((prevMarkers) => ({ ...prevMarkers, ...newMarkers }));
+  };
+  
+  
+
+  // 위치 추적 시작 함수 (기존과 동일)
+  const startTracking = () => {
+    if (!selectedPickup) {
+      console.error("수거지를 선택해야 위치 전송을 시작할 수 있습니다.");
+      return;
+    }
+  
+    setTrackingId(selectedPickup.pickupId); // 현재 수거 중인 픽업 ID 저장
+    setTracking(true);
+    setModalVisible(false);
+  
+    // 선택된 마커만 보이도록 설정
+    Object.entries(pickupMarkers).forEach(([id, marker]) => {
+      if (parseInt(id) === selectedPickup.pickupId) {
+        marker.setMap(map); // 선택된 마커만 표시
+      } else {
+        marker.setMap(null); // 다른 마커 숨김
+      }
+    });
+  
+    const timerId = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
+    setTimer(timerId);
+  
+    const id = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        updateDriverMarker(latitude, longitude);
+  
+        // 클릭한 마커의 픽업 ID로 위치 전송
+        sendLocationUpdate(selectedPickup.pickupId, latitude, longitude);
+  
+        // 폴리라인 업데이트
+        if (selectedPickup) {
+          const { roadNameAddress, detailedAddress } = selectedPickup.address;
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          geocoder.addressSearch(
+            `${roadNameAddress} ${detailedAddress}`,
+            (result, status) => {
+              if (status === window.kakao.maps.services.Status.OK) {
+                const endCoords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+                const startCoords = new window.kakao.maps.LatLng(latitude, longitude);
+                updatePolylineWithNaviAPI(startCoords, endCoords);
+              }
+            }
+          );
+        }
+      },
+      (error) => {
+        console.error("위치 추적 중 오류 발생:", error);
+      },
+      { enableHighAccuracy: true }
+    );
+  
+    setWatchId(id); // watchPosition ID 저장
+  };
+  
+  
+
+  // 위치 추적 중지 함수 (기존과 동일)
+  const stopTracking = async (pickupId) => {
+    if (!pickupId) {
+      console.error("픽업 ID가 제공되지 않았습니다.");
+      return;
+    }
+    setTrackingId(null);
+    setTracking(false);
+    clearInterval(timer);
+    setTimer(null);
+  
+    if (watchId !== null) {
+      navigator.geolocation.clearWatch(watchId); // 위치 추적 중단
+      console.log("위치 추적이 중단되었습니다.");
+      setWatchId(null); // watchId 초기화
+    }
+  
+    console.log(`픽업 ID ${pickupId}에 대한 위치 전송이 중단되었습니다.`);
+  
+    // 위치 삭제 API 호출
+    try {
+      const token = localStorage.getItem("token");
+  
+      const response = await fetch(`https://refresh-f5-server.o-r.kr/api/pickup/delete-location?pickupId=${pickupId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("위치 삭제에 실패했습니다.");
+      }
+      console.log(`픽업 ID ${pickupId}의 위치가 성공적으로 삭제되었습니다.`);
+    } catch (error) {
+      console.error("위치 삭제 오류:", error);
+    }
+  };
+  
+
+  // 로그아웃 함수 (기존과 동일)
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    localStorage.removeItem("id");
+    window.location.href = '/login';
+  };
+
+  // 마커 클릭 및 폴리라인 업데이트 함수들 (기존과 동일)
   const handleMarkerClick = (pickupLat, pickupLng) => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -216,7 +401,7 @@ const PickupDeliverPage = () => {
       { enableHighAccuracy: true }
     );
   };
-  
+
   const updatePolylineWithNaviAPI = async (startCoords, endCoords) => {
     try {
       const response = await fetch(
@@ -271,94 +456,8 @@ const PickupDeliverPage = () => {
       console.error("카카오내비 경로 업데이트 오류:", error);
     }
   };
-  
 
-// 마커를 클릭했을 때 selectedPickup 업데이트
-const addPickupMarkers = () => {
-    const geocoder = new window.kakao.maps.services.Geocoder();
-    pickups.forEach((pickup) => {
-      const fullAddress = `${pickup.address.roadNameAddress} ${pickup.address.detailedAddress}`;
-      geocoder.addressSearch(fullAddress, (result, status) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-          const marker = new window.kakao.maps.Marker({
-            position: coords,
-            map: map,
-          });
-  
-          // 마커 클릭 이벤트
-          window.kakao.maps.event.addListener(marker, "click", () => {
-            setSelectedPickup(pickup); // 클릭한 픽업 정보를 상태로 설정
-            fetchPickupDetails(pickup.pickupId); // 픽업 상세 정보 가져오기
-            console.log(`선택된 픽업 ID: ${pickup.pickupId}`);
-                 // 기사 위치와 수거지 위치 기반으로 폴리라인 업데이트
-                 if (driverMarker) {
-                  updatePolylineWithNaviAPI(driverMarker.getPosition(), coords);
-                }
-              
-          });
-
-          
-
-
-  
-          setPickupMarkers((prevMarkers) => [...prevMarkers, marker]);
-        }
-      });
-    });
-  };
-  
-
-  const startTracking = () => {
-    if (!selectedPickup) {
-      console.error("수거지를 선택해야 위치 전송을 시작할 수 있습니다.");
-      return;
-    }
-  
-    setTracking(true);
-    setModalVisible(false);
-  
-    const timerId = setInterval(() => {
-      setElapsedTime((prev) => prev + 1);
-    }, 1000);
-    setTimer(timerId);
-  
-    const id = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        updateDriverMarker(latitude, longitude);
-  
-        // 클릭한 마커의 픽업 ID로 위치 전송
-        sendLocationUpdate(selectedPickup.pickupId, latitude, longitude);
-  
-        // 폴리라인 업데이트
-        if (selectedPickup) {
-          const { roadNameAddress, detailedAddress } = selectedPickup.address;
-          const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.addressSearch(
-            `${roadNameAddress} ${detailedAddress}`,
-            (result, status) => {
-              if (status === window.kakao.maps.services.Status.OK) {
-                const endCoords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-                const startCoords = new window.kakao.maps.LatLng(latitude, longitude);
-                updatePolylineWithNaviAPI(startCoords, endCoords);
-              }
-            }
-          );
-        }
-      },
-      (error) => {
-        console.error("위치 추적 중 오류 발생:", error);
-      },
-      { enableHighAccuracy: true }
-    );
-  
-    setWatchId(id); // watchPosition ID 저장
-  };
-  
-
-
-
+  // useEffect 훅들 (기존 로직 유지)
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${js_key}&libraries=services&autoload=false`;
@@ -408,7 +507,6 @@ const addPickupMarkers = () => {
       pickupMarkers.forEach((marker) => marker.setMap(null)); // 수거지 마커 제거
     };
   }, [js_key]);
-
   useEffect(() => {
     if (map) fetchPickups();
   }, [map]);
@@ -417,126 +515,123 @@ const addPickupMarkers = () => {
     if (map && pickups.length > 0) addPickupMarkers();
   }, [map, pickups]);
 
-  // 로그아웃 함수
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("email");
-  localStorage.removeItem("role");
-  localStorage.removeItem("id");
-  window.location.href = '/login';
-};
-
-
-
-// 위치 추적 중지 및 삭제
-const stopTracking = async (pickupId) => {
-  if (!pickupId) {
-    console.error("픽업 ID가 제공되지 않았습니다.");
-    return;
-  }
-
-  setTracking(false);
-  clearInterval(timer);
-  setTimer(null);
-
-  if (watchId !== null) {
-    navigator.geolocation.clearWatch(watchId); // 위치 추적 중단
-    console.log("위치 추적이 중단되었습니다.");
-    setWatchId(null); // watchId 초기화
-  }
-
-  console.log(`픽업 ID ${pickupId}에 대한 위치 전송이 중단되었습니다.`);
-
-  // 위치 삭제 API 호출
-  try {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`https://refresh-f5-server.o-r.kr/api/pickup/delete-location?pickupId=${pickupId}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("위치 삭제에 실패했습니다.");
-    }
-    console.log(`픽업 ID ${pickupId}의 위치가 성공적으로 삭제되었습니다.`);
-  } catch (error) {
-    console.error("위치 삭제 오류:", error);
-  }
-};
-
-
-
-
-
+  // 렌더링 로직 (픽업 리스트 사이드바 추가)
   return (
     <div className="pickup-page-wrapper">
-      <div className="pickup-container">
-        <header className="page-header">
-          <div className="header-content">
-            <Truck size={36} strokeWidth={2} className="truck-icon" />
-            <h1 className="page-title">수거지 현황</h1>
-            <button onClick={handleLogout} className="logout-button">
-            로그아웃
-          </button>
-          </div>
-        </header>
+      <header className="page-header">
+        <h1 className="page-title">수거지 현황</h1>
+        <Button type="primary" danger  onClick={handleLogout}>
+          로그아웃
+        </Button>
+      </header>
 
-        <div id="map-container" className="map-display"></div>
+      <div className="main-content-wrapper">
+        {/* 지도와 상세 정보 */}
+        <div className="map-and-details-container">
+          <div id="map-container" className="map-display"></div>
 
-        {selectedPickup && (
-          <section className="pickup-details-section">
-            <h3>선택한 수거지 정보</h3>
-            <p><strong>수거지:</strong> {selectedPickup.address.name}</p>
-            <p><strong>주소:</strong> {selectedPickup.address.roadNameAddress}</p>
-            <p><strong>수거 ID:</strong> {selectedPickup.pickupId}</p>
-            <h4>수거 품목 정보</h4>
-            {loading ? (
-              <p>로딩 중...</p>
-            ) : pickupDetails.length > 0 ? (
-              <ul>
-                {pickupDetails.map((item, index) => (
-                  <li key={index}>
-                    {item.wasteName} - {item.weight}kg (예상 가격: {item.pricePreview}원)
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>수거 품목 정보가 없습니다.</p>
-            )}
-            {!tracking && (
-              <button
-                onClick={() => setModalVisible(true)}
-                className="action-button start-button"
+          {selectedPickup && (
+  <section className="pickup-details-section">
+    <Card
+      title="선택한 수거지 정보"
+      bordered={false}
+      styles={{
+        header: {
+          backgroundColor: "var(--primary-color)",
+          color: "white",
+          textAlign: "center",
+          borderTopLeftRadius: "12px",
+          borderTopRightRadius: "12px",
+        },
+        body: {
+          padding: "20px",
+        },
+      }}
+    >
+      <Descriptions column={1}>
+        <Descriptions.Item label="수거지">
+          <span style={{ fontWeight: "bold", color: "var(--primary-color)" }}>
+            {selectedPickup.address.name}
+          </span>
+        </Descriptions.Item>
+        <Descriptions.Item label="주소">
+          {selectedPickup.address.roadNameAddress}
+        </Descriptions.Item>
+        <Descriptions.Item label="수거 ID">
+          {selectedPickup.pickupId}
+        </Descriptions.Item>
+      </Descriptions>
+    </Card>
+  </section>
+)}
+        </div>
+
+        {/* 하단 수거지 리스트 */}
+        <div className="pickup-list-container">
+          <h2>오늘의 수거지</h2>
+          <List
+            itemLayout="horizontal"
+            dataSource={pickupList}
+            renderItem={(pickup) => (
+              <List.Item
+                className={`pickup-list-item ${
+                  selectedPickupStatus[pickup.pickupId] ? "selected" : ""
+                }`}
+                onClick={() => handlePickupListItemClick(pickup)}
+                style={{
+                  pointerEvents:
+                    trackingId && trackingId !== pickup.pickupId
+                      ? "none"
+                      : "auto",
+                  opacity:
+                    trackingId && trackingId !== pickup.pickupId ? 0.5 : 1,
+                }}
+                actions={[
+                  trackingId === pickup.pickupId ? (
+                    <Button
+                      type="danger"
+                      onClick={() => stopTracking(pickup.pickupId)}
+                    >
+                      수거 종료
+                    </Button>
+                  ) : (
+                    <Button
+                      type="primary"
+                      disabled={!!trackingId}
+                      onClick={() => startTracking(pickup.pickupId)}
+                    >
+                      수거 시작
+                    </Button>
+                  ),
+                ]}
               >
-                수거 시작하기
-              </button>
+                <List.Item.Meta
+                  avatar={
+                    <Avatar
+                      style={{
+                        backgroundColor: selectedPickupStatus[pickup.pickupId]
+                          ? "green"
+                          : "gray",
+                      }}
+                      icon={
+                        selectedPickupStatus[pickup.pickupId] ? (
+                          <Check size={16} />
+                        ) : (
+                          <X size={16} />
+                        )
+                      }
+                    />
+                  }
+                  title={pickup.address.name}
+                  description={pickup.address.roadNameAddress}
+                />
+              </List.Item>
             )}
-            {tracking && (
-              <button
-              onClick={() => stopTracking(selectedPickup.pickupId)} // 동일한 pickupId로 위치 삭제
-                className="action-button stop-button"
-              >
-                수거 종료하기
-              </button>
-            )}
-          </section>
-        )}
-
-        {modalVisible && (
-          <Modal
-            message="수거를 시작하시겠습니까?"
-            onConfirm={startTracking}
-            onClose={() => setModalVisible(false)}
           />
-        )}
+        </div>
       </div>
     </div>
   );
 };
 
 export default PickupDeliverPage;
-
