@@ -22,7 +22,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
+                //.cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS 설정 추가
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 // POST 요청만 허용
@@ -48,21 +48,21 @@ public class SecurityConfig {
     }
 
     // CORS 설정을 위한 빈 등록
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000",
-                "http://3.37.122.192:8000",
-                "http://localhost:8000",
-                "http://127.0.0.1:3000",
-                "https://refresh-f5.store",
-                "http://15.165.174.146:3000")); // 특정 도메인만 허용
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
-        configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
-        configuration.setAllowCredentials(true); // 쿠키 및 인증정보 허용
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000",
+//                "http://3.37.122.192:8000",
+//                "http://localhost:8000",
+//                "http://127.0.0.1:3000",
+//                "https://refresh-f5.store",
+//                "http://15.165.174.146:3000")); // 특정 도메인만 허용
+//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
+//        configuration.setAllowedHeaders(Arrays.asList("*")); // 모든 헤더 허용
+//        configuration.setAllowCredentials(true); // 쿠키 및 인증정보 허용
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 }
