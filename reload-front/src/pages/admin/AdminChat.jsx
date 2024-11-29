@@ -5,7 +5,7 @@ import SockJS from 'sockjs-client';
 import { Stomp } from '@stomp/stompjs';
 
 const AdminChat = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]); // 모든 메시지를 배열로 저장
   const [stompClient, setStompClient] = useState(null);
   const [chatList, setChatList] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -14,7 +14,6 @@ const AdminChat = () => {
   const inputValueRef = useRef('');
   const adminName = "새로고침";
 
-  // 구독된 채팅방 ID 추적
   const subscribedChatRooms = useRef(new Set());
 
   useEffect(() => {
@@ -26,17 +25,16 @@ const AdminChat = () => {
     client.connect({}, () => {
       setStompClient(client);
 
-      // 새로운 채팅방이 생성될 때마다 구독
       client.subscribe('/topic/admin/new-room', (message) => {
         const newRoom = JSON.parse(message.body);
         console.log('New room created:', newRoom);
 
-        // 중복 구독 방지
         if (newRoom.chatId && !subscribedChatRooms.current.has(newRoom.chatId)) {
           subscribedChatRooms.current.add(newRoom.chatId);
+
           client.subscribe(`/topic/chat/${newRoom.chatId}`, (message) => {
             const receivedMessage = JSON.parse(message.body);
-            handleReceivedMessage(receivedMessage);
+            handleReceivedMessage(receivedMessage, newRoom.chatId);
           });
 
           setChatList((prevList) => [
@@ -54,7 +52,7 @@ const AdminChat = () => {
     };
   }, [stompClient]);
 
-  const handleReceivedMessage = (receivedMessage) => {
+  const handleReceivedMessage = (receivedMessage, chatId) => {
     if (!receivedMessage.time) {
       receivedMessage.time = new Date().toLocaleTimeString('ko-KR', {
         hour: '2-digit',
@@ -63,15 +61,16 @@ const AdminChat = () => {
     }
 
     setMessages((prevMessages) => {
-      if (!prevMessages.some((msg) => msg.content === receivedMessage.content)) {
-        return [...prevMessages, receivedMessage];
+      // 중복 메시지 방지
+      if (!prevMessages.some((msg) => msg.chatId === chatId && msg.content === receivedMessage.content)) {
+        return [...prevMessages, { ...receivedMessage, chatId }];
       }
       return prevMessages;
     });
 
     setChatList((prevList) =>
       prevList.map((chat) =>
-        chat.chatId === receivedMessage.chatId
+        chat.chatId === chatId
           ? { ...chat, content: receivedMessage.content, unread: chat.unread + 1 }
           : chat
       )
@@ -84,9 +83,14 @@ const AdminChat = () => {
         chatId: selectedUser.chatId,
         content: inputValueRef.current,
         sender: adminName,
+        time: new Date().toLocaleTimeString('ko-KR', {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
       };
 
       stompClient.send('/app/chat', {}, JSON.stringify(message));
+
       setMessages((prevMessages) => [...prevMessages, message]);
       inputValueRef.current = '';
       inputRef.current.value = '';
@@ -96,11 +100,21 @@ const AdminChat = () => {
   const selectUser = (user) => {
     setSelectedUser(user);
     setChatList((prevList) =>
-      prevList.map((chat) => (chat.chatId === user.chatId ? { ...chat, unread: 0 } : chat))
+      prevList.map((chat) =>
+        chat.chatId === user.chatId ? { ...chat, unread: 0 } : chat
+      )
     );
   };
 
-  // 채팅방 목록과 채팅창 UI 그대로 유지
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  const filteredMessages = messages.filter((msg) => msg.chatId === selectedUser?.chatId);
+
   const ChatList = () => (
     <Card title="채팅 목록" style={styles.chatList} bordered>
       <List
@@ -109,7 +123,7 @@ const AdminChat = () => {
         renderItem={(chat) => (
           <List.Item
             style={{
-              backgroundColor: selectedUser?.sender === chat.sender ? '#e0f7fa' : 'white',
+              backgroundColor: selectedUser?.chatId === chat.chatId ? '#e0f7fa' : 'white',
               cursor: 'pointer',
               borderRadius: '5px',
               margin: '5px 0',
@@ -119,10 +133,10 @@ const AdminChat = () => {
           >
             <List.Item.Meta
               avatar={<Avatar icon="user" />}
-              title={<span><strong>{chat.sender}</strong></span>}
+              title={<strong>{chat.sender}</strong>}
               description={chat.content}
             />
-            {chat.unread > 0 && selectedUser?.sender !== chat.sender && (
+            {chat.unread > 0 && selectedUser?.chatId !== chat.chatId && (
               <span style={styles.unreadBadge}>안 읽음: {chat.unread}</span>
             )}
           </List.Item>
@@ -132,9 +146,13 @@ const AdminChat = () => {
   );
 
   const ChatWindow = () => (
-    <Card title={selectedUser ? `${selectedUser.sender}와의 대화` : '유저를 선택하세요'} style={styles.chatWindow} bordered>
+    <Card
+      title={selectedUser ? `${selectedUser.sender}와의 대화` : '유저를 선택하세요'}
+      style={styles.chatWindow}
+      bordered
+    >
       <div style={styles.messageContainer} ref={chatContainerRef}>
-        {messages.map((msg, index) => (
+        {filteredMessages.map((msg, index) => (
           <div key={index} style={msg.sender === adminName ? styles.adminMessage : styles.userMessage}>
             {msg.sender !== adminName && (
               <div style={styles.userAvatarContainer}>
@@ -151,21 +169,15 @@ const AdminChat = () => {
       </div>
       <div style={styles.inputContainer}>
         <input
-          className='admin-chat-input'
+          className="admin-chat-input"
           type="text"
           onChange={(e) => (inputValueRef.current = e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage();
-            }
-          }}
+          onKeyDown={handleKeyDown}
           placeholder="메시지를 입력하세요"
           style={styles.input}
           ref={inputRef}
           disabled={!selectedUser}
           autoComplete="off"
-          autoFocus
         />
         <SendOutlined
           onClick={sendMessage}
@@ -182,6 +194,9 @@ const AdminChat = () => {
     </div>
   );
 };
+
+
+
 
 const styles = {
   container: {
