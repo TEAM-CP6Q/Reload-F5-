@@ -16,12 +16,10 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://127.0.0.1:3000",
-                                "http://3.37.122.192:8000",
-                                "http://15.165.174.146:3000",
-                                "http://localhost:8000",
+                                "https://refresh-f5-server.o-r.kr",
                                 "https://refresh-f5.store")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowCredentials(true);
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+                        //.allowCredentials(true);
             }
         };
     }
