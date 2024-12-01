@@ -43,9 +43,37 @@ const CategoryButtons = () => {
     );
 };
 
+// fetch 디자이너 데이터
+const fetchDesigner = async (designerId) => {
+    const response = await fetch(`https://refresh-f5-server.o-r.kr/api/account/designer/get-designer/${designerId}`, {
+      method: 'GET', // 메소드 설정 (GET)
+      headers: {
+        'Content-Type': 'application/json', // 요청 헤더 추가
+      }
+    });
+    const data = await response.json();
+    return data;
+  };
+  
+
 const NewProductCard = ({ product }) => {
     const navigate = useNavigate();
     const [isPressed, setIsPressed] = useState(false);
+    const [designer, setDesigner] = useState(null);
+
+    useEffect(() => {
+        const fetchDesignerData = async () => {
+            try {
+                const designerData = await fetchDesigner(product.designerIndex);
+                setDesigner(designerData);
+                console.log("디자이너 : " + product.designerIndex);
+            } catch (error) {
+                console.error('디자이너 데이터를 가져오는 중 오류가 발생했습니다:', error);
+            }
+        };
+
+        fetchDesignerData();
+    }, [product.designerIndex]);
 
     const handleClick = () => {
         navigate('/product-detail', {
@@ -63,11 +91,11 @@ const NewProductCard = ({ product }) => {
         >
             <div className="main-product-card-image-container">
                 <div className="new-product-card">
-                    <img src={`/api/images/${product.pid}`} alt={product.name} className="new-product-image" />
+                    <img src={product.imageUrls[0]} alt={product.name} className="new-product-image" />
                 </div>
             </div>
             <div className="main-product-card-content">
-                <div className="new-product-designer">D.디자이너</div>
+                <div className="new-product-designer">{designer ? designer.name : '로딩 중...'}</div>
                 <div className="new-product-name">{product.name}</div>
                 <div className="new-product-price">{product.price.toLocaleString()}원</div>
             </div>
