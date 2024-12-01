@@ -40,6 +40,11 @@ const ProductDetailPage = () => {
         navigate(`/designer/${designer.id}`);
     };
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+    };
+
     return (
         <div className='productDetail-main-container'>
             <Header />
@@ -58,7 +63,7 @@ const ProductDetailPage = () => {
                                 <img 
                                     src={designer.profileImage} 
                                     alt={designer?.name} 
-                                    className="designer-profile-pic"
+                                    className="productDetail-designer-profile-pic"
                                 />
                             )}
                         </div>
@@ -75,6 +80,62 @@ const ProductDetailPage = () => {
                         <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '10px' }} />
                     </div>
                 </div>
+            </div>
+
+            <div className="productDetail-divider" />
+
+            <div className='productDetail-title-container'>
+                <div className='productDetail-title-label'>{product.name}</div>
+                <div className='productDetail-title-price'>{product.price?.toLocaleString()}원</div>
+            </div>
+
+            <div className='productDetail-buttons-container'>
+                <button className='productDetail-cart-button'>장바구니</button>
+                <button className='productDetail-buy-button'>즉시구매</button>
+            </div>
+
+            <div className="productDetail-divider" />
+
+            <div className='productDetail-info-container'>
+                <h3 style={{fontWeight: '600', marginBottom: '15px'}}>상품 정보</h3>
+                <div className='productDetail-info-item'>
+                    <span className='productDetail-info-label'>품명</span>
+                    <span className='productDetail-info-value'>{product.name}</span>
+                </div>
+                <div className='productDetail-info-item'>
+                    <span className='productDetail-info-label'>디자이너</span>
+                    <span className='productDetail-info-value'>{designer?.name}</span>
+                </div>
+                <div className='productDetail-info-item'>
+                    <span className='productDetail-info-label'>가격</span>
+                    <span className='productDetail-info-value'>{product.price?.toLocaleString()}원</span>
+                </div>
+                <div className='productDetail-info-item'>
+                    <span className='productDetail-info-label'>출시 일자</span>
+                    <span className='productDetail-info-value'>{formatDate(product.createdOn)}</span>
+                </div>
+                <div className='productDetail-info-item'>
+                    <span className='productDetail-info-label'>제품 ID</span>
+                    <span className='productDetail-info-value'>{product.pid}</span>
+                </div>
+            </div>
+
+            <div className="productDetail-divider" />
+
+            <div className='productDetail-additional-images'>
+                {product.imageUrls.slice(1).map((imageUrl, index) => (
+                    <img 
+                        key={index + 1}
+                        src={imageUrl} 
+                        alt={`${product.name} 추가 이미지 ${index + 1}`} 
+                        className="productDetail-additional-image" 
+                    />
+                ))}
+            </div>
+
+            <div className='productDetail-fixed-bottom-buttons'>
+                <button className='productDetail-fixed-cart-button'>장바구니</button>
+                <button className='productDetail-fixed-buy-button'>즉시구매</button>
             </div>
         </div>
     );
