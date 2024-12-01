@@ -20,13 +20,15 @@ public class ProductServiceImpl implements ProductService{
 
     // 상품등록
     @Override
-    public void insertProduct(ProductDTO productDTO) {
+    public ProductDTO insertProduct(ProductDTO productDTO) {
         try {
             productDAO.insertProduct(productDTO);
         } catch (Exception e) {
             throw new IllegalStateException("상품 등록 실패", e);
         }
+        return productDTO;
     }
+
 
     // 상품 카테고리 등록
     @Override

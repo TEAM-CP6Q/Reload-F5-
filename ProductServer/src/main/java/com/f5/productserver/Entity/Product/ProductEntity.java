@@ -4,7 +4,9 @@ import com.f5.productserver.Entity.ProductCategory.ProductCategoryEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -34,9 +36,10 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "pc_Id",referencedColumnName = "pcId", nullable = false)
     private ProductCategoryEntity categoryIndex;
-    @Column(nullable = false)
-    private Long imageIndex;
+    @ElementCollection
+    @CollectionTable(name = "url", joinColumns = @JoinColumn(name = "pId"))
+    @Column(name = "image_url")
+    private List<String> imageUrls = new ArrayList<>();
     @Column(nullable = false)
     private Long designerIndex;
-
 }
