@@ -168,7 +168,20 @@ const MainPage = () => {
     }, []);
 
     const onSearch = () => {
-        console.log(searchValue);
+        if (searchValue.trim()) {
+            // 현재 products 배열에서 검색어가 포함된 상품들을 필터링
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(searchValue.toLowerCase())
+            );
+            
+            // 검색 결과 페이지로 이동하면서 필터링된 상품들과 검색어를 전달
+            navigate('/search', {
+                state: { 
+                    searchResults: filteredProducts,
+                    searchQuery: searchValue
+                }
+            });
+        }
     };
 
     const handleKeyPress = (event) => {
@@ -223,7 +236,7 @@ const MainPage = () => {
 
             <div className="main-new-products-header">
                 <div className="main-new-products-text">
-                    최신 상품
+                    전체 상품
                 </div>
                 <div className="main-new-products-array">
                     최신순

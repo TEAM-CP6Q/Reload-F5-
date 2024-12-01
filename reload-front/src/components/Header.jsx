@@ -75,6 +75,8 @@ const Header = () => {
                 return '수거 기사님 위치 확인';
             case '/product-detail':
                 return '상품 상세';
+            case '/search':
+                return '상품 검색';
 
 
 
