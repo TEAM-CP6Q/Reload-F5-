@@ -38,7 +38,8 @@ public class SecurityConfig {
                                 "/api/account/designer/get-designer/**",
                                 "/api/account/designer/all-designer",
                                 "/api/product/product-list",
-                                "/api/**").permitAll()
+                                "/api/**",
+                                "/api/home").permitAll()
 
                         // POST 요청 허용
                         .pathMatchers(HttpMethod.POST,
