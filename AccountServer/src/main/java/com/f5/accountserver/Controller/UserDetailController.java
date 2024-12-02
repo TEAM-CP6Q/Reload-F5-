@@ -88,7 +88,6 @@ public class UserDetailController {
                             .build());
         }
     }
-
     @GetMapping("/user-list")
     public ResponseEntity<?> getUserList() {
         LinkedHashMap<String, UserDetailDTO> userList = new LinkedHashMap<>();
