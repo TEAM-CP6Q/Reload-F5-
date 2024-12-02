@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import Header from "../components/Header";
@@ -17,12 +17,12 @@ const PickupLocation = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [estimatedTime, setEstimatedTime] = useState(null);
+  const [addressCache, setAddressCache] = useState({});
 
-  const driverMarkerRef = useRef(null); // 기사 마커를 관리
-  const pickupMarkerRef = useRef(null); // 수거지 마커를 관리
+  const driverMarkerRef = useRef(null);
+  const pickupMarkerRef = useRef(null);
 
-  // 지도 초기화
-  const initializeMap = (lat, lng) => {
+  const initializeMap = useCallback((lat, lng) => {
     if (!window.kakao || !window.kakao.maps) {
       setError("카카오맵 API가 로드되지 않았습니다.");
       return;
@@ -38,30 +38,118 @@ const PickupLocation = () => {
       const newMap = new window.kakao.maps.Map(container, options);
       setMap(newMap);
     });
-  };
+  }, []);
 
-  const loadKakaoScript = () => {
+  const loadKakaoScript = useCallback(() => {
     return new Promise((resolve, reject) => {
       if (window.kakao && window.kakao.maps) {
-        resolve();
+        window.kakao.maps.load(() => {
+          resolve();
+        });
         return;
       }
 
       const script = document.createElement("script");
       script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${js_key}&libraries=services&autoload=false`;
       script.async = true;
-      script.onload = resolve;
+      script.onload = () => {
+        window.kakao.maps.load(() => {
+          resolve();
+        });
+      };
       script.onerror = () => reject("카카오맵 API 스크립트를 로드할 수 없습니다.");
-      document.body.appendChild(script);
+      document.head.appendChild(script);
     });
+  }, [js_key]);
+
+// geocoder를 컴포넌트 상단에서 한 번만 생성
+const geocoderRef = useRef(null);
+
+// 주소 검색 함수
+const geocodePickupAddress = useCallback((roadAddress, detailAddress) => {
+  if (!window.kakao || !window.kakao.maps || !map) {
+    console.error("Kakao maps 초기화 상태:", {
+      kakao: !!window.kakao,
+      maps: !!window.kakao?.maps,
+      map: !!map
+    });
+    setError("지도 서비스를 초기화하는 데 실패했습니다.");
+    return;
+  }
+
+  // geocoder 초기화가 안 되어있으면 초기화
+  if (!geocoderRef.current) {
+    geocoderRef.current = new window.kakao.maps.services.Geocoder();
+  }
+
+  const callback = (result, status) => {
+    if (status === window.kakao.maps.services.Status.OK) {
+      const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+
+      if (pickupMarkerRef.current) {
+        pickupMarkerRef.current.setMap(null);
+      }
+
+      const marker = new window.kakao.maps.Marker({
+        position: coords,
+        map: map
+      });
+
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: `<div style="padding:5px;font-size:12px;">상세주소: ${detailAddress}</div>`
+      });
+
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        infowindow.open(map, marker);
+      });
+
+      pickupMarkerRef.current = marker;
+      map.setCenter(coords);
+    } else {
+      console.error("주소 검색 실패", {
+        status,
+        errorCode: window.kakao.maps.services.Status,
+        address: roadAddress
+      });
+      setError("주소를 찾을 수 없습니다.");
+    }
   };
 
-  // 수거지 주소를 받아와 지도에 표시
-  const fetchPickupDetails = async () => {
+  geocoderRef.current.addressSearch(roadAddress, callback);
+}, [map]); // addressCache 의존성 제거
+
+  const displayMarker = useCallback((coords, detailAddress) => {
+    if (pickupMarkerRef.current) {
+      pickupMarkerRef.current.setMap(null);
+    }
+
+    const marker = new window.kakao.maps.Marker({
+      position: coords,
+      map: map
+    });
+
+    const infowindow = new window.kakao.maps.InfoWindow({
+      content: `<div style="padding:5px;font-size:12px;">상세주소: ${detailAddress}</div>`
+    });
+
+    window.kakao.maps.event.addListener(marker, 'click', () => {
+      infowindow.open(map, marker);
+    });
+
+    pickupMarkerRef.current = marker;
+    map.setCenter(coords);
+  }, [map]);
+
+
+
+
+
+
+  const fetchPickupDetails = useCallback(async () => {
     if (!pickupId || !map) return;
-  
+
     const token = localStorage.getItem("token");
-  
+
     try {
       setLoading(true);
       const response = await fetch(
@@ -74,12 +162,10 @@ const PickupLocation = () => {
           },
         }
       );
-  
+
       if (response.ok) {
         const data = await response.json();
         console.log("받은 데이터:", data);
-        
-        // roadNameAddress와 detailedAddress를 분리하여 전달
         geocodePickupAddress(data.roadNameAddress, data.detailedAddress);
       } else {
         setError("수거 상세 정보를 불러오는 데 실패했습니다.");
@@ -89,51 +175,15 @@ const PickupLocation = () => {
     } finally {
       setLoading(false);
     }
-  };
-  
-  const geocodePickupAddress = (roadAddress, detailAddress) => {
-    if (!window.kakao || !window.kakao.maps || !map) {
-      setError("지도 서비스를 초기화하는 데 실패했습니다.");
-      return;
+  }, [pickupId, map, geocodePickupAddress]);
+
+  const updateDriverMarker = useCallback((coords) => {
+    // 기존 폴리라인 제거
+    if (polyline) {
+      polyline.setMap(null);
     }
   
-    const geocoder = new window.kakao.maps.services.Geocoder();
-  
-    console.log("검색할 도로명 주소:", roadAddress);
-  
-    geocoder.addressSearch(roadAddress, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-  
-        if (pickupMarkerRef.current) {
-          pickupMarkerRef.current.setMap(null);
-        }
-  
-        const newPickupMarker = new window.kakao.maps.Marker({
-          position: coords,
-          map: map
-        });
-  
-        const infowindow = new window.kakao.maps.InfoWindow({
-          content: `<div style="padding:5px;font-size:12px;">상세주소: ${detailAddress}</div>`
-        });
-  
-        window.kakao.maps.event.addListener(newPickupMarker, 'click', function() {
-          infowindow.open(map, newPickupMarker);
-        });
-  
-        pickupMarkerRef.current = newPickupMarker;
-        map.setCenter(coords);
-      } else {
-        setError("주소를 찾을 수 없습니다.");
-        console.error("주소 검색 실패:", roadAddress);
-      }
-    });
-  };
-
-
-  // 기사 위치를 받아와 지도에 표시
-  const updateDriverMarker = (coords) => {
+    // 기사 마커 업데이트
     if (driverMarkerRef.current) {
       console.log("기존 마커 위치 업데이트 중...");
       driverMarkerRef.current.setPosition(coords);
@@ -142,6 +192,8 @@ const PickupLocation = () => {
       const content = `
         <div style="position: relative; width: 36px; height: 48px; text-align: center;">
           <div style="
+            position: relative;
+            z-index: 2;
             width: 36px;
             height: 36px;
             border-radius: 50%; 
@@ -159,6 +211,8 @@ const PickupLocation = () => {
               " />
           </div>
           <div style="
+            position: relative;
+            z-index: 1;
             width: 0; 
             height: 0; 
             border-left: 9px solid transparent; 
@@ -168,25 +222,49 @@ const PickupLocation = () => {
           </div>
         </div>
       `;
-
+  
       const newCustomOverlay = new window.kakao.maps.CustomOverlay({
         position: coords,
         content: content,
         map: map,
+        zIndex: 3  // 폴리라인보다 높은 z-index
       });
-
+  
       driverMarkerRef.current = newCustomOverlay;
     }
+  
+    // 이전 경로에 새로운 위치 추가
+    const newPath = [...path, coords];
+    setPath(newPath);
+  
+    // 새로운 폴리라인 생성 및 표시
+    const newPolyline = new window.kakao.maps.Polyline({
+      path: newPath,
+      strokeWeight: 3,
+      strokeColor: '#388E3C',
+      strokeOpacity: 0.8,
+      strokeStyle: 'solid',
+      zIndex: 1  // 폴리라인의 z-index
+    });
+  
+    newPolyline.setMap(map);
+    setPolyline(newPolyline);
+  
+    // 예상 시간 계산 (수거지 마커가 있는 경우만)
+    if (pickupMarkerRef.current) {
+      const pickupPosition = pickupMarkerRef.current.getPosition();
+      const distance = Math.round(coords.getDistance(pickupPosition));
+      const estimatedMinutes = Math.ceil((distance / 1000) * (60 / 40));
+      setEstimatedTime(estimatedMinutes);
+    }
+  }, [map, polyline]);
 
-    map.setCenter(coords);
-  };
-
-  const fetchDriverLocation = async () => {
+  const fetchDriverLocation = useCallback(async () => {
     if (!pickupId) {
       console.error("수거 ID가 설정되지 않았습니다.");
       return;
     }
-
+  
     try {
       const response = await fetch(
         `https://refresh-f5-server.o-r.kr/api/pickup/get-location?pickupId=${pickupId}`,
@@ -197,41 +275,70 @@ const PickupLocation = () => {
           },
         }
       );
-
+  
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`Error: ${response.status} - ${response.statusText} - ${errorText}`);
-        throw new Error("기사 위치를 가져오는 데 실패했습니다.");
-      }
-
-      const { latitude, longitude } = await response.json();
-      console.log("기사 현재 위치:", { latitude, longitude });
-
-      if (!latitude || !longitude) {
-        console.error("응답에 유효한 좌표가 없습니다.");
+        setError("기사님이 수거를 시작하지 않았습니다.");
         return;
       }
-
-      const coords = new window.kakao.maps.LatLng(latitude, longitude);
-      updateDriverMarker(coords);
+  
+      const text = await response.text();
+      
+      // 응답이 비어있거나 유효하지 않은 경우
+      if (!text || text === "null" || text === "{}") {
+        setError("기사님이 수거를 시작하지 않았습니다.");
+        return;
+      }
+  
+      const data = JSON.parse(text);
+      
+      // 위치 데이터가 있는 경우
+      if (data && data.latitude && data.longitude) {
+        const coords = new window.kakao.maps.LatLng(data.latitude, data.longitude);
+        updateDriverMarker(coords);
+        setError(null); // 에러 메시지 제거
+      } else {
+        setError("기사님이 수거를 시작하지 않았습니다.");
+      }
+  
     } catch (error) {
       console.error("기사 위치 업데이트 오류:", error);
+      setError("기사님이 수거를 시작하지 않았습니다.");
     }
-  };
+  }, [pickupId, updateDriverMarker]);
 
-  useEffect(() => {
-    loadKakaoScript()
-      .then(() => initializeMap(37.5665, 126.978))
-      .catch((error) => setError(error));
-  }, []);
+  // 기존 useEffect들을 제거하고 아래와 같이 분리
 
-  useEffect(() => {
-    if (map) {
-      fetchPickupDetails();
-      const intervalId = setInterval(fetchDriverLocation, 5000);
-      return () => clearInterval(intervalId);
-    }
-  }, [map]);
+// 1. 지도 초기화를 위한 useEffect
+useEffect(() => {
+  loadKakaoScript()
+    .then(() => initializeMap(37.5665, 126.978))
+    .catch((error) => setError(error));
+}, [loadKakaoScript, initializeMap]);
+
+// 2. 수거지 마커를 위한 useEffect - 한 번만 실행
+useEffect(() => {
+  if (map && pickupId) {
+    fetchPickupDetails();
+  }
+}, [map]); // pickupId 제거, map이 로드된 후 한 번만 실행
+
+// 3. 기사 위치 추적을 위한 useEffect
+useEffect(() => {
+  if (map && pickupId) {
+    let isSubscribed = true;
+
+    const intervalId = setInterval(async () => {
+      if (isSubscribed) {
+        await fetchDriverLocation();
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+      isSubscribed = false;
+    };
+  }
+}, [map, pickupId, fetchDriverLocation]);
 
   return (
     <div className="pickuplocation-container">
