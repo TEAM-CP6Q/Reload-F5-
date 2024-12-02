@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CicdController {
     @GetMapping("/")
     public String homePage(HttpServletRequest request){
-        return "homePage";
+        return "index";
     }
 }
