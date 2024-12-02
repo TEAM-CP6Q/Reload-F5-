@@ -46,19 +46,4 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable); // CSRF 보호 비활성화
         return http.build();
     }
-
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList(
-//                "http://127.0.0.1:3000",
-//                "https://refresh-f5-server.o-r.kr",
-//                "https://refresh-f5.store"
-//        )); // 허용할 Origin 설정
-//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드 설정
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 CORS 설정 적용
-//        return source;
-//    }
 }
