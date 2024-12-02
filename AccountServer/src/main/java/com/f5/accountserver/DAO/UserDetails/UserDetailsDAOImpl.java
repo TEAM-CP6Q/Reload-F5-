@@ -1,19 +1,20 @@
 package com.f5.accountserver.DAO.UserDetails;
 
 import com.f5.accountserver.DTO.UserDetailDTO;
-import com.f5.accountserver.Entity.DormantEntity;
 import com.f5.accountserver.Entity.UserDetailsEntity;
 import com.f5.accountserver.Repository.DormantRepository;
 import com.f5.accountserver.Repository.UserDetailsRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 @Transactional
@@ -54,8 +55,10 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
     @Override
     public void update(UserDetailDTO userDetails) {
         try {
+            log.info(userDetails.toString());
             UserDetailsEntity existingUser = userDetailsRepository.findById(userDetails.getId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저를 찾을 수 없습니다."));
+            log.info("이름");
             existingUser.setName(userDetails.getName());
             existingUser.setPostalCode(userDetails.getPostalCode());
             existingUser.setRoadNameAddress(userDetails.getRoadNameAddress());

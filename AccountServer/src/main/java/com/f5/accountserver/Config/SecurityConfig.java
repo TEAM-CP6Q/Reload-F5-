@@ -29,7 +29,9 @@ public class SecurityConfig {
                                         "/api/account/search-account/**",
                                         "/api/account/user-list",
                                         "/api/account/designer/get-designer/**",
-                                        "/api/account/designer/all-designer")
+                                        "/api/account/designer/all-designer",
+                                        "/api/home",
+                                        "/**")
                                 .permitAll()
 
                                 // PATCH 요청만 허용
