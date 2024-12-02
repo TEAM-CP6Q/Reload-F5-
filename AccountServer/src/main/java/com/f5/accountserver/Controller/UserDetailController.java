@@ -53,7 +53,7 @@ public class UserDetailController {
                             .Msg(e.getMessage())
                             .build());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(StatusCodeDTO.builder()
+            return ResponseEntity.status(405).body(StatusCodeDTO.builder()
                             .Code(405L)
                             .Msg(e.getMessage())
                             .build());
