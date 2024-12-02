@@ -59,9 +59,9 @@ const PickupLocation = () => {
   // 수거지 주소를 받아와 지도에 표시
   const fetchPickupDetails = async () => {
     if (!pickupId || !map) return;
-
+  
     const token = localStorage.getItem("token");
-
+  
     try {
       setLoading(true);
       const response = await fetch(
@@ -74,12 +74,13 @@ const PickupLocation = () => {
           },
         }
       );
-
+  
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        const fullAddress = `${data.roadNameAddress} ${data.detailedAddress}`;
-        geocodePickupAddress(fullAddress);
+        console.log("받은 데이터:", data);
+        
+        // roadNameAddress와 detailedAddress를 분리하여 전달
+        geocodePickupAddress(data.roadNameAddress, data.detailedAddress);
       } else {
         setError("수거 상세 정보를 불러오는 데 실패했습니다.");
       }
@@ -89,55 +90,47 @@ const PickupLocation = () => {
       setLoading(false);
     }
   };
-
-  // 수거지 주소를 지도 위에 마커로 표시
-  const geocodePickupAddress = (address) => {
+  
+  const geocodePickupAddress = (roadAddress, detailAddress) => {
     if (!window.kakao || !window.kakao.maps || !map) {
       setError("지도 서비스를 초기화하는 데 실패했습니다.");
       return;
     }
-
-    window.kakao.maps.load(() => {
-      const geocoder = new window.kakao.maps.services.Geocoder();
-
-      console.log("검색 중인 주소:", address);
-
-      geocoder.addressSearch(address, (result, status) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
-          const newPickupLocation = {
-            lat: parseFloat(result[0].y),
-            lng: parseFloat(result[0].x),
-          };
-          setPickupLocation(newPickupLocation);
-
-          if (pickupMarkerRef.current) {
-            pickupMarkerRef.current.setMap(null);
-          }
-
-          const pickupMarkerImage = new window.kakao.maps.MarkerImage(
-            "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png",
-            new window.kakao.maps.Size(24, 35)
-          );
-
-          const newPickupMarker = new window.kakao.maps.Marker({
-            position: coords,
-            map: map,
-            image: pickupMarkerImage,
-          });
-
-          pickupMarkerRef.current = newPickupMarker;
-          map.setCenter(coords);
-        } else if (status === window.kakao.maps.services.Status.ZERO_RESULT) {
-          setError("주소를 찾을 수 없습니다. 입력한 주소를 확인하세요.");
-          console.error("Geocoding 실패: 결과 없음", address);
-        } else {
-          setError("주소 검색 중 오류 발생. 다시 시도하세요.");
-          console.error("Geocoding 오류:", status);
+  
+    const geocoder = new window.kakao.maps.services.Geocoder();
+  
+    console.log("검색할 도로명 주소:", roadAddress);
+  
+    geocoder.addressSearch(roadAddress, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK) {
+        const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+  
+        if (pickupMarkerRef.current) {
+          pickupMarkerRef.current.setMap(null);
         }
-      });
+  
+        const newPickupMarker = new window.kakao.maps.Marker({
+          position: coords,
+          map: map
+        });
+  
+        const infowindow = new window.kakao.maps.InfoWindow({
+          content: `<div style="padding:5px;font-size:12px;">상세주소: ${detailAddress}</div>`
+        });
+  
+        window.kakao.maps.event.addListener(newPickupMarker, 'click', function() {
+          infowindow.open(map, newPickupMarker);
+        });
+  
+        pickupMarkerRef.current = newPickupMarker;
+        map.setCenter(coords);
+      } else {
+        setError("주소를 찾을 수 없습니다.");
+        console.error("주소 검색 실패:", roadAddress);
+      }
     });
   };
+
 
   // 기사 위치를 받아와 지도에 표시
   const updateDriverMarker = (coords) => {
