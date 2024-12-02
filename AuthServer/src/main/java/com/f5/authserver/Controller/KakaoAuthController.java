@@ -34,7 +34,6 @@ public class KakaoAuthController {
     private final CustomUserDetailsService customUserDetailsService;
     private final UserDAO userDAO;
 
-
     private static final Logger logger = LoggerFactory.getLogger(KakaoAuthController.class);
 
     private final KakaoAuthService kakaoAuthService;
