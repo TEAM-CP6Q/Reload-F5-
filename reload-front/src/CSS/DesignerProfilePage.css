@@ -1,0 +1,186 @@
+.designer-profile-container {
+    padding: 0;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+.designer-profile-info-container {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.designer-profile-sub-container {
+    width: 90%;
+    margin-top: 20px;
+}
+
+.designer-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.designer-profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 60px;
+    object-fit: cover;
+    border: 2px solid #4CAF50;
+}
+
+.designer-profile-name {
+    font-size: 20px;
+    color: #333;
+}
+
+.designer-profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.designer-profile-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.designer-profile-label {
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+}
+
+/* 상품 리스트 스타일 */
+.designer-profile-products-container {
+    width: 100%;
+    margin-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.designer-profile-products-subcontainer {
+    width: 90%;
+}
+
+.designer-profile-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px 0px;
+}
+
+.designer-profile-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.designer-profile-card:hover {
+    transform: translateY(-5px);
+}
+
+.designer-profile-card-pressed {
+    transform: scale(0.98);
+}
+
+.designer-profile-image-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.designer-profile-card-wrapper {
+    width: 85%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.designer-profile-product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.designer-profile-content {
+    width: 85%;
+}
+
+.designer-profile-product-designer {
+    font-size: 9px;
+    color: #666;
+    margin-top: 8px;
+}
+
+.designer-profile-product-name {
+    font-size: 13px;
+    margin-top: 4px;
+    color: #333;
+    line-height: normal;
+}
+
+.designer-profile-product-price {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 4px;
+    color: #333;
+}
+
+.designer-profile-no-products {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}
+
+.designer-profile-loading-container {
+    width: 100%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.designer-profile-loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4CAF50;
+    border-radius: 50%;
+    animation: designer-profile-spin 1s linear infinite;
+}
+
+.designer-profile-loading-text {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+@keyframes designer-profile-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

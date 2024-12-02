@@ -77,9 +77,10 @@ const Header = () => {
                 return '상품 상세';
             case '/search':
                 return '상품 검색';
+            case '/designer':
+                return '디자이너';
 
-
-
+                
             default:
                 return 'Main Page';
         }

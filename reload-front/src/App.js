@@ -21,6 +21,7 @@ import PickupLocation from './pages/PickupLocation';
 import ProductDetial from './pages/ProductDetailPage';
 import PickupDeliverPage from './pages/PickupDeliverPage';
 import SearchResultsPage from './pages/SearhResultsPage';
+import DesignerProfilePage from './pages/DesignerProfilePage';
 
 function AppContent() {
   const [role, setRole] = useState('user'); // 기본값을 'user'로 설정
@@ -76,6 +77,7 @@ function AppContent() {
             <Route path="/pickup-location" element={<PickupLocation />} />
             <Route path="/product-detail" element={<ProductDetial />} />
             <Route path="/search" element={<SearchResultsPage />} />
+            <Route path="/designer" element={<DesignerProfilePage />} />
           </>
         )}
       </Routes>
