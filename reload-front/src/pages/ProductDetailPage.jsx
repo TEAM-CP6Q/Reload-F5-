@@ -37,7 +37,11 @@ const ProductDetailPage = () => {
     }
 
     const handleDesignerClick = () => {
-        navigate(`/designer/${designer.id}`);
+        if (designer?.id) {
+            navigate('/designer', { 
+                state: { designerId: designer.id }
+            });
+        }
     };
 
     const formatDate = (dateString) => {
