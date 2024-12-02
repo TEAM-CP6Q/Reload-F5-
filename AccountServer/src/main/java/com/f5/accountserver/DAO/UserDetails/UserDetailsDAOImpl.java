@@ -56,6 +56,7 @@ public class UserDetailsDAOImpl implements UserDetailsDAO {
         try {
             UserDetailsEntity existingUser = userDetailsRepository.findById(userDetails.getId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 ID의 유저를 찾을 수 없습니다."));
+            System.out.println("아이디없음\n");
             existingUser.setName(userDetails.getName());
             existingUser.setPostalCode(userDetails.getPostalCode());
             existingUser.setRoadNameAddress(userDetails.getRoadNameAddress());
