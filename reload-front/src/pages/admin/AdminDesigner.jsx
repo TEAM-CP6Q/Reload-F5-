@@ -97,23 +97,30 @@ const AdminDesigner = () => {
   };
 
  // 디자이너 수정 핸들러
-const handleEditDesigner = async (values) => {
+ const handleEditDesigner = async (values) => {
   const token = localStorage.getItem('token'); // 액세스 토큰 가져오기
+  
+  // 디버깅: 현재 수정하려는 디자이너의 ID와 상태값 로그
+  console.log("Editing Designer ID:", editingDesigner?.key);
+  console.log("Updated Values:", values);
+
   try {
-    const response = await fetch(`https://refresh-f5-server.o-r.kr//api/pickup/update-pickup`, {
+    const response = await fetch(`https://refresh-f5-server.o-r.kr/api/account/designer/update-designer`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`, // Bearer 토큰 추가
       },
       body: JSON.stringify({
-        id: editingDesigner.key,
+        id: editingDesigner.key, // 디자이너 ID
         name: values.name,
+        image: editingDesigner.profile || 'default-image', // 기본 이미지 제공
         email: values.email,
         phone: values.phone,
         career: values.experience,
         category: values.category,
         pr: values.description,
+        empStatus: values.empStatus, // 재직 상태 포함
       }),
     });
 
@@ -121,13 +128,15 @@ const handleEditDesigner = async (values) => {
       setDesigners(
         designers.map((designer) =>
           designer.key === editingDesigner.key
-            ? { ...designer, ...values }
+            ? { ...designer, ...values, status: values.empStatus ? '재직 중' : '퇴사' }
             : designer
         )
       );
       message.success('디자이너 정보가 성공적으로 수정되었습니다.');
       setIsEditModalOpen(false);
     } else {
+      const errorResponse = await response.json();
+      console.error("Response Error:", errorResponse);
       message.error('디자이너 정보 수정에 실패했습니다.');
     }
   } catch (error) {
@@ -135,6 +144,7 @@ const handleEditDesigner = async (values) => {
     message.error('디자이너 정보 수정 중 오류가 발생했습니다.');
   }
 };
+
 
 
   return (
@@ -247,44 +257,57 @@ const handleEditDesigner = async (values) => {
         </Form>
       </Modal>
 
+   
       {/* 디자이너 정보 수정 모달 */}
-      {editingDesigner && (
-        <Modal
-          title="정보 수정"
-          open={isEditModalOpen}
-          onCancel={() => setIsEditModalOpen(false)}
-          footer={null}
-          centered
-        >
-          <Form
-            layout="vertical"
-            onFinish={handleEditDesigner}
-            initialValues={editingDesigner}
-          >
-            <Form.Item label="이름" name="name">
-              <Input />
-            </Form.Item>
-            <Form.Item label="이메일" name="email">
-              <Input />
-            </Form.Item>
-            <Form.Item label="전화번호" name="phone">
-              <Input />
-            </Form.Item>
-            <Form.Item label="경력" name="experience">
-              <Input />
-            </Form.Item>
-            <Form.Item label="카테고리" name="category">
-              <Input />
-            </Form.Item>
-            <Form.Item label="소개" name="description">
-              <Input.TextArea />
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit">저장</Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      )}
+{editingDesigner && (
+  <Modal
+    title="정보 수정"
+    open={isEditModalOpen}
+    onCancel={() => setIsEditModalOpen(false)}
+    footer={null}
+    centered
+  >
+    <Form
+      layout="vertical"
+      onFinish={handleEditDesigner}
+      initialValues={{
+        ...editingDesigner,
+        empStatus: editingDesigner.status === '재직 중', // 초기값 설정
+      }}
+    >
+      <Form.Item label="이름" name="name" rules={[{ required: true, message: '이름을 입력해주세요.' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item label="이메일" name="email" rules={[{ required: true, type: 'email', message: '유효한 이메일을 입력해주세요.' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item label="전화번호" name="phone" rules={[{ required: true, message: '전화번호를 입력해주세요.' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item label="경력 (년)" name="experience" rules={[{ required: true, message: '경력을 입력해주세요.' }]}>
+        <Input type="number" />
+      </Form.Item>
+      <Form.Item label="카테고리" name="category" rules={[{ required: true, message: '카테고리를 입력해주세요.' }]}>
+        <Input />
+      </Form.Item>
+      <Form.Item label="소개" name="description">
+        <Input.TextArea rows={3} />
+      </Form.Item>
+      <Form.Item label="재직 상태" name="empStatus" rules={[{ required: true, message: '재직 상태를 선택해주세요.' }]}>
+        <Select>
+          <Option value={true}>재직 중</Option>
+          <Option value={false}>퇴사</Option>
+        </Select>
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">
+          저장
+        </Button>
+      </Form.Item>
+    </Form>
+  </Modal>
+)}
+
     </div>
   );
 };
