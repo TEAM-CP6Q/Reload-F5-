@@ -3,6 +3,7 @@ package com.f5.productserver.Controller.Product;
 import com.f5.productserver.DTO.Product.ProductDTO;
 import com.f5.productserver.Service.Communication.CommunicationService;
 import com.f5.productserver.Service.Product.ProductService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.DataInput;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,24 +69,26 @@ public class ProductController {
     }
 
     // DB에 상품 등록
-    @PostMapping(value = "/add-product", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/add-product", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addProducts(
-            @RequestPart("product") ProductDTO productDTO,
-            @RequestPart("images") List<MultipartFile> images) {
+            @RequestPart(value = "product")  ProductDTO productDTO,
+            @RequestPart(value = "images") List<MultipartFile> images) {
         logger.info("Received ProductDTO: {}", productDTO);
         try {
             // 1. 디자이너 ID 가져오기
             if (productDTO.getDesignerIndex() == null) {
                 throw new IllegalArgumentException("Designer index is required.");
             }
-            Long designerIndex = communicationService.getDesigner(1L);
+            Long designerIndex = communicationService.getDesigner(productDTO.getDesignerIndex());
+            logger.info("디비에서 받아온 디자이너 인덱스: {}", productDTO.getDesignerIndex());
             // 2. 디자이너 인덱스를 ProductDTO에 설정
             productDTO.setDesignerIndex(designerIndex);
 
             // 3. 이미지 업로드 및 이미지 URL 설정
             List<String> imageURI = communicationService.uploadImagesToImageServer(images);
             productDTO.setImageUrls(imageURI);
-            // 4. 제품 정보 저장
+            logger.info("Received imageURI: {}", imageURI);
+                // 4. 제품 정보 저장
             ProductDTO createdProduct = productService.insertProduct(productDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
         } catch (IllegalArgumentException e) {
