@@ -10,6 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class cicdController {
     @GetMapping("/")
     public String homePage(HttpServletRequest request){
-        return "home";
+        return "default";
     }
 }
