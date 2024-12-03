@@ -79,6 +79,8 @@ const Header = () => {
                 return '상품 검색';
             case '/designer':
                 return '디자이너';
+            case "/category-products":
+                return '카테고리별 상품';
 
                 
             default:

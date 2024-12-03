@@ -15,7 +15,8 @@ import mainBanner03 from '../images/mainBanner03.png';
 
 const { Search } = Input;
 
-const CategoryButtons = () => {
+const CategoryButtons = ({ products }) => {  // products prop 추가
+    const navigate = useNavigate();
     const categories = [
         { id: 1, name: '인테리어', icon: '🏠' },
         { id: 2, name: '수납/정리', icon: '📦' },
@@ -27,12 +28,29 @@ const CategoryButtons = () => {
         { id: 8, name: '기타', icon: '📌' }
     ];
 
+    const handleCategoryClick = (categoryId, categoryName) => {
+        // 현재 products 배열에서 해당 카테고리의 상품만 필터링
+        const categoryProducts = products.filter(product => 
+            product.categoryIndex.pcId === categoryId
+        );
+
+        navigate('/category-products', {
+            state: { 
+                categoryProducts,
+                categoryName
+            }
+        });
+    };
+
     return (
         <div className="category-container">
             <div className="category-grid">
                 {categories.map(category => (
-                    <div key={category.id} className="category-button-container"> {/* key 속성을 div에 추가 */}
-                        <button className="category-button">
+                    <div key={category.id} className="category-button-container">
+                        <button 
+                            className="category-button"
+                            onClick={() => handleCategoryClick(category.id, category.name)}
+                        >
                             <div className="category-icon">{category.icon}</div>
                         </button>
                         <span className="category-name">{category.name}</span>
@@ -228,7 +246,7 @@ const MainPage = () => {
                 </div>
             </div>
 
-            <CategoryButtons />
+            <CategoryButtons products={products}/>
 
             <div className='main-divider'>
                 <div className="main-divider-bar" />
