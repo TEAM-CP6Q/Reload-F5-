@@ -39,6 +39,24 @@ const SearchResultsPage = () => {
         );
     };
 
+    const EmptyState = () => (
+        <div className="search-results-empty">
+            <div className="search-results-empty-icon">🔍</div>
+            <div className="search-results-empty-title">
+                '{searchQuery}' 검색 결과가 없습니다
+            </div>
+            <div className="search-results-empty-description">
+                다른 검색어로 다시 시도해보세요
+            </div>
+            <button 
+                className="search-results-empty-button"
+                onClick={() => navigate('/')}
+            >
+                홈으로 돌아가기
+            </button>
+        </div>
+    );
+
     return (
         <>
             <Header />
@@ -47,13 +65,17 @@ const SearchResultsPage = () => {
                     '{searchQuery}' 검색 결과
                 </div>
                 <div className="search-results-products-container">
-                    <div className="search-results-subcontainer">
-                        <div className="search-results-grid">
-                            {searchResults.map((product) => (
-                                <ProductCard key={product.pid} product={product} />
-                            ))}
+                    {searchResults.length > 0 ? (
+                        <div className="search-results-subcontainer">
+                            <div className="search-results-grid">
+                                {searchResults.map((product) => (
+                                    <ProductCard key={product.pid} product={product} />
+                                ))}
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <EmptyState />
+                    )}
                 </div>
             </div>
         </>
