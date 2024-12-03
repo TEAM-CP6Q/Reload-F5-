@@ -4,7 +4,7 @@ export default function TestPage() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const validateForm = (formData) => {
+  const validateForm = async (formData) => {
     const errors = [];
     
     // Validate product data
@@ -12,7 +12,20 @@ export default function TestPage() {
       errors.push('Product data is missing');
     } else {
       try {
-        const productData = JSON.parse(formData.get('product'));
+        const productBlob = formData.get('product');
+        const productData = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            try {
+              resolve(JSON.parse(reader.result));
+            } catch (e) {
+              reject(new Error('JSON 파싱 오류'));
+            }
+          };
+          reader.onerror = () => reject(new Error('파일 읽기 오류'));
+          reader.readAsText(productBlob);
+        });
+        
         if (!productData.name) errors.push('상품명이 누락되었습니다');
         if (!productData.content) errors.push('상품 설명이 누락되었습니다');
         if (!productData.price || productData.price <= 0) errors.push('올바른 가격을 입력해주세요');
@@ -41,7 +54,7 @@ export default function TestPage() {
     try {
       const formData = new FormData();
       
-      // Add product data as a JSON string
+      // Add product data as a Blob
       const productData = {
         name: e.target.name.value,
         content: e.target.description.value,
@@ -54,18 +67,20 @@ export default function TestPage() {
       };
 
       console.log('Product Data being sent:', productData);
-      formData.append('product', JSON.stringify(productData));
+      const json = JSON.stringify(productData);
+      const blob = new Blob([json], {type: "application/json"});
+      formData.append("product", blob);
 
       // Add image files
       const imageFiles = e.target.images.files;
       console.log('Number of images selected:', imageFiles.length);
       for (let i = 0; i < imageFiles.length; i++) {
         formData.append('images', imageFiles[i]);
-        console.log('Image file being added:', imageFiles[i], 'Size:', imageFiles[i].size);
+        console.log('Image file being added:', imageFiles[i].name, 'Size:', imageFiles[i].size);
       }
 
       // Validate form data before sending
-      const validationErrors = validateForm(formData);
+      const validationErrors = await validateForm(formData);
       if (validationErrors.length > 0) {
         console.error('Validation errors:', validationErrors);
         throw new Error(validationErrors.join('\n'));
@@ -77,6 +92,11 @@ export default function TestPage() {
       }
 
       console.log('Sending request to server...');
+
+      // Log FormData contents for debugging
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ', pair[1]);
+      }
 
       const response = await fetch('https://refresh-f5-server.o-r.kr/api/product/add-product', {
         method: 'POST',
