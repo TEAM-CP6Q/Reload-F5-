@@ -51,10 +51,10 @@ const SideBar = ({ isOpen, onClose }) => {
             const email = localStorage.getItem("email");
 
             if (token && email) {
-                console.log("로그인 성공");
+                //console.log("로그인 성공");
                 setIsLogin(true);
             } else {
-                console.log("로그인 실패");
+                //console.log("로그인 실패");
                 setIsLogin(false);
             }
         };

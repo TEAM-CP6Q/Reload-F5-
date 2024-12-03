@@ -84,7 +84,6 @@ const NewProductCard = ({ product }) => {
             try {
                 const designerData = await fetchDesigner(product.designerIndex);
                 setDesigner(designerData);
-                console.log("디자이너 : " + product.designerIndex);
             } catch (error) {
                 console.error('디자이너 데이터를 가져오는 중 오류가 발생했습니다:', error);
             }
