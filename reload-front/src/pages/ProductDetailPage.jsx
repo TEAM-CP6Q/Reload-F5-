@@ -49,6 +49,35 @@ const ProductDetailPage = () => {
         return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
     };
 
+    const handleAddToCart = () => {
+        // Get existing cart items from localStorage or initialize empty array
+        const existingCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        
+        // Check if product already exists in cart
+        const existingItemIndex = existingCartItems.findIndex(item => item.pid === product.pid);
+        
+        if (existingItemIndex !== -1) {
+            // If product exists, increment quantity
+            existingCartItems[existingItemIndex].quantity += 1;
+        } else {
+            // If product doesn't exist, add it with quantity 1
+            existingCartItems.push({
+                pid: product.pid,
+                name: product.name,
+                price: product.price,
+                imageUrl: product.imageUrls[0],
+                designerName: designer?.name || '',
+                quantity: 1
+            });
+        }
+        
+        // Save updated cart back to localStorage
+        localStorage.setItem('cartItems', JSON.stringify(existingCartItems));
+        
+        // Navigate to cart page
+        navigate('/cart');
+    };
+
     return (
         <div className='productDetail-main-container'>
             <Header />
@@ -94,7 +123,7 @@ const ProductDetailPage = () => {
             </div>
 
             <div className='productDetail-buttons-container'>
-                <button className='productDetail-cart-button'>장바구니</button>
+                <button className='productDetail-cart-button' onClick={handleAddToCart}>장바구니</button>
                 <button className='productDetail-buy-button'>즉시구매</button>
             </div>
 
@@ -138,7 +167,7 @@ const ProductDetailPage = () => {
             </div>
 
             <div className='productDetail-fixed-bottom-buttons'>
-                <button className='productDetail-fixed-cart-button'>장바구니</button>
+                <button className='productDetail-fixed-cart-button' onClick={handleAddToCart}>장바구니</button>
                 <button className='productDetail-fixed-buy-button'>즉시구매</button>
             </div>
         </div>

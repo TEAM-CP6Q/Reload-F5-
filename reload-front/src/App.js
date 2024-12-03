@@ -24,6 +24,7 @@ import SearchResultsPage from './pages/SearhResultsPage';
 import DesignerProfilePage from './pages/DesignerProfilePage';
 import TestPage from './pages/TestPage';
 import CategoryProductsPage from './pages/CategoryProductsPage';
+import ShoppingCart from './pages/ShoppingCart';
 
 function AppContent() {
   const [role, setRole] = useState('user'); // 기본값을 'user'로 설정
@@ -82,6 +83,7 @@ function AppContent() {
             <Route path="/designer" element={<DesignerProfilePage />} />
             <Route path="/test" element={<TestPage />} />
             <Route path="/category-products" element={<CategoryProductsPage />} />
+            <Route path="/cart" element={<ShoppingCart />} />
           </>
         )}
       </Routes>

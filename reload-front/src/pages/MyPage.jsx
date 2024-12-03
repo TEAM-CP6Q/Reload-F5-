@@ -23,6 +23,7 @@ const MyPage = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("id");
     localStorage.removeItem("access_token");
+    localStorage.removeItem("cartItems");
     navigate("/");
   };
 
@@ -114,6 +115,7 @@ const MyPage = () => {
         localStorage.removeItem("username");
         localStorage.removeItem("id");
         localStorage.removeItem("access_token");
+        localStorage.removeItem("cartItems");
         navigate("/");
       } else {
         alert("탈퇴 실패: " + result.message);

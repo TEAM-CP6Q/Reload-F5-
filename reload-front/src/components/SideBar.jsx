@@ -41,6 +41,7 @@ const SideBar = ({ isOpen, onClose }) => {
             localStorage.removeItem("username");
             localStorage.removeItem("id");
             localStorage.removeItem("access_token");
+            localStorage.removeItem("cartItems");
             window.location.reload();
         }
     };

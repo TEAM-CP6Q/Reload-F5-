@@ -12,7 +12,14 @@ const Header = () => {
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
 
     const handleShoppingCart = () => {
-        navigate('/login');
+        const token = localStorage.getItem("token");
+        const email = localStorage.getItem("email");
+
+        if (token && email) {
+            navigate('/cart');
+        } else {
+            navigate('/login');
+        }
     };
 
     const handleBackClick = () => {
@@ -81,8 +88,10 @@ const Header = () => {
                 return '디자이너';
             case "/category-products":
                 return '카테고리별 상품';
+            case "/cart":
+                return '장바구니';
 
-                
+
             default:
                 return 'Main Page';
         }
