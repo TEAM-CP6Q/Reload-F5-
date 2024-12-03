@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캡스톤 CICD 무중단 배포</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #1b4965;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #126782;
+            padding: 10px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        nav a:hover {
+            background-color: #45a29e;
+            transform: translateY(-2px);
+        }
+
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        section {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            max-width: 400px;
+            flex: 1;
+            min-width: 300px;
+        }
+
+        section h2 {
+            color: #126782;
+            margin-top: 0;
+        }
+
+        section p {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            max-width: 500px;
+            height: auto;
+        }
+
+        .image-container img {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            background-color: #1b4965;
+            color: #fff;
+            text-align: center;
+            padding: 15px;
+            margin-top: 20px;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>캡스톤 CICD 무중단 배포 후</h1>
+</header>
+
+<nav>
+    <a href="#home">홈</a>
+    <a href="#about">소개</a>
+    <a href="#contact">연락처</a>
+</nav>
+
+<main>
+    <section id="home">
+        <h2>환영합니다!</h2>
+        <p>이 웹 사이트는 동물이 운영합니다.</p>
+    </section>
+
+    <section id="about">
+        <h2>소개</h2>
+        <p>안녕하세요, 북극여우입니다. 저희 동물원은 방문객을 항상 환영합니다!</p>
+    </section>
+
+    <section id="contact">
+        <h2>연락처</h2>
+        <p>📞 010-6778-6069</p>
+    </section>
+
+    <div class="image-container">
+        <img src="https://cdn.pixabay.com/photo/2017/01/14/12/59/iceland-1979445_1280.jpg" alt="북극여우 이미지">
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2024 동물의 왕국. All rights reserved.</p>
+</footer>
+</body>
+</html>
