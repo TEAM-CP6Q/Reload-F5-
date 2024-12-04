@@ -273,7 +273,7 @@ const AdminProduct = () => {
       >
         <Form layout="vertical" onFinish={handleFinish}>
           <Form.Item 
-            label="상품 이미지" 
+            label="상품 이미지(1MB 미만)" 
             name="images" 
             rules={[{ required: true, message: '이미지를 선택해주세요' }]}
           >
@@ -293,7 +293,7 @@ const AdminProduct = () => {
             name="name" 
             rules={[{ required: true, message: '상품명을 입력해주세요' }]}
           >
-            <Input />
+            <Input placeholder="상품명을 입력해주세요" />
           </Form.Item>
 
           <Form.Item 
@@ -301,7 +301,7 @@ const AdminProduct = () => {
             name="price" 
             rules={[{ required: true, message: '가격을 입력해주세요' }]}
           >
-            <Input type="number" min="1" />
+            <Input type="number" min="1" placeholder="상품의 가격을 입력해주세요" />
           </Form.Item>
 
           <Form.Item 
@@ -340,7 +340,7 @@ const AdminProduct = () => {
             name="description"
             rules={[{ required: true, message: '상품 설명을 입력해주세요' }]}
           >
-            <Input.TextArea rows={3} />
+            <Input.TextArea rows={3} placeholder="상품의 설명을 입력해주세요" />
           </Form.Item>
 
           <Form.Item>
