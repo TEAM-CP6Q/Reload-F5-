@@ -27,11 +27,11 @@
     justify-content: center;
     cursor: pointer;
     background-color: white;
-    padding: 10px 0px;
+    padding: 10px 0px 5px 0px;
 }
 
 .productDetail-designer-sub-container {
-    width: 95%;
+    width: 92%;
     height: 100%;
     display: flex;
     flex-direction: row;
@@ -49,8 +49,8 @@
 .productDetail-designer-image {
     border: 1px black solid;
     border-radius: 25px;
-    width: 23px;
-    height: 23px;
+    width: 30px;
+    height: 30px;
     margin-right: 10px;
 }
 
@@ -78,28 +78,29 @@
     background-color: white;
 }
 
-.productDetail-cart-button, .productDetail-buy-button {
+.productDetail-cart-button,
+.productDetail-buy-button {
     flex: 1;
     padding: 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 14px;
     cursor: pointer;
 }
 
-.productDetail-title-container{
+.productDetail-title-container {
     padding: 10px 15px;
 }
 
-.productDetail-title-label{
+.productDetail-title-label {
     font-size: 16px;
     margin-bottom: 10px;
 }
 
-.productDetail-title-price{
- font-size: 14px;
- font-weight: 600;
- color: red;
+.productDetail-title-price {
+    font-size: 14px;
+    font-weight: 600;
+    color: red;
 }
 
 .productDetail-cart-button {
@@ -132,6 +133,8 @@
 
 .productDetail-info-value {
     font-size: 13px;
+    width: 75%;
+    text-align: end;
 }
 
 .productDetail-additional-image {
@@ -147,19 +150,23 @@
     right: 0;
     display: flex;
     gap: 10px;
-    padding: 10px 15px; /* 좌우 패딩을 상단 버튼과 동일하게 맞춤 */
+    padding: 10px 15px;
+    /* 좌우 패딩을 상단 버튼과 동일하게 맞춤 */
     background-color: white;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    height: 60px; /* 고정된 높이 설정 */
-    box-sizing: border-box; /* 패딩을 높이에 포함 */
+    height: 60px;
+    /* 고정된 높이 설정 */
+    box-sizing: border-box;
+    /* 패딩을 높이에 포함 */
 }
 
-.productDetail-fixed-cart-button, .productDetail-fixed-buy-button {
+.productDetail-fixed-cart-button,
+.productDetail-fixed-buy-button {
     flex: 1;
     padding: 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 14px;
     cursor: pointer;
 }
@@ -182,7 +189,8 @@
     gap: 2px;
     background-color: white;
     padding-top: 10px;
-    padding-bottom: 70px; /* 하단 고정 버튼의 높이(60px)보다 약간 더 크게 설정 */
+    padding-bottom: 70px;
+    /* 하단 고정 버튼의 높이(60px)보다 약간 더 크게 설정 */
 }
 
 .productDetail-divider {
