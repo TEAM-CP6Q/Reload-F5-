@@ -101,7 +101,7 @@
     border: 1px solid #ff4444;
     background: white;
     color: #ff4444;
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: pointer;
 }
 
@@ -136,7 +136,7 @@
     border: 1px solid #4CAF50;
     background: white;
     color: #4CAF50;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
 }
@@ -147,7 +147,7 @@
     border: none;
     background: #4CAF50;
     color: white;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 16px;
     cursor: pointer;
 }

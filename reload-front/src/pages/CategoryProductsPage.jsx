@@ -62,7 +62,7 @@ const CategoryProductsPage = () => {
             <Header />
             <div className="category-products-container">
                 <div className="category-products-term">
-                    {categoryName} 카테고리
+                    {categoryName}
                 </div>
                 <div className="category-products-products-container">
                     {categoryProducts.length > 0 ? (
