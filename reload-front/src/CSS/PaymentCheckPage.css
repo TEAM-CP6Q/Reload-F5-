@@ -1,0 +1,221 @@
+.payCheck-container {
+}
+
+.payCheck-content {
+    margin-top: 20px;
+    padding: 10px 10px 80px 10px;
+}
+
+.payCheck-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.payCheck-items-section,
+.payCheck-info-section,
+.payCheck-delivery-section,
+.payCheck-summary-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.payCheck-items-list {
+    margin-top: 15px;
+}
+
+.payCheck-item {
+    display: flex;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.payCheck-item:last-child {
+    border-bottom: none;
+}
+
+.payCheck-item-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.payCheck-item-details {
+    margin-left: 15px;
+    flex: 1;
+}
+
+.payCheck-item-name {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.payCheck-item-designer {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.payCheck-item-quantity {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.payCheck-item-price {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.payCheck-info-row {
+    display: flex;
+    padding: 10px 0;
+    align-items: center;
+}
+
+.payCheck-info-label {
+    width: 100px;
+    color: #666;
+}
+
+.payCheck-info-value {
+    flex: 1;
+}
+
+.payCheck-address-input-container {
+    flex: 1;
+    display: flex;
+    gap: 10px;
+}
+
+.payCheck-address-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.payCheck-address-change-button {
+    padding: 8px 15px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.payCheck-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.payCheck-summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.payCheck-summary-row.payCheck-total {
+    border-top: 2px solid #ddd;
+    padding-top: 15px;
+    margin-top: 15px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
+.payCheck-button-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: white;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.payCheck-button {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    display: block;
+    padding: 15px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.payCheck-address-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.payCheck-address-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.payCheck-modal-address-input {
+    width: 100%;
+    padding: 10px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.payCheck-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.payCheck-modal-cancel-button,
+.payCheck-modal-save-button {
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.payCheck-modal-cancel-button {
+    background: #f0f0f0;
+    border: none;
+}
+
+.payCheck-modal-save-button {
+    background: #4CAF50;
+    color: white;
+    border: none;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    
+    .payCheck-item-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .payCheck-button-container {
+        padding: 10px;
+    }
+}

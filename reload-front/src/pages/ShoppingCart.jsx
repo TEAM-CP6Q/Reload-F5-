@@ -38,7 +38,7 @@ const ShoppingCart = () => {
 
     const handleCheckout = () => {
         // Implement checkout logic
-        navigate('/checkout');
+        navigate('/payment-check');
     };
 
     const handleContinueShopping = () => {

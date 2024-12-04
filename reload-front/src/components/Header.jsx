@@ -90,6 +90,8 @@ const Header = () => {
                 return '카테고리별 상품';
             case "/cart":
                 return '장바구니';
+            case "/payment-check":
+                return '결제';
 
 
             default:
