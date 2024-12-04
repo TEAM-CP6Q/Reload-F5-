@@ -102,7 +102,7 @@ const DesignerProfilePage = () => {
     );
 
     if (error) return <div>에러: {error}</div>;
-    
+
     if (!designer) return <div>디자이너를 찾을 수 없습니다.</div>;
 
     return (
@@ -116,17 +116,13 @@ const DesignerProfilePage = () => {
                             alt={designer.name}
                             className="designer-profile-image"
                         />
-                        <h1 className="designer-profile-name">{designer.name}</h1>
+                        {/* <h1 className="designer-profile-name">{designer.name}</h1> */}
                     </div>
 
                     <div className="designer-profile-info">
                         <div className="designer-profile-info-item">
-                            <span className="designer-profile-label">카테고리:</span>
-                            <span>{designer.category}</span>
-                        </div>
-                        <div className="designer-profile-info-item">
-                            <span className="designer-profile-label">경력:</span>
-                            <span>{designer.career}</span>
+                            <span className="designer-profile-label">이름:</span>
+                            <span>{designer.name}</span>
                         </div>
                         <div className="designer-profile-info-item">
                             <span className="designer-profile-label">소개:</span>
@@ -136,9 +132,17 @@ const DesignerProfilePage = () => {
                             <span className="designer-profile-label">고용상태:</span>
                             <span>{designer.empStatus ? '재직중' : '미재직'}</span>
                         </div>
+                        <div className="designer-profile-info-item">
+                            <span className="designer-profile-label">경력:</span>
+                            <span>{designer.career}</span>
+                        </div>
+                        <div className="designer-profile-info-item">
+                            <span className="designer-profile-label">카테고리:</span>
+                            <span>{designer.category}</span>
+                        </div>
                     </div>
                 </div>
-                
+
 
                 <div className="designer-profile-products-container">
                     <div className="designer-profile-products-subcontainer">
