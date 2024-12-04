@@ -219,8 +219,10 @@ const AdminProduct = () => {
       title: '대표 사진', 
       dataIndex: 'imageUrls', 
       key: 'image',
+    
+      height: 50,
       render: (imageUrls) => imageUrls && imageUrls.length > 0 ? 
-        <img src={imageUrls[0]} alt="product" style={{ width: 50 }} /> : 
+        <img src={imageUrls[0]} alt="product" style={{ width: 50, height: 50 }} /> : 
         <UploadOutlined />
     },
     { title: '상품명', dataIndex: 'name', key: 'name' },

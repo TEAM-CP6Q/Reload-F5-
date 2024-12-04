@@ -23,8 +23,8 @@ const InfoItem = ({ label, value }) => (
     justifyContent: 'space-between',
     margin: '4px 0'
   }}>
-    <Text strong style={{ color: '#666' }}>{label}:</Text>
-    <Text style={{ maxWidth: '60%', textAlign: 'right' }}>
+    <Text strong style={{ color: '#666', minWidth: '30%', textAlign: 'start' }}>{label}:</Text>
+    <Text style={{ maxWidth: '70%', textAlign: 'right' }}>
       {value}
     </Text>
   </div>
