@@ -13,6 +13,8 @@ const ProductDetailPage = () => {
     const [showCartModal, setShowCartModal] = useState(false);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+        
         const fetchDesignerData = async () => {
             try {
                 if (product?.designerIndex) {

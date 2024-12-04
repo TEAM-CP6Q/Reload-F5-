@@ -29,3 +29,7 @@ PRTEST2
 npm install @stomp/stompjs sockjs-client
 
 //cicd
+
+
+//어드민 페이지
+npm install @emotion/styled @emotion/react
