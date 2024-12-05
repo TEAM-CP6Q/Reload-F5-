@@ -122,11 +122,13 @@ const PaymentCheckPage = () => {
             if (response.status === 200) {
                 const result = await response.json();
                 // 주문 생성 성공 후 결제 페이지로 이동
+                console.log(result);
                 navigate('/payment-process', {
                     state: {
                         orderData: {
                             ...orderData,
-                            orderId: result.orderId // 서버에서 반환된 주문 ID
+                            orderId: result.orderId,
+                            merchantUid: result.merchantUid
                         }
                     }
                 });

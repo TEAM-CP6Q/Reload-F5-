@@ -7,7 +7,10 @@ const PaymentProcessPage = () => {
     const orderData = location.state?.orderData;
 
     useEffect(() => {
-        console.log('Payment Process Started', { orderData });
+        console.log('Payment Process Started', { 
+            orderData,
+            merchantUid: orderData.merchantUid // merchantUid 확인
+        });
         
         if (!orderData) {
             console.error('Order data is missing', { location });
@@ -40,7 +43,7 @@ const PaymentProcessPage = () => {
             const data = {
                 pg: 'html5_inicis.INIpayTest',
                 pay_method: 'card',
-                merchant_uid: `merchant_${new Date().getTime()}_${orderData.orderId}`,
+                merchant_uid: orderData.merchantUid ?? null, // null이면 그대로 null로 유지
                 name: `주문 상품 (${orderData?.orderItemList?.length || 0}개)`,
                 amount: orderData?.orderDTO?.totalPrice || 0,
                 buyer_name: orderData?.orderDTO?.consumer || '',
@@ -50,8 +53,6 @@ const PaymentProcessPage = () => {
                 currency: 'KRW',
                 language: 'ko'
             };
-
-            console.log("merchant : "+orderData?.orderDTO);
 
             console.log('Payment request data:', data);
 
