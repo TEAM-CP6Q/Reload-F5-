@@ -96,11 +96,11 @@ const PaymentCheckPage = () => {
             }
 
             const orderData = {
-                order: {
+                orderDTO: {
                     consumer: userInfo.name,
                     totalPrice: totalPrice
                 },
-                orderProduct: cartItems.map(item => ({
+                orderItemList: cartItems.map(item => ({
                     productId: item.pid,
                     price: item.price,
                     amount: item.quantity
@@ -114,7 +114,7 @@ const PaymentCheckPage = () => {
                 {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
                     body: JSON.stringify(orderData)
@@ -124,7 +124,7 @@ const PaymentCheckPage = () => {
             if (response.status === 200) {
                 const result = await response.json();
                 console.log('주문 생성 결과:', result);
-                alert('결제가 완료되었습니다.');
+                alert('주문이가 완료되었습니다.');
                 localStorage.removeItem('cartItems');
                 navigate('/order-complete');
             } else {
