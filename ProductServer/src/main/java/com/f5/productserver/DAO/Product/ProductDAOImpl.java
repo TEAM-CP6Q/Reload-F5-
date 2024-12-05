@@ -139,4 +139,19 @@ public class ProductDAOImpl implements ProductDAO {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    public void deleteProduct(Long id) {
+        try{
+            if(productRepository.existsBypId(id)) {
+                ProductEntity product = productRepository.findAllBypId(id);
+                productRepository.delete(product);
+            } else {
+                throw new IllegalStateException("해당 아이디의 상품이 없음");
+            }
+        } catch (IllegalStateException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("상품 삭제 중 오류 발생"+ e.getMessage(), e);
+        }
+    }
 }
