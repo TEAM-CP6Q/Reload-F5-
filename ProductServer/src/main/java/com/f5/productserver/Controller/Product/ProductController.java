@@ -68,6 +68,7 @@ public class ProductController {
         }
     }
 
+
     // DB에 상품 등록
     @PostMapping(value = "/add-product", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addProducts(
@@ -95,6 +96,17 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 등록 실패: " + e.getMessage());
+        }
+    }
+
+    // 상품 삭제
+    @DeleteMapping("/delete-product/{pId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable("pId") Long pId) {
+        try {
+            productService.deleteProduct(pId);
+            return ResponseEntity.ok("상품 삭제 성공");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

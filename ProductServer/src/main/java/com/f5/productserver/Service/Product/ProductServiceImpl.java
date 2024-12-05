@@ -29,6 +29,15 @@ public class ProductServiceImpl implements ProductService{
         return productDTO;
     }
 
+    @Override
+    public void deleteProduct(Long id) {
+        try{
+            productDAO.deleteProduct(id);
+        } catch (Exception e){
+            throw new IllegalStateException(e);
+        }
+    }
+
 
     // 상품 카테고리 등록
     @Override

@@ -12,4 +12,6 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     List<ProductEntity> findAll();
     List<ProductEntity> findAllByOrderByCreatedOnDesc();
     List<ProductEntity> findAllByCategoryIndex_Value(String value);
+    ProductEntity findAllBypId(Long id);
+    boolean existsBypId(Long id);
 }

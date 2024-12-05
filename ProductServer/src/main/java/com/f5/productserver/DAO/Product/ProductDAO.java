@@ -13,4 +13,5 @@ public interface ProductDAO {
     List<ProductDTO> findLatestProducts();
     List<ProductDTO> findProductsByCategory(String value);
     List<ProductDTO> findProductDetails(int pId);
+    void deleteProduct(Long id);
 }

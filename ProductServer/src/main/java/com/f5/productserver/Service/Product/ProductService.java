@@ -12,4 +12,5 @@ public interface ProductService {
     List<ProductDTO> getAllProducts(String value);
     List<ProductDTO> getLatestProducts();
     List<ProductDTO> getProductDetails(int pId);
+    void deleteProduct(Long id);
 }
