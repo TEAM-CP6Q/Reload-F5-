@@ -19,6 +19,6 @@ public class PaymentEntity {
     @OneToOne
     private PickupListEntity pickupListEntity;
 
-    @Column(length = 100, name = "merchant_uid")
+    @Column(length = 100)
     private String merchantUid;  // 주문번호
 }
