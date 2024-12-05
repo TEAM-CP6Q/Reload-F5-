@@ -25,7 +25,7 @@ public class ImageServiceImpl implements ImageService {
         List<String> imagesURI = new ArrayList<>();
         for(MultipartFile image : images){
             ImageEntity imageEntity =   this.imageDAO.uploadImage(ImageEntity.builder().image(image.getBytes()).build());
-            imagesURI.add("http://3.37.122.192:8000/api/image/download/"+imageEntity.getId());
+            imagesURI.add("https://refresh-f5-server.o-r.kr/api/image/download/"+imageEntity.getId());
         }
 
         return ResponseEntity.status(201)
@@ -42,6 +42,15 @@ public class ImageServiceImpl implements ImageService {
         }
         return ResponseEntity.status(200)
                 .body(image.get().getImage());
+    }
+
+    @Override
+    public void deleteImage(Long id) {
+        try{
+            imageDAO.deleteImage(id);
+        } catch (Exception e){
+            throw new IllegalStateException(e);
+        }
     }
 
 }
