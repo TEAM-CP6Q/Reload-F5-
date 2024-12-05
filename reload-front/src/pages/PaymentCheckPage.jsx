@@ -88,7 +88,7 @@ const PaymentCheckPage = () => {
     
         try {
             const token = localStorage.getItem("token");
-            
+    
             if (!token) {
                 alert('로그인이 필요합니다.');
                 navigate('/login');
@@ -96,12 +96,11 @@ const PaymentCheckPage = () => {
             }
     
             const orderData = {
-                order: {
+                orderDTO: {
                     consumer: userInfo.name,
-                    totalPrice: totalPrice,
-                    createdOn: new Date().toISOString()
+                    totalPrice: totalPrice
                 },
-                orderProduct: cartItems.map(item => ({
+                orderItemList: cartItems.map(item => ({
                     productId: item.pid,
                     price: item.price,
                     amount: item.quantity
@@ -122,18 +121,23 @@ const PaymentCheckPage = () => {
     
             if (response.status === 200) {
                 const result = await response.json();
-                console.log('주문 생성 결과:', result);
-                alert('결제가 완료되었습니다.');
-                localStorage.removeItem('cartItems');
-                navigate('/order-complete');
+                // 주문 생성 성공 후 결제 페이지로 이동
+                navigate('/payment-process', {
+                    state: {
+                        orderData: {
+                            ...orderData,
+                            orderId: result.orderId // 서버에서 반환된 주문 ID
+                        }
+                    }
+                });
             } else {
                 const errorData = await response.text();
                 console.error('주문 생성 실패:', errorData);
                 alert('주문 처리 중 오류가 발생했습니다.');
             }
         } catch (error) {
-            console.error("결제 처리 실패:", error);
-            alert('결제 처리 중 오류가 발생했습니다.');
+            console.error("주문 처리 실패:", error);
+            alert('주문 처리 중 오류가 발생했습니다.');
         }
     };
 
@@ -145,8 +149,6 @@ const PaymentCheckPage = () => {
         <div className="payCheck-container">
             <Header />
             <div className="payCheck-content">
-                <h2 className="payCheck-title">주문/결제</h2>
-
                 {/* 주문 상품 목록 */}
                 <section className="payCheck-items-section">
                     <h3>주문 상품</h3>
@@ -194,24 +196,7 @@ const PaymentCheckPage = () => {
                         </div>
                         <div className="payCheck-info-row">
                             <span className="payCheck-info-label">상세 주소</span>
-                            <div className="payCheck-address-input-container">
-                                <input
-                                    type="text"
-                                    value={deliveryAddress.detailedAddress}
-                                    onChange={(e) => setDeliveryAddress({
-                                        ...deliveryAddress,
-                                        detailedAddress: e.target.value
-                                    })}
-                                    placeholder="상세 주소를 입력해주세요"
-                                    className="payCheck-address-input"
-                                />
-                                <button 
-                                    className="payCheck-address-change-button"
-                                    onClick={handleAddressChange}
-                                >
-                                    주소 변경
-                                </button>
-                            </div>
+                            <span className="payCheck-info-value">{deliveryAddress.detailedAddress}</span>
                         </div>
                     </div>
                 </section>
@@ -277,13 +262,13 @@ const PaymentCheckPage = () => {
                                 className="payCheck-modal-address-input"
                             />
                             <div className="payCheck-modal-buttons">
-                                <button 
+                                <button
                                     className="payCheck-modal-cancel-button"
                                     onClick={() => setIsAddressModalOpen(false)}
                                 >
                                     취소
                                 </button>
-                                <button 
+                                <button
                                     className="payCheck-modal-save-button"
                                     onClick={handleModalSave}
                                 >
