@@ -85,16 +85,16 @@ const PaymentCheckPage = () => {
             alert('배송지를 입력해주세요.');
             return;
         }
-
+    
         try {
             const token = localStorage.getItem("token");
-
+    
             if (!token) {
                 alert('로그인이 필요합니다.');
                 navigate('/login');
                 return;
             }
-
+    
             const orderData = {
                 orderDTO: {
                     consumer: userInfo.name,
@@ -106,9 +106,7 @@ const PaymentCheckPage = () => {
                     amount: item.quantity
                 }))
             };
-
-            console.log(orderData);
-
+    
             const response = await fetch(
                 'https://refresh-f5-server.o-r.kr/api/payment/order/create-order-list',
                 {
@@ -120,21 +118,26 @@ const PaymentCheckPage = () => {
                     body: JSON.stringify(orderData)
                 }
             );
-
+    
             if (response.status === 200) {
                 const result = await response.json();
-                console.log('주문 생성 결과:', result);
-                alert('주문이가 완료되었습니다.');
-                localStorage.removeItem('cartItems');
-                navigate('/order-complete');
+                // 주문 생성 성공 후 결제 페이지로 이동
+                navigate('/payment-process', {
+                    state: {
+                        orderData: {
+                            ...orderData,
+                            orderId: result.orderId // 서버에서 반환된 주문 ID
+                        }
+                    }
+                });
             } else {
                 const errorData = await response.text();
                 console.error('주문 생성 실패:', errorData);
                 alert('주문 처리 중 오류가 발생했습니다.');
             }
         } catch (error) {
-            console.error("결제 처리 실패:", error);
-            alert('결제 처리 중 오류가 발생했습니다.');
+            console.error("주문 처리 실패:", error);
+            alert('주문 처리 중 오류가 발생했습니다.');
         }
     };
 
