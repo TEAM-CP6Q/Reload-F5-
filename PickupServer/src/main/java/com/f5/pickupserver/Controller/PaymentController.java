@@ -6,6 +6,7 @@ import com.f5.pickupserver.Entity.PaymentEntity;
 import com.f5.pickupserver.Entity.PickupListEntity;
 import com.f5.pickupserver.Repository.PaymentRepository;
 import com.f5.pickupserver.Repository.PickupListRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,6 +45,7 @@ public class PaymentController {
     }
 
     @PatchMapping("/update-payment")
+    @Transactional
     public ResponseEntity<?> updatePayment(@RequestParam("pickupId") Long pickupId, @RequestParam("merchantUid") String merchantUid) {
         PickupListEntity pickupList = pickupListRepository.findByPickupId(pickupId);
         if (pickupList == null) {
@@ -51,6 +53,16 @@ public class PaymentController {
                             .code(404L)
                             .msg("Pickup list not found")
                             .build());
+        }else if(paymentRepository.existsByMerchantUid(merchantUid)){
+            return ResponseEntity.status(405).body(StatusCodeDTO.builder()
+                            .code(405L)
+                            .msg("Already exists merchant uid")
+                            .build());
+        }else if(paymentRepository.existsByPickupListEntity(pickupList)){
+            return ResponseEntity.status(406).body(StatusCodeDTO.builder()
+                    .code(406L)
+                    .msg("Already payed this pickup")
+                    .build());
         }
         try{
             PaymentEntity paymentEntity = new PaymentEntity();
@@ -63,8 +75,8 @@ public class PaymentController {
             map.put(paymentEntity, pickupList);
             return ResponseEntity.ok(map);
         } catch (Exception e){
-            return ResponseEntity.status(405).body(StatusCodeDTO.builder()
-                            .code(405L)
+            return ResponseEntity.status(407).body(StatusCodeDTO.builder()
+                            .code(407L)
                             .msg("결제 내역 저장 및 수정 실패")
                             .build());
         }
