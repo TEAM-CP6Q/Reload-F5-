@@ -28,4 +28,18 @@ public class ImageDAOImpl implements ImageDAO{
     public Optional<ImageEntity> downloadImage(Long id) {
         return this.imageRepository.findById(id);
     }
+    public void deleteImage(Long id) {
+        try{
+            if(imageRepository.existsById(id)) {
+                ImageEntity image = imageRepository.findAllById(id);
+                imageRepository.delete(image);
+            } else {
+                throw new IllegalStateException("해당 인덱스의 이미지가 없습니다.");
+            }
+        } catch (IllegalStateException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("이미지 삭제 중 오류 발생"+ e.getMessage(), e);
+        }
+    }
 }

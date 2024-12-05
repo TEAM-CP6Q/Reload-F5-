@@ -35,4 +35,13 @@ public class ImageController {
         return this.imageService.downloadImage(id);
     }
 
+    @DeleteMapping("/delete-image/{imageId}")
+    public ResponseEntity<?> deleteImage(@PathVariable("imageId") Long id) {
+        try {
+            imageService.deleteImage(id);
+            return ResponseEntity.ok("이미지 삭제 성공");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

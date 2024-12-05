@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface ImageDAO {
     ImageEntity uploadImage(ImageEntity imageEntity);
     Optional<ImageEntity> downloadImage(Long id);
+    void deleteImage(Long id);
 }
