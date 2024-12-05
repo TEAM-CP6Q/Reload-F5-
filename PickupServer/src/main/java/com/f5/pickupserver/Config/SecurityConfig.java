@@ -38,7 +38,7 @@ public class SecurityConfig {
 
                                 .requestMatchers(HttpMethod.PATCH,
                                         "/api/pickup/update-pickup",
-                                        "/api/pickup/payment/get-merchant-uid")
+                                        "/api/pickup/payment/update-payment")
                                 .permitAll()
 
                                 .requestMatchers(HttpMethod.DELETE,

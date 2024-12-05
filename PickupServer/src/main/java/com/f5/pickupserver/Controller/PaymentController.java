@@ -31,7 +31,7 @@ public class PaymentController {
 
     @GetMapping("/get-merchant-uid")
     public ResponseEntity<?> getMerchantUid(@RequestParam("pickupId") Long pickupId) {
-        if (pickupListRepository.existsByPickupId(pickupId)) {
+        if (!pickupListRepository.existsByPickupId(pickupId)) {
             return ResponseEntity.status(404).body(StatusCodeDTO.builder()
                             .msg("Pickup list not found")
                             .code(404L)
