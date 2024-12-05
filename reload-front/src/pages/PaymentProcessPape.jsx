@@ -82,7 +82,7 @@ const PaymentProcessPage = () => {
                             data: resultData
                         });
 
-                        if (result.status === 200) {
+                        if (result.status === 201) {
                             console.log('Payment process completed successfully');
                             navigate('/payment-complete', {
                                 state: {
