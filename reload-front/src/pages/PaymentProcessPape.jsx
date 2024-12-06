@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import "../CSS/PaymentProcessPage.css";
 
 const PaymentProcessPage = () => {
     const location = useLocation();
@@ -132,12 +133,6 @@ const PaymentProcessPage = () => {
             <div className="payment-process-content">
                 <h2>결제 처리 중...</h2>
                 <p>잠시만 기다려주세요. 결제 창이 나타납니다.</p>
-                {process.env.NODE_ENV === 'development' && (
-                    <div style={{ marginTop: '20px', fontSize: '12px', color: '#666' }}>
-                        <p>주문 정보:</p>
-                        <pre>{JSON.stringify(orderData, null, 2)}</pre>
-                    </div>
-                )}
             </div>
         </div>
     );

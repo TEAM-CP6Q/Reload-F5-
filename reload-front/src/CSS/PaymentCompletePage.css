@@ -1,0 +1,146 @@
+.payment-complete-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.payment-complete-content {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.4s ease-out;
+}
+
+.payment-complete-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    background-color: #2ecc71;
+    color: white;
+    font-size: 48px;
+    line-height: 80px;
+    border-radius: 50%;
+}
+
+.payment-complete-message {
+    margin-bottom: 40px;
+}
+
+.payment-complete-message h2 {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 16px;
+}
+
+.payment-complete-message p {
+    color: #666;
+    font-size: 16px;
+}
+
+.payment-complete-details {
+    background-color: #f8f9fa;
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 32px;
+}
+
+.payment-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.payment-info-row:last-child {
+    border-bottom: none;
+}
+
+.payment-info-row span:first-child {
+    color: #666;
+}
+
+.payment-info-row span:last-child {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.payment-complete-actions {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.payment-complete-actions button {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.order-details-button {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.order-details-button:hover {
+    background-color: #27ae60;
+    transform: translateY(-2px);
+}
+
+.continue-shopping-button {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.continue-shopping-button:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-2px);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .payment-complete-content,
+    .payment-failed-content,
+    .payment-process-content {
+        margin: 40px 20px;
+        padding: 30px 15px;
+    }
+
+    .payment-complete-actions,
+    .payment-failed-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .payment-complete-actions button,
+    .payment-failed-actions button {
+        width: 100%;
+    }
+}

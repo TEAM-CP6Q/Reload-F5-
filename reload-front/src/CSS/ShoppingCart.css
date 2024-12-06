@@ -133,7 +133,7 @@
 .continue-shopping-button {
     flex: 1;
     padding: 15px;
-    border: 1px solid #4CAF50;
+    border: none;
     background: white;
     color: #4CAF50;
     border-radius: 10px;

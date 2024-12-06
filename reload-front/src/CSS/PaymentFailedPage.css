@@ -1,62 +1,121 @@
 .payment-failed-container {
     min-height: 100vh;
-    background-color: #f5f5f5;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
 }
 
 .payment-failed-content {
-    max-width: 600px;
-    margin: 60px auto;
-    padding: 40px 20px;
+    max-width: 480px;
+    margin: 80px auto;
+    padding: 48px 32px;
     text-align: center;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.payment-failed-icon {
+    margin-bottom: 24px;
+    color: #dc3545;
+    animation: scaleIn 0.5s ease-out 0.3s both;
 }
 
 .payment-failed-message {
-    margin-bottom: 40px;
+    margin-bottom: 32px;
 }
 
 .payment-failed-message h2 {
-    font-size: 24px;
-    color: #e74c3c;
-    margin-bottom: 20px;
+    font-size: 26px;
+    font-weight: 600;
+    color: #343a40;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
 }
 
-.payment-failed-message p {
-    color: #666;
-    margin: 10px 0;
+.payment-failed-description {
+    color: #6c757d;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.payment-failed-divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e9ecef, transparent);
+    margin: 32px 0;
 }
 
 .payment-failed-actions {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     justify-content: center;
+    flex-direction: column;
 }
 
 .payment-failed-actions button {
-    padding: 12px 24px;
+    padding: 14px 24px;
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
     cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.2s;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    max-width: none;
 }
 
 .retry-button {
-    background-color: #3498db;
+    background-color: #4CAF50;
     color: white;
+    flex: 1;
+    max-width: 200px;
 }
 
 .retry-button:hover {
-    background-color: #2980b9;
+    background-color: #4CAF50;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(34, 139, 230, 0.2);
 }
 
 .home-button {
-    background-color: #95a5a6;
-    color: white;
+    background-color: #f1f3f5;
+    color: #495057;
+    flex: 1;
+    max-width: 200px;
 }
 
 .home-button:hover {
-    background-color: #7f8c8d;
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(73, 80, 87, 0.1);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 576px) {
+    .payment-failed-content {
+        margin: 40px 20px;
+        padding: 32px 24px;
+    }
 }
