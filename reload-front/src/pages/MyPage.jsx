@@ -68,6 +68,8 @@ const MyPage = () => {
       const result = await response.json();
 
       if (response.status === 200) {
+        
+        localStorage.setItem("username", result.name); 
         setName(result.name);
         setPhonenumber(result.phoneNumber);
       } else {
