@@ -31,7 +31,7 @@ const PaymentCompletePage = () => {
                         </div>
                         <div className="payment-info-row">
                             <span>주문 상품</span>
-                            <span>{orderInfo.orderItemList.length}개</span>
+                            <span>{orderInfo.orderItemList.length}종류</span>
                         </div>
                     </div>
                 )}

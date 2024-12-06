@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import '../CSS/PaymentCheckPage.css';
 
@@ -20,15 +20,34 @@ const PaymentCheckPage = () => {
     });
     const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const isDirectPurchase = location.state?.isDirectPurchase;
 
     useEffect(() => {
         // 장바구니 아이템 로드
-        const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        setCartItems(savedCartItems);
+        let items;
+        if (isDirectPurchase) {
+            // 즉시구매 상품 로드
+            items = JSON.parse(localStorage.getItem('directPurchaseItem')) || [];
+        } else {
+            // 일반 장바구니 상품 로드
+            items = JSON.parse(localStorage.getItem('cartItems')) || [];
+        }
+        setCartItems(items);
 
-        // 총 가격 계산
-        const total = savedCartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        setTotalPrice(total);
+         // 총 가격 계산
+         const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+         setTotalPrice(total);
+
+        if (isDirectPurchase) {
+            // 즉시구매 상품 로드
+            const directPurchaseItem = JSON.parse(localStorage.getItem('directPurchaseItem')) || [];
+            setCartItems(directPurchaseItem);
+        } else {
+            // 일반 장바구니 상품 로드
+            const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+            setCartItems(savedCartItems);
+        }
 
         // 사용자 정보 로드
         const fetchUserInfo = async () => {
@@ -74,10 +93,21 @@ const PaymentCheckPage = () => {
         };
 
         fetchUserInfo();
-    }, [navigate]);
+    }, [navigate, isDirectPurchase]);
 
     const handleAddressChange = () => {
         setIsAddressModalOpen(true);
+    };
+
+    const handleModalSave = () => {
+        setIsAddressModalOpen(false);
+    };
+
+    // 결제 완료 또는 취소 시 처리
+    const cleanupPurchaseData = () => {
+        if (isDirectPurchase) {
+            localStorage.removeItem('directPurchaseItem');
+        }
     };
 
     const handlePayment = async () => {
@@ -85,20 +115,21 @@ const PaymentCheckPage = () => {
             alert('배송지를 입력해주세요.');
             return;
         }
-    
+
         try {
             const token = localStorage.getItem("token");
-    
+
             if (!token) {
                 alert('로그인이 필요합니다.');
                 navigate('/login');
                 return;
             }
-    
+
             const orderData = {
                 orderDTO: {
                     consumer: userInfo.name,
-                    totalPrice: totalPrice
+                    totalPrice: totalPrice,
+                    isDirectPurchase: isDirectPurchase // 즉시구매 여부 추가
                 },
                 orderItemList: cartItems.map(item => ({
                     productId: item.pid,
@@ -106,7 +137,7 @@ const PaymentCheckPage = () => {
                     amount: item.quantity
                 }))
             };
-    
+
             const response = await fetch(
                 'https://refresh-f5-server.o-r.kr/api/payment/order/create-order-list',
                 {
@@ -118,33 +149,31 @@ const PaymentCheckPage = () => {
                     body: JSON.stringify(orderData)
                 }
             );
-    
+
             if (response.status === 200) {
                 const result = await response.json();
-                // 주문 생성 성공 후 결제 페이지로 이동
-                console.log(result);
+                cleanupPurchaseData(); // 결제 진행 전 데이터 정리
                 navigate('/payment-process', {
                     state: {
                         orderData: {
                             ...orderData,
                             orderId: result.orderId,
                             merchantUid: result.merchantUid
-                        }
+                        },
+                        isDirectPurchase: isDirectPurchase
                     }
                 });
             } else {
                 const errorData = await response.text();
                 console.error('주문 생성 실패:', errorData);
                 alert('주문 처리 중 오류가 발생했습니다.');
+                cleanupPurchaseData(); // 에러 발생 시에도 데이터 정리
             }
         } catch (error) {
             console.error("주문 처리 실패:", error);
             alert('주문 처리 중 오류가 발생했습니다.');
+            cleanupPurchaseData(); // 에러 발생 시에도 데이터 정리
         }
-    };
-
-    const handleModalSave = () => {
-        setIsAddressModalOpen(false);
     };
 
     return (
