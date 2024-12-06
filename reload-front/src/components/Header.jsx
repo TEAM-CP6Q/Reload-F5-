@@ -92,6 +92,10 @@ const Header = () => {
                 return '장바구니';
             case "/payment-check":
                 return '결제';
+            case "/payment-failed":
+                return '결제 실패';
+            case "/payment-complete":
+                return '결제 완료';
 
 
             default:
