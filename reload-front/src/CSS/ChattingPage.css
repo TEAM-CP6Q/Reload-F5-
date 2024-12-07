@@ -1,4 +1,4 @@
-.container {
+.chatting-container {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -6,7 +6,6 @@
     margin: 0 auto;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #ddd;
   }
   
   .message-container {
@@ -82,11 +81,12 @@
     margin-bottom: 10px;
   }
   
-  .input-container {
+  .chatting-input-container {
     display: flex;
     align-items: center;
     padding: 10px;
     border-top: 1px solid #ddd;
+    position: relative;
   }
   
   .chat-input {

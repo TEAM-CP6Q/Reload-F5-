@@ -140,6 +140,34 @@ const MainPage = () => {
         }
       };
 
+      useEffect(() => {
+        const handleGet = async () => {
+          const token = localStorage.getItem("token");
+          const email = localStorage.getItem("email");
+    
+          const response = await fetch(
+            `https://refresh-f5-server.o-r.kr/api/account/search-account/${email}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+              },
+            }
+          );
+    
+          const result = await response.json();
+    
+          if (response.status === 200) {
+            
+            localStorage.setItem("username", result.name); 
+          } else {
+            alert("로그인 부탁: " + result.message);
+          }
+        };
+        handleGet();
+      }, []);
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
