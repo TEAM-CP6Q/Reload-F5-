@@ -54,26 +54,7 @@ public class KakaoAuthController {
         try {
             logger.info("Received Kakao auth code: {}", request.getCode());
             KakaoLoginDTO status;
-            try {
-                status = kakaoAuthService.loginKakao(request.getCode());
-            } catch (IllegalStateException e) {
-                if(e.getMessage().equals("Need register")) {
-                    return ResponseEntity.status(404).body(StatusCodeDTO.builder()
-                            .Code(404L)
-                            .Msg("카카오 회원가입을 진행해주세요.")
-                            .build());
-                } else if(e.getMessage().equals("Need integration")){
-                    return ResponseEntity.status(405).body(StatusCodeDTO.builder()
-                            .Code(405L)
-                            .Msg("통합을 진행해주세요.")
-                            .build());
-                } else{
-                    return status(406).body(StatusCodeDTO.builder()
-                            .Code(406L)
-                            .Msg("토큰 처리 중 서버 오류")
-                            .build());
-                }
-            }
+            status = kakaoAuthService.loginKakao(request.getCode());
             String email = status.getEmail();
 
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
@@ -88,11 +69,22 @@ public class KakaoAuthController {
             return ok(response);
 
         } catch (Exception e) {
-            logger.error("Internal server error occurred during token processing");
-            return status(406).body(StatusCodeDTO.builder()
-                            .Code(406L)
-                            .Msg("토큰 처리 중 서버 오류")
-                            .build());
+            if (e.getMessage().equals("Need register")) {
+                return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                        .Code(404L)
+                        .Msg("카카오 회원가입을 진행해주세요.")
+                        .build());
+            } else if (e.getMessage().equals("Need integration")) {
+                return ResponseEntity.status(405).body(StatusCodeDTO.builder()
+                        .Code(405L)
+                        .Msg("통합을 진행해주세요.")
+                        .build());
+            } else {
+                return status(406).body(StatusCodeDTO.builder()
+                        .Code(406L)
+                        .Msg("토큰 처리 중 서버 오류")
+                        .build());
+            }
         }
     }
 
