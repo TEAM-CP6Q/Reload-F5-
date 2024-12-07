@@ -27,7 +27,6 @@ const ProductDetailPage = () => {
                         }
                     });
                     const designerData = await response.json();
-                    console.log("디자이너 정보" + designerData);
                     setDesigner(designerData);
                 }
             } catch (error) {
@@ -486,6 +485,10 @@ const ProductDetailPage = () => {
                 <div className='productDetail-info-item'>
                     <span className='productDetail-info-label'>품명</span>
                     <span className='productDetail-info-value'>{product.name}</span>
+                </div>
+                <div className='productDetail-info-item'>
+                    <span className='productDetail-info-label'>카테고리</span>
+                    <span className='productDetail-info-value'>{product.categoryIndex.value}</span>
                 </div>
                 <div className='productDetail-info-item'>
                     <span className='productDetail-info-label'>디자이너</span>
