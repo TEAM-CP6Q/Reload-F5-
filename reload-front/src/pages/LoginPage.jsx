@@ -46,7 +46,13 @@ const LoginPage = () => {
         navigate('/');
       } else {
         console.log("로그인 실패");
-        alert("로그인 실패: " + result.message);
+        if (response.status === 402) {
+          alert("아이디 또는 비밀번호가 잘못되었습니다");
+        } else if (response.status === 400) {
+          alert("카카오로 로그인 해주세요");
+        } else {
+          alert("로그인 실패: " + result.message);
+        }
       }
     } catch (error) {
       console.error("Fetch error: ", error);
@@ -82,6 +88,21 @@ const LoginPage = () => {
       }
     } catch (error) {
       console.error("Fetch error: ", error);
+    }
+  };
+
+  const handleSocialLogin = async (response) => {
+    try {
+      // 기존 소셜 로그인 로직...
+      if (response.status === 404) {
+        alert("회원가입 후 진행해주세요");
+      } else if (response.status === 405) {
+        alert("아이디를 통합해주세요");
+      } else if (response.status === 406) {
+        alert("토큰 오류입니다");
+      }
+    } catch (error) {
+      console.error("Social login error: ", error);
     }
   };
 
@@ -141,7 +162,7 @@ const LoginPage = () => {
               <Link to="/signup-type">회원가입</Link>
             </div>
 
-            <div className="social-login">
+            <div className="social-login" onClick={handleSocialLogin}>
               <p>소셜 계정으로 간편 로그인</p>
               <KakaoLogin/>
             </div>
