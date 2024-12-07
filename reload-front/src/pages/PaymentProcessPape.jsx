@@ -7,22 +7,11 @@ const PaymentProcessPage = () => {
     const navigate = useNavigate();
     const orderData = location.state?.orderData;
 
-    const deleteFailedOrder = async (orderId, merchantUid) => {
+    const deleteFailedOrder = async (orderId) => {
         try {
-            // merchantUid로 orderId를 찾아야 하는 경우를 위한 API 호출
-            let targetOrderId = orderId;
-            if (!targetOrderId && merchantUid) {
-                // 여기에 merchantUid로 orderId를 조회하는 로직 추가 가능
-                console.log('Using merchant_uid to find order:', merchantUid);
-            }
-
             const accessToken = localStorage.getItem('accessToken');
-            if (!targetOrderId) {
-                console.error('No order ID available for deletion');
-                return false;
-            }
             
-            const response = await fetch(`https://refresh-f5-server.o-r.kr/api/payment/order/delete-order-list/${targetOrderId}`, {
+            const response = await fetch(`https://refresh-f5-server.o-r.kr/api/payment/order/delete-order-list/${orderId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -49,50 +38,37 @@ const PaymentProcessPage = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const paymentStatus = urlParams.get('imp_success');
         const merchantUid = urlParams.get('merchant_uid');
+        const impUid = urlParams.get('imp_uid');
         
         // 모바일 결제 후 리디렉션된 경우
         if (paymentStatus !== null) {
             console.log('Mobile payment redirect detected', {
                 status: paymentStatus,
-                merchantUid: merchantUid
+                merchantUid,
+                impUid
             });
             
-            if (paymentStatus === 'false') {
-                // 결제 실패 또는 취소된 경우
-                console.log('Mobile payment cancelled or failed');
-                
-                // localStorage에서 주문 정보 확인
-                const storedOrderData = localStorage.getItem('currentOrder');
-                let orderId = null;
-                
-                if (storedOrderData) {
-                    try {
-                        const parsedOrderData = JSON.parse(storedOrderData);
-                        orderId = parsedOrderData.orderId;
-                    } catch (e) {
-                        console.error('Error parsing stored order data:', e);
-                    }
+            // localStorage에서 주문 정보 가져오기
+            const storedOrderData = localStorage.getItem('currentOrder');
+            let currentOrderData = null;
+            
+            if (storedOrderData) {
+                try {
+                    currentOrderData = JSON.parse(storedOrderData);
+                    console.log('Retrieved stored order data:', currentOrderData);
+                } catch (e) {
+                    console.error('Error parsing stored order data:', e);
                 }
-                
-                // orderData나 localStorage의 정보로 주문 삭제
-                deleteFailedOrder(orderId || orderData?.orderId, merchantUid).then(() => {
-                    // 저장된 주문 정보 삭제
-                    localStorage.removeItem('currentOrder');
-                    
-                    navigate('/payment-failed', {
-                        state: {
-                            error: '결제가 취소되었거나 실패했습니다.'
-                        }
-                    });
-                });
-                return;
-            } else if (paymentStatus === 'true') {
+            }
+
+            if (paymentStatus === 'true' && impUid) {
                 // 결제 성공 시
-                const imp_uid = urlParams.get('imp_uid');
                 const paymentData = {
-                    paymentUid: imp_uid,
-                    orderUid: orderData?.orderId
+                    paymentUid: impUid,
+                    orderUid: currentOrderData?.orderId
                 };
+
+                console.log('Processing successful payment:', paymentData);
 
                 // 결제 성공 처리
                 fetch('https://refresh-f5-server.o-r.kr/api/payment/create', {
@@ -104,10 +80,11 @@ const PaymentProcessPage = () => {
                 })
                 .then(async (result) => {
                     if (result.status === 201) {
+                        localStorage.removeItem('currentOrder');
                         navigate('/payment-complete', {
                             state: {
-                                orderInfo: orderData,
-                                paymentInfo: { imp_uid, merchant_uid: merchantUid }
+                                orderInfo: currentOrderData,
+                                paymentInfo: { imp_uid: impUid, merchant_uid: merchantUid }
                             }
                         });
                     } else {
@@ -117,15 +94,29 @@ const PaymentProcessPage = () => {
                 })
                 .catch(async (error) => {
                     console.error('Payment process error:', error);
-                    await deleteFailedOrder(orderData?.orderId, merchantUid);
+                    if (currentOrderData?.orderId) {
+                        await deleteFailedOrder(currentOrderData.orderId);
+                    }
                     alert(`결제 처리 중 오류 발생: ${error.message}`);
                     navigate('/payment-failed');
+                });
+                return;
+            } else if (paymentStatus === 'false') {
+                // 결제 실패 또는 취소된 경우
+                console.log('Mobile payment cancelled or failed');
+                if (currentOrderData?.orderId) {
+                    deleteFailedOrder(currentOrderData.orderId);
+                }
+                localStorage.removeItem('currentOrder');
+                navigate('/payment-failed', {
+                    state: {
+                        error: '결제가 취소되었거나 실패했습니다.'
+                    }
                 });
                 return;
             }
         }
 
-        // 이전 코드와 동일...
         console.log('Payment Process Started', { 
             orderData,
             merchantUid: orderData?.merchantUid
@@ -138,7 +129,7 @@ const PaymentProcessPage = () => {
             return;
         }
 
-        // 주문 정보를 localStorage에 저장
+        // 결제 시작 시 주문 정보 저장
         localStorage.setItem('currentOrder', JSON.stringify(orderData));
 
         const loadIamportScript = () => {
@@ -210,7 +201,6 @@ const PaymentProcessPage = () => {
                             });
 
                             if (result.status === 201) {
-                                // 성공 시 저장된 주문 정보 삭제
                                 localStorage.removeItem('currentOrder');
                                 console.log('Payment process completed successfully');
                                 navigate('/payment-complete', {
