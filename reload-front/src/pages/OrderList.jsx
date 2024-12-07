@@ -156,7 +156,7 @@ const OrderList = () => {
                 </div>
                 <div className="order-main">
                   <div className="order-header-section">
-                    <span className="order-number">주문번호: {order.merchantUid}</span>
+                    <span className="order-number">주문번호: {order.orderId}</span>
                   </div>
                   <div className="order-products">
                     {order.products.map((product) => (
