@@ -3,6 +3,8 @@ body {
   /* background-color: rgb(91, 129, 145); */
   /* background-color: rgb(204, 197, 197); */
   background-color: rgb(255, 255, 255); /* 모바일 컨테이너 배경색 설정 */
+  height: 100%;
+  min-height: 100vh;
 }
 
 /* 모바일 크기 고정 */
@@ -14,6 +16,8 @@ body {
   margin-left: auto;
   margin-right: auto;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /*테두리 그림자*/
+  height: 100%;
+  min-height: 100vh;
 }
 
 /* 웹 화면 크기 */

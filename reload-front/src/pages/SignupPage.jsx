@@ -126,7 +126,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="social-login-container" style={{ height: '100vh' }}>
+    <div className="social-login-container">
       <Header />
       <div className="signup-inner">
         <div className="signuplogo-con">

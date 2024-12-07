@@ -392,10 +392,14 @@ const AdminDesigner = () => {
             rules={[{ required: true, message: '카테고리를 선택해주세요.' }]}
           >
             <Select placeholder="카테고리를 선택해주세요">
-              <Option value="의류">의류</Option>
-              <Option value="가방">가방</Option>
-              <Option value="신발">신발</Option>
-              <Option value="액세서리">액세서리</Option>
+              <Option value="인테리어">인테리어</Option>
+              <Option value="수납/정리">수납/정리</Option>
+              <Option value="문구/펜시">문구/펜시</Option>
+              <Option value="완구">완구</Option>
+              <Option value="패션/잡화">패션/잡화</Option>
+              <Option value="반려동물">반려동물</Option>
+              <Option value="가구">가구</Option>
+              <Option value="기타">기타</Option>
             </Select>
           </Form.Item>
           <Form.Item
