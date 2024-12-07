@@ -72,7 +72,7 @@ public class PaymentController {
             pickupList.setPayment(true);
             pickupListRepository.save(pickupList);
             LinkedHashMap<Object,Object> map = new LinkedHashMap<>();
-            map.put(paymentEntity, pickupList);
+            map.put(paymentEntity.getMerchantUid(), pickupList);
             return ResponseEntity.ok(map);
         } catch (Exception e){
             return ResponseEntity.status(407).body(StatusCodeDTO.builder()
