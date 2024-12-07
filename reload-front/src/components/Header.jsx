@@ -127,6 +127,7 @@ const Header = () => {
     };
 
     const isMainPage = location.pathname === '/';
+    const shouldHideBackButton = location.pathname === '/payment-failed' || location.pathname === '/payment-complete';
 
     return (
         <>
@@ -134,9 +135,11 @@ const Header = () => {
                 <div className="header-contents">
                     {!isMainPage && (
                         <div className="header-other_page_header">
-                            <span className="header-back_btn" onClick={handleBackClick}>
-                                <FontAwesomeIcon icon={faArrowLeft} className="faArrowLeft" style={{ cursor: 'pointer', fontSize: '20px' }} />
-                            </span>
+                            {!shouldHideBackButton && (
+                                <span className="header-back_btn" onClick={handleBackClick}>
+                                    <FontAwesomeIcon icon={faArrowLeft} className="faArrowLeft" style={{ cursor: 'pointer', fontSize: '20px' }} />
+                                </span>
+                            )}
                             <span className="header-other_page_title">{getPageTitle()}</span>
                             <span onClick={handleHomeClick} className="header-home_btn">
                                 <FontAwesomeIcon icon={faHouse} style={{ fontSize: '25px' }} />
