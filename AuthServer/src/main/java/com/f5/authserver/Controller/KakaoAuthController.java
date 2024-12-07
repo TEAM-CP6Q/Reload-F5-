@@ -81,8 +81,8 @@ public class KakaoAuthController {
 
         } catch (Exception e) {
             logger.error("Internal server error occurred during token processing");
-            return status(405).body(StatusCodeDTO.builder()
-                            .Code(405L)
+            return status(406).body(StatusCodeDTO.builder()
+                            .Code(406L)
                             .Msg("토큰 처리 중 서버 오류")
                             .build());
         }
