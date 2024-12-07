@@ -53,20 +53,28 @@ public class KakaoAuthController {
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoAuthRequestDTO request) throws AuthenticationException {
         try {
             logger.info("Received Kakao auth code: {}", request.getCode());
-
-            KakaoLoginDTO status = kakaoAuthService.loginKakao(request.getCode());
-            String email = status.getEmail();
-            if(!userDAO.existsByEmail(email)) {
-                return ResponseEntity.status(404).body(StatusCodeDTO.builder()
-                                .Code(404L)
-                                .Msg("카카오 회원가입을 진행해주세요.")
-                                .build());
-            } else if(!userRepository.getByEmail(email).getKakao()) {
-                return ResponseEntity.status(405).body(StatusCodeDTO.builder()
-                                .Code(405L)
-                                .Msg("통합을 진행해주세요.")
-                                .build());
+            KakaoLoginDTO status;
+            try {
+                status = kakaoAuthService.loginKakao(request.getCode());
+            } catch (IllegalStateException e) {
+                if(e.getMessage().equals("Need register")) {
+                    return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                            .Code(404L)
+                            .Msg("카카오 회원가입을 진행해주세요.")
+                            .build());
+                } else if(e.getMessage().equals("Need integration")){
+                    return ResponseEntity.status(405).body(StatusCodeDTO.builder()
+                            .Code(405L)
+                            .Msg("통합을 진행해주세요.")
+                            .build());
+                } else{
+                    return status(406).body(StatusCodeDTO.builder()
+                            .Code(406L)
+                            .Msg("토큰 처리 중 서버 오류")
+                            .build());
+                }
             }
+            String email = status.getEmail();
 
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
             final String token = jwtTokenUtil.generateToken(userDetails.getUsername());
@@ -87,7 +95,6 @@ public class KakaoAuthController {
                             .build());
         }
     }
-
 
     @PatchMapping("/integration")
     public ResponseEntity<?> integrationAccount(@RequestBody KakaoAuthRequestDTO request) {
