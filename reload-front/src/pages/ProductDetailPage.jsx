@@ -273,7 +273,7 @@ const ProductDetailPage = () => {
     // 수량 선택 모달 컴포넌트
     const QuantityModal = () => {
         if (!showQuantityModal) return null;
-
+    
         return (
             <div style={{
                 position: 'fixed',
@@ -281,70 +281,92 @@ const ProductDetailPage = () => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 zIndex: 1000,
+                backdropFilter: 'blur(4px)',
                 animation: 'fadeIn 0.3s ease-out'
             }}>
                 <div style={{
                     backgroundColor: 'white',
-                    padding: '30px',
-                    borderRadius: '12px',
-                    width: '80%',
+                    padding: '24px',
+                    borderRadius: '16px',
+                    width: '90%',
                     maxWidth: '400px',
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
                     animation: 'slideIn 0.3s ease-out',
-                    textAlign: 'center'
                 }}>
                     <h3 style={{
-                        margin: '0 0 20px 0',
+                        margin: '0 0 24px 0',
                         fontSize: '20px',
                         fontWeight: '600',
-                        color: '#333'
+                        color: '#1a1a1a',
+                        textAlign: 'center',
+                        letterSpacing: '-0.5px'
                     }}>
                         구매 수량 선택
                     </h3>
                     
-                    <div style={{ marginBottom: '20px' }}>
+                    <div style={{ 
+                        backgroundColor: '#f8faf9',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '24px'
+                    }}>
                         <div style={{ 
                             display: 'flex', 
-                            alignItems: 'center',
                             justifyContent: 'space-between',
-                            padding: '10px',
-                            backgroundColor: '#f5f5f5',
-                            borderRadius: '8px',
-                            marginBottom: '15px'
+                            alignItems: 'center',
+                            marginBottom: '16px'
                         }}>
-                            <span style={{ fontWeight: '500' }}>{product.name}</span>
-                            <span>{product.price?.toLocaleString()}원</span>
+                            <span style={{ 
+                                fontWeight: '500',
+                                color: '#2d2d2d',
+                                fontSize: '15px'
+                            }}>
+                                {product.name}
+                            </span>
+                            <span style={{
+                                color: '#4CAF50',
+                                fontWeight: '600',
+                                fontSize: '15px'
+                            }}>
+                                {product.price?.toLocaleString()}원
+                            </span>
                         </div>
                         
                         <div style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '15px',
-                            margin: '20px 0'
+                            gap: '16px',
+                            padding: '8px 0'
                         }}>
                             <button
                                 onClick={() => handleQuantityChange(quantity - 1)}
                                 style={{
-                                    width: '36px',
-                                    height: '36px',
-                                    border: '1px solid #e0e0e0',
+                                    width: '40px',
+                                    height: '40px',
+                                    border: '1.5px solid #e0e0e0',
                                     borderRadius: '50%',
                                     backgroundColor: 'white',
                                     cursor: 'pointer',
-                                    fontSize: '18px'
+                                    fontSize: '20px',
+                                    color: '#666',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s ease'
                                 }}
                             >
-                                -
+                                −
                             </button>
                             <span style={{ 
-                                fontSize: '18px',
-                                fontWeight: '500',
+                                fontSize: '20px',
+                                fontWeight: '600',
+                                color: '#1a1a1a',
                                 minWidth: '40px',
                                 textAlign: 'center'
                             }}>
@@ -353,56 +375,70 @@ const ProductDetailPage = () => {
                             <button
                                 onClick={() => handleQuantityChange(quantity + 1)}
                                 style={{
-                                    width: '36px',
-                                    height: '36px',
-                                    border: '1px solid #e0e0e0',
+                                    width: '40px',
+                                    height: '40px',
+                                    border: '1.5px solid #e0e0e0',
                                     borderRadius: '50%',
                                     backgroundColor: 'white',
                                     cursor: 'pointer',
-                                    fontSize: '18px'
+                                    fontSize: '20px',
+                                    color: '#666',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s ease'
                                 }}
                             >
                                 +
                             </button>
                         </div>
-
+                    </div>
+    
+                    <div style={{
+                        backgroundColor: '#f0f7f1',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '24px'
+                    }}>
                         <div style={{
-                            padding: '15px',
-                            backgroundColor: '#f8f8f8',
-                            borderRadius: '8px',
-                            marginTop: '20px'
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
                         }}>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'space-between',
+                            <span style={{
+                                color: '#2d2d2d',
                                 fontWeight: '600',
-                                fontSize: '16px'
+                                fontSize: '15px'
                             }}>
-                                <span>총 결제금액</span>
-                                <span>{(product.price * quantity).toLocaleString()}원</span>
-                            </div>
+                                총 결제금액
+                            </span>
+                            <span style={{
+                                color: '#4CAF50',
+                                fontWeight: '700',
+                                fontSize: '18px'
+                            }}>
+                                {(product.price * quantity).toLocaleString()}원
+                            </span>
                         </div>
                     </div>
-
+    
                     <div style={{
                         display: 'flex',
-                        justifyContent: 'center',
                         gap: '10px',
-                        marginTop: '20px'
                     }}>
                         <button
                             onClick={() => setShowQuantityModal(false)}
                             style={{
-                                padding: '12px 20px',
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '10px',
+                                flex: '1',
+                                padding: '15px',
+                                border: '1.5px solid #e0e0e0',
+                                borderRadius: '12px',
                                 backgroundColor: 'white',
                                 cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: '500',
+                                fontSize: '15px',
+                                fontWeight: '600',
                                 color: '#666',
-                                flex: 1,
-                                maxWidth: '150px'
+                                transition: 'all 0.2s ease'
                             }}
                         >
                             취소
@@ -410,16 +446,16 @@ const ProductDetailPage = () => {
                         <button
                             onClick={handlePurchaseConfirm}
                             style={{
-                                padding: '12px 20px',
+                                flex: '1',
+                                padding: '15px',
                                 border: 'none',
-                                borderRadius: '10px',
+                                borderRadius: '12px',
                                 backgroundColor: '#4CAF50',
                                 color: 'white',
                                 cursor: 'pointer',
-                                fontSize: '14px',
-                                fontWeight: '500',
-                                flex: 1,
-                                maxWidth: '150px'
+                                fontSize: '15px',
+                                fontWeight: '600',
+                                transition: 'all 0.2s ease'
                             }}
                         >
                             구매하기
