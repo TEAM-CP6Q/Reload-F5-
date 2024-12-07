@@ -195,7 +195,7 @@
   }
 
   .email-check-btn{
-    width: 35%;
+    width: 30%;
     padding: 10px;
     background-color: transparent; /* 배경색 제거 */
     color: #388E3C; /* 글자 색상 */
@@ -209,3 +209,60 @@
     background-color: #388E3C; /* 호버 시 배경색 추가 */
     color: white; /* 호버 시 글자 색상 변경 */
   }
+
+  .email-check-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    text-align: center;
+    height: 100%;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.email-check-modal p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #333;
+    line-height: 1.5;
+}
+
+.email-check-modal .close-btn {
+    padding: 10px 30px;
+    background-color: #388E3C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.email-check-modal .close-btn:hover {
+    background-color: #45a049;
+}
+
+/* Custom modal overlay and content styles */
+.ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ReactModal__Content {
+    position: relative !important;
+    inset: auto !important;
+    margin: auto;
+    width: 90% !important;
+    max-width: 400px !important;
+    height: auto !important;
+    min-height: 200px;
+    padding: 0 !important;
+    background-color: white;
+    border-radius: 10px !important;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border: none !important;
+}

@@ -137,7 +137,8 @@ const LoginPage = () => {
             <button type="submit" className="login-button">로그인</button>
 
             <div className="link-group">
-              <Link to="/signup-type">회원가입</Link> | <Link >아이디/비밀번호 찾기</Link>
+              {/* <Link to="/signup-type">회원가입</Link> | <Link >아이디/비밀번호 찾기</Link> */}
+              <Link to="/signup-type">회원가입</Link>
             </div>
 
             <div className="social-login">
