@@ -28,9 +28,9 @@ public class ProductController {
     }
 
     /*
-    * 전체 productlist에서 category별 전체 목록 불러옴
-    * value = category의 value(ex. 가구, 전체 등)
-    * */
+     * 전체 productlist에서 category별 전체 목록 불러옴
+     * value = category의 value(ex. 가구, 전체 등)
+     * */
     @GetMapping("/product-list/{value}")
     public ResponseEntity<?> getAllProducts(@PathVariable String value) {
         try {
@@ -87,7 +87,7 @@ public class ProductController {
             List<String> imageURI = communicationService.uploadImagesToImageServer(images);
             productDTO.setImageUrls(imageURI);
             logger.info("Received imageURI: {}", imageURI);
-                // 4. 제품 정보 저장
+            // 4. 제품 정보 저장
             ProductDTO createdProduct = productService.insertProduct(productDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
         } catch (IllegalArgumentException e) {
