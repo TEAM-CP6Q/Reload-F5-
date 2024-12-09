@@ -24,7 +24,6 @@ const KakaoCallback = () => {
       console.log('인가 코드가 없습니다.');
     }
   }, [location, navigate]);
-
   const handleLogin = async (authCode) => {
     try {
       const response = await fetch('https://refresh-f5-server.o-r.kr/api/auth/kakao/login', {
@@ -35,28 +34,44 @@ const KakaoCallback = () => {
         body: JSON.stringify({ code: authCode }),
       });
 
-      if (response.status === 405) {
-        const confirmIntegration = window.confirm('통합하시겠습니까?');
-        if (confirmIntegration) {
-          await handleIntegration(authCode);
-        }
-      } else if (response.status === 200) {
-        const result = await response.json();
-        if (result.token) {
-          console.log(result);
-          console.log(result.user.email);
-          localStorage.setItem('token', result.token);
-          localStorage.setItem('email', result.user.email);
-          navigate('/');
-        } else {
-          console.error('로그인 응답에 토큰이 없습니다:', result);
-        }
-      } else {
+      if (!response.ok) {
         const errorData = await response.json();
-        console.error(`로그인 실패 - 상태 코드 ${response.status}:`, errorData);
+        
+        switch (response.status) {
+          case 404:
+            alert('카카오 회원가입을 진행해주세요.');
+            navigate('/register'); // 회원가입 페이지로 이동
+            break;
+            
+          case 405:
+            const confirmIntegration = window.confirm('통합을 진행하시겠습니까?');
+            if (confirmIntegration) {
+              await handleIntegration(authCode);
+            }
+            break;
+            
+          case 406:
+            alert('토큰 처리 중 서버 오류가 발생했습니다.');
+            break;
+            
+          default:
+            alert(`로그인 실패: ${errorData.Msg || '알 수 없는 오류가 발생했습니다.'}`);
+        }
+        return;
       }
+
+      const result = await response.json();
+      if (result.token) {
+        localStorage.setItem('token', result.token);
+        localStorage.setItem('email', result.user.email);
+        navigate('/');
+      } else {
+        alert('로그인 정보가 올바르지 않습니다.');
+      }
+
     } catch (error) {
       console.error('로그인 요청 오류:', error);
+      alert('로그인 처리 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
     }
