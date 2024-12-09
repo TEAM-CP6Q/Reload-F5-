@@ -5,6 +5,7 @@ import com.f5.productserver.DTO.Product.ProductDTO;
 import com.f5.productserver.DTO.ProductCategory.ProductCategoryDTO;
 import com.f5.productserver.Entity.Product.ProductEntity;
 import com.f5.productserver.Entity.ProductCategory.ProductCategoryEntity;
+import org.springframework.boot.autoconfigure.web.embedded.TomcatVirtualThreadsWebServerFactoryCustomizer;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +35,15 @@ public class ProductServiceImpl implements ProductService{
         try{
             productDAO.deleteProduct(id);
         } catch (Exception e){
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public void deleteProductCategory(int id) {
+        try {
+            productDAO.deleteProductCategory(id);
+        } catch (Exception e) {
             throw new IllegalStateException(e);
         }
     }
@@ -75,5 +85,15 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public List<ProductDTO> getProductDetails(int pId) {
         return productDAO.findProductDetails(pId);
+    }
+
+    @Override
+    public List<ProductCategoryDTO> getProductCategory() {
+        return productDAO.findAllProductCategorys();
+    }
+
+    @Override
+    public void updateProductCategory(ProductCategoryDTO productCategoryDTO) {
+        productDAO.updateProductCategory(productCategoryDTO);
     }
 }

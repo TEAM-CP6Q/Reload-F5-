@@ -25,7 +25,8 @@ public class SecurityConfig {
                         authorizeRequests
                                 // POST 요청만 허용
                                 .requestMatchers(HttpMethod.POST,
-                                        "/api/product/add-product")
+                                        "/api/product/add-product",
+                                        "api/product/add-product-category")
                                 .permitAll()
 
                                 // GET 요청만 허용
@@ -38,14 +39,14 @@ public class SecurityConfig {
                                 .permitAll()
 
                                 // PATCH 요청만 허용
-//                                .requestMatchers(HttpMethod.PATCH,
-//                                        "/api/account/update-account",
-//                                        "/api/account/designer/update-designer")
-//                                .permitAll()
+                                .requestMatchers(HttpMethod.PATCH,
+                                        "/api/product/update-category")
+                                .permitAll()
 
                                 // DELETE 요청만 허용
                                 .requestMatchers(HttpMethod.DELETE,
-                                        "/api/product/delete-product/**")
+                                        "/api/product/delete-product/**",
+                                        "/api/product/delete-category/**")
                                 .permitAll()
 
                                 // 그 외의 요청은 인증 필요
