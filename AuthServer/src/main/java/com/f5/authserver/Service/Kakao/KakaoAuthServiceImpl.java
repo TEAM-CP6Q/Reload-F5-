@@ -6,6 +6,8 @@ import com.f5.authserver.DTO.Kakao.IntegrationDTO;
 import com.f5.authserver.DTO.Auth.RegisterDTO;
 import com.f5.authserver.DTO.Kakao.KakaoLoginDTO;
 import com.f5.authserver.DTO.Kakao.UserKakaoDTO;
+import com.f5.authserver.Repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,12 @@ import java.net.URISyntaxException;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+@Slf4j
 @Service
 public class KakaoAuthServiceImpl implements KakaoAuthService {
 
     private final UserDAO userDAO;
+    private final UserRepository userRepository;
 
     @Value("${kakao.client-id}") // application.properties에서 클라이언트 ID 가져오기
     private String clientId;
@@ -34,10 +38,11 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
     //private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    public KakaoAuthServiceImpl(UserDAO userDAO, ObjectMapper objectMapper) {
+    public KakaoAuthServiceImpl(UserDAO userDAO, ObjectMapper objectMapper, UserRepository userRepository) {
         this.userDAO = userDAO;
         //this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.userRepository = userRepository;
     }
 
     private LinkedHashMap<String, Object> getKakaoInfo(String authCode) throws URISyntaxException {
@@ -93,28 +98,33 @@ public class KakaoAuthServiceImpl implements KakaoAuthService {
             System.out.printf("email: " + email + ", id: " +
                     id + ", phoneNumber: " + phoneNumber +
                     ", name: " + name + "\n");
-            Boolean status = userDAO.existsByEmail(email);
-            if(!status)
+            log.info("일단 정보 가져오는거 성공");
+            Boolean status = userRepository.existsByEmail(email);
+            log.info("exists 성공");
+            if(!status) {
+                log.info("회갑 필요");
                 throw new IllegalStateException("Need register");
+            }
             else if (!userDAO.getKakaoByEmail(email).getKakao()) {
+                log.info("통합 필요");
                 throw new IllegalStateException("Need integration");
             }
-            else {
-                UserKakaoDTO userKakaoDTO = userDAO.getKakaoByEmail(email);
-                if(userKakaoDTO.getKakao())
-                    return KakaoLoginDTO.builder()
-                            .email(userKakaoDTO.getEmail())
-                            .userId(userKakaoDTO.getUserId())
-                            .build();
-            }
+            log.info("status 검증 성공");
 
-            return null;
+            UserKakaoDTO userKakaoDTO = userDAO.getKakaoByEmail(email);
+            log.info("서비스단에선 성공");
+            return KakaoLoginDTO.builder()
+                    .email(userKakaoDTO.getEmail())
+                    .userId(userKakaoDTO.getUserId())
+                    .build();
 
         } catch (HttpClientErrorException e) {
             System.err.println("카카오 API 요청 실패: " + e.getResponseBodyAsString());
             throw new RuntimeException("카카오 API 요청 실패", e);
-        } catch (Exception e) {
-            throw new RuntimeException("JSON 파싱 오류", e);
+        } catch (IllegalStateException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("JSON 파싱 오류");
         }
     }
 

@@ -69,6 +69,7 @@ public class KakaoAuthController {
             return ok(response);
 
         } catch (Exception e) {
+            logger.error(e.getMessage());
             if (e.getMessage().equals("Need register")) {
                 return ResponseEntity.status(404).body(StatusCodeDTO.builder()
                         .Code(404L)
