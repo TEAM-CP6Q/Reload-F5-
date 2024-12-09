@@ -34,7 +34,7 @@ const PickupRequestPage = () => {
             left: "0",
             margin: "auto",
             width: "100%",
-            height: "80%",
+            height: "500px",
             padding: "0",
             overflow: "hidden",
             display: "flex",
@@ -609,17 +609,20 @@ const PickupRequestPage = () => {
                 </button>
             </div>
 
-            <Modal
-                isOpen={isOpen}
-                onRequestClose={() => setIsOpen(false)}
-                style={customStyles}
-                contentLabel="주소 검색"
-            >
-                <DaumPostcode
-                    onComplete={completeHandler}
-                    style={{ height: "100%" }}
-                />
-            </Modal>
+            <Modal isOpen={isOpen} ariaHideApp={false} style={customStyles}>
+          <button
+            onClick={() => setIsOpen(false)}
+            style={{
+              alignSelf: "center",
+              padding: "10px 20px",
+              fontSize: "16px",
+              marginTop: "20px",
+            }}
+          >
+            닫기
+          </button>
+          <DaumPostcode onComplete={completeHandler} height="100%" />
+        </Modal>
         </div>
     );
 };
