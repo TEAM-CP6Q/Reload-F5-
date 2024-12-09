@@ -39,10 +39,9 @@ public class SecurityConfig {
 //                                .permitAll()
 
                                         // DELETE 요청만 허용
-//                                .requestMatchers(HttpMethod.DELETE,
-//                                        "/api/account/withdraw/**",
-//                                        "/api/account/designer/remove-designer")
-//                                .permitAll()
+                                .requestMatchers(HttpMethod.DELETE,
+                                        "/api/image/delete-image/**")
+                                .permitAll()
 
                                         // 그 외의 요청은 인증 필요
                                         .anyRequest().authenticated()

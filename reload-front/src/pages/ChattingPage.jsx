@@ -151,7 +151,7 @@ const ChattingPage = () => {
   }, [messages]);
 
   return (
-    <div className="container">
+    <div className="chatting-container">
       <Header />
       <div className="message-container" ref={messageContainerRef}>
         {messages.map((msg, index) => (
@@ -180,7 +180,7 @@ const ChattingPage = () => {
           </div>
         ))}
       </div>
-      <div className="input-container">
+      <div className="chatting-input-container">
         <input
           className="chat-input"
           type="text"

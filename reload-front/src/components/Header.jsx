@@ -10,6 +10,7 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+    const isDirectPurchase = location.state?.isDirectPurchase;
 
     const handleShoppingCart = () => {
         const token = localStorage.getItem("token");
@@ -27,6 +28,18 @@ const Header = () => {
             if (window.confirm('정말 나가시겠습니까? 현재 진행중인 과정은 초기화됩니다.')) {
                 navigate(-1);
             }
+        } else if (location.pathname === '/payment-check' && isDirectPurchase) {
+            // 즉시구매 데이터 정리 후 이동
+            localStorage.removeItem('directPurchaseItem');
+
+            // 기존 장바구니가 임시 저장되어 있다면 복원
+            const tempCartItems = localStorage.getItem('tempCartItems');
+            if (tempCartItems) {
+                localStorage.setItem('cartItems', tempCartItems);
+                localStorage.removeItem('tempCartItems');
+            }
+
+            navigate(-1);
         } else {
             navigate(-1);
         }
@@ -37,10 +50,22 @@ const Header = () => {
             if (window.confirm('정말 나가시겠습니까? 현재 진행중인 과정은 초기화됩니다.')) {
                 navigate('/');
             }
+        } else if (location.pathname === '/payment-check' && isDirectPurchase) {
+            // 즉시구매 데이터 정리 후 홈으로 이동
+            localStorage.removeItem('directPurchaseItem');
+
+            // 기존 장바구니가 임시 저장되어 있다면 복원
+            const tempCartItems = localStorage.getItem('tempCartItems');
+            if (tempCartItems) {
+                localStorage.setItem('cartItems', tempCartItems);
+                localStorage.removeItem('tempCartItems');
+            }
+
+            navigate('/');
         } else {
             navigate('/');
         }
-    }
+    };
 
     const handleOpenMenuBar = () => {
         setIsSideBarOpen(true);
@@ -92,29 +117,41 @@ const Header = () => {
                 return '장바구니';
             case "/payment-check":
                 return '결제';
-
-
+            case "/payment-failed":
+                return '결제 실패';
+            case "/payment-complete":
+                return '결제 완료';
             default:
                 return 'Main Page';
         }
     };
 
     const isMainPage = location.pathname === '/';
+    const shouldHideBackButton = location.pathname === '/payment-failed' || location.pathname === '/payment-complete';
 
     return (
         <>
             <header>
                 <div className="header-contents">
                     {!isMainPage && (
-                        <div className="header-other_page_header">
-                            <span className="header-back_btn" onClick={handleBackClick}>
-                                <FontAwesomeIcon icon={faArrowLeft} className="faArrowLeft" style={{ cursor: 'pointer', fontSize: '20px' }} />
-                            </span>
-                            <span className="header-other_page_title">{getPageTitle()}</span>
-                            <span onClick={handleHomeClick} className="header-home_btn">
-                                <FontAwesomeIcon icon={faHouse} style={{ fontSize: '25px' }} />
-                            </span>
-                        </div>
+                        shouldHideBackButton ? (
+                            <div className="header-other_page_header">
+                                <span className="header-other_page_title" style={{marginLeft: '60px'}}>{getPageTitle()}</span>
+                                <span onClick={handleHomeClick} className="header-home_btn">
+                                    <FontAwesomeIcon icon={faHouse} style={{ fontSize: '25px' }} />
+                                </span>
+                            </div>
+                        ) : (
+                            <div className="header-other_page_header">
+                                <span className="header-back_btn" onClick={handleBackClick}>
+                                    <FontAwesomeIcon icon={faArrowLeft} className="faArrowLeft" style={{ cursor: 'pointer', fontSize: '20px' }} />
+                                </span>
+                                <span className="header-other_page_title">{getPageTitle()}</span>
+                                <span onClick={handleHomeClick} className="header-home_btn">
+                                    <FontAwesomeIcon icon={faHouse} style={{ fontSize: '25px' }} />
+                                </span>
+                            </div>
+                        )
                     )}
                     {isMainPage && (
                         <div className="header-main_page_header">

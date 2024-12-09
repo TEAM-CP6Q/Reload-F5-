@@ -32,11 +32,13 @@ public class SecurityConfig {
                                         "/api/pickup/get-details",
                                         "/api/pickup/get-all-pickups",
                                         "/api/pickup/get-location",
-                                        "/api/pickup/get-today-pickup")
+                                        "/api/pickup/get-today-pickup",
+                                        "/api/pickup/payment/get-merchant-uid")
                                 .permitAll()
 
                                 .requestMatchers(HttpMethod.PATCH,
-                                        "/api/pickup/update-pickup")
+                                        "/api/pickup/update-pickup",
+                                        "/api/pickup/payment/update-payment")
                                 .permitAll()
 
                                 .requestMatchers(HttpMethod.DELETE,

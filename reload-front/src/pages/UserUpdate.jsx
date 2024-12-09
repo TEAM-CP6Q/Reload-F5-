@@ -150,7 +150,7 @@ const UserUpdate = () => {
               className="user-update-input phone-input"
               onChange={(e) => setPhonenumber(e.target.value)}
             />
-            <button className="userupdate-verification-btn">인증번호 발송</button>
+            {/* <button className="userupdate-verification-btn">인증번호 발송</button> */}
           </div>
         </div>
 

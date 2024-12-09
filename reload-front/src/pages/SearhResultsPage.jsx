@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import "../CSS/SearchResultsPage.css";
 import Header from '../components/Header';
@@ -8,8 +8,35 @@ const SearchResultsPage = () => {
     const navigate = useNavigate();
     const { searchResults, searchQuery } = location.state || { searchResults: [], searchQuery: '' };
 
+    const fetchDesigner = async (designerId) => {
+        const response = await fetch(`https://refresh-f5-server.o-r.kr/api/account/designer/get-designer/${designerId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        const data = await response.json();
+        return data;
+    };
+
     const ProductCard = ({ product }) => {
         const [isPressed, setIsPressed] = useState(false);
+        const [designer, setDesigner] = useState(null);
+
+        useEffect(() => {
+            const fetchDesignerData = async () => {
+                try {
+                    const designerData = await fetchDesigner(product.designerIndex);
+                    setDesigner(designerData);
+                } catch (error) {
+                    console.error('디자이너 데이터를 가져오는 중 오류가 발생했습니다:', error);
+                }
+            };
+
+            if (product.designerIndex) {
+                fetchDesignerData();
+            }
+        }, [product.designerIndex]);
         
         const handleClick = () => {
             navigate('/product-detail', {
@@ -31,7 +58,7 @@ const SearchResultsPage = () => {
                     </div>
                 </div>
                 <div className="search-results-content">
-                    <div className="search-results-designer">{product.designer?.name || '브랜드명'}</div>
+                    <div className="search-results-designer">{designer?.name}</div>
                     <div className="search-results-name">{product.name}</div>
                     <div className="search-results-price">{product.price?.toLocaleString()}원</div>
                 </div>

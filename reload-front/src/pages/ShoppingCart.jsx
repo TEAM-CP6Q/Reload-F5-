@@ -42,7 +42,7 @@ const ShoppingCart = () => {
     };
 
     const handleContinueShopping = () => {
-        navigate(-1);
+        navigate('/');
     };
 
     return (

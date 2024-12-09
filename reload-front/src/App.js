@@ -26,6 +26,9 @@ import TestPage from './pages/TestPage';
 import CategoryProductsPage from './pages/CategoryProductsPage';
 import ShoppingCart from './pages/ShoppingCart';
 import PaymentCheckPage from './pages/PaymentCheckPage';
+import PaymentProcessPape from './pages/PaymentProcessPape';
+import PaymentFailedPage from './pages/PaymentFailedPage';
+import PaymentCompletePage from './pages/PaymentCompletePage';
 
 function AppContent() {
   const [role, setRole] = useState('user'); // 기본값을 'user'로 설정
@@ -86,6 +89,9 @@ function AppContent() {
             <Route path="/category-products" element={<CategoryProductsPage />} />
             <Route path="/cart" element={<ShoppingCart />} />
             <Route path="/payment-check" element={<PaymentCheckPage />} />
+            <Route path="/payment-process" element={<PaymentProcessPape />} />
+            <Route path="/payment-failed" element={<PaymentFailedPage />} />
+            <Route path="/payment-complete" element={<PaymentCompletePage />} />
           </>
         )}
       </Routes>

@@ -11,6 +11,8 @@ const ProductDetailPage = () => {
     const product = state?.product;
     const [designer, setDesigner] = useState(null);
     const [showCartModal, setShowCartModal] = useState(false);
+    const [showQuantityModal, setShowQuantityModal] = useState(false);
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -25,7 +27,6 @@ const ProductDetailPage = () => {
                         }
                     });
                     const designerData = await response.json();
-                    console.log("디자이너 정보" + designerData);
                     setDesigner(designerData);
                 }
             } catch (error) {
@@ -60,28 +61,37 @@ const ProductDetailPage = () => {
         if (token && email) {
             const existingCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
 
-        const existingItemIndex = existingCartItems.findIndex(item => item.pid === product.pid);
+            const existingItemIndex = existingCartItems.findIndex(item => item.pid === product.pid);
 
-        if (existingItemIndex !== -1) {
-            existingCartItems[existingItemIndex].quantity += 1;
-        } else {
-            existingCartItems.push({
-                pid: product.pid,
-                name: product.name,
-                price: product.price,
-                imageUrl: product.imageUrls[0],
-                designerName: designer?.name || '',
-                quantity: 1
-            });
-        }
+            if (existingItemIndex !== -1) {
+                existingCartItems[existingItemIndex].quantity += 1;
+            } else {
+                existingCartItems.push({
+                    pid: product.pid,
+                    name: product.name,
+                    price: product.price,
+                    imageUrl: product.imageUrls[0],
+                    designerName: designer?.name || '',
+                    quantity: 1
+                });
+            }
 
-        localStorage.setItem('cartItems', JSON.stringify(existingCartItems));
-        setShowCartModal(true);
+            localStorage.setItem('cartItems', JSON.stringify(existingCartItems));
+            setShowCartModal(true);
         } else {
             navigate('/login');
         }
+    };
 
-        
+    const handleDirectPurchase = () => {
+        const token = localStorage.getItem("token");
+        const email = localStorage.getItem("email");
+    
+        if (token && email) {
+            setShowQuantityModal(true); // 수량 선택 모달 표시
+        } else {
+            navigate('/login');
+        }
     };
 
     const handleGoToCart = () => {
@@ -233,6 +243,229 @@ const ProductDetailPage = () => {
         );
     };
 
+    const handleQuantityChange = (newQuantity) => {
+        if (newQuantity >= 1) {
+            setQuantity(newQuantity);
+        }
+    };
+
+    const handlePurchaseConfirm = () => {
+        // 즉시구매용 상품 생성
+        const directPurchaseItem = [{
+            pid: product.pid,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrls[0],
+            designerName: designer?.name || '',
+            quantity: quantity,
+            isDirectPurchase: true // 즉시구매 상품 표시
+        }];
+    
+        // 직접 구매 상품을 별도의 키에 저장
+        localStorage.setItem('directPurchaseItem', JSON.stringify(directPurchaseItem));
+        
+        setShowQuantityModal(false);
+        navigate('/payment-check', { 
+            state: { isDirectPurchase: true }  // 결제 페이지에 즉시구매 여부 전달
+        });
+    };
+
+    // 수량 선택 모달 컴포넌트
+    const QuantityModal = () => {
+        if (!showQuantityModal) return null;
+    
+        return (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 1000,
+                backdropFilter: 'blur(4px)',
+                animation: 'fadeIn 0.3s ease-out'
+            }}>
+                <div style={{
+                    backgroundColor: 'white',
+                    padding: '24px',
+                    borderRadius: '16px',
+                    width: '90%',
+                    maxWidth: '400px',
+                    boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+                    animation: 'slideIn 0.3s ease-out',
+                }}>
+                    <h3 style={{
+                        margin: '0 0 24px 0',
+                        fontSize: '20px',
+                        fontWeight: '600',
+                        color: '#1a1a1a',
+                        textAlign: 'center',
+                        letterSpacing: '-0.5px'
+                    }}>
+                        구매 수량 선택
+                    </h3>
+                    
+                    <div style={{ 
+                        backgroundColor: '#f8faf9',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '24px'
+                    }}>
+                        <div style={{ 
+                            display: 'flex', 
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            marginBottom: '16px'
+                        }}>
+                            <span style={{ 
+                                fontWeight: '500',
+                                color: '#2d2d2d',
+                                fontSize: '15px'
+                            }}>
+                                {product.name}
+                            </span>
+                            <span style={{
+                                color: '#4CAF50',
+                                fontWeight: '600',
+                                fontSize: '15px'
+                            }}>
+                                {product.price?.toLocaleString()}원
+                            </span>
+                        </div>
+                        
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '16px',
+                            padding: '8px 0'
+                        }}>
+                            <button
+                                onClick={() => handleQuantityChange(quantity - 1)}
+                                style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    border: '1.5px solid #e0e0e0',
+                                    borderRadius: '50%',
+                                    backgroundColor: 'white',
+                                    cursor: 'pointer',
+                                    fontSize: '20px',
+                                    color: '#666',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                −
+                            </button>
+                            <span style={{ 
+                                fontSize: '20px',
+                                fontWeight: '600',
+                                color: '#1a1a1a',
+                                minWidth: '40px',
+                                textAlign: 'center'
+                            }}>
+                                {quantity}
+                            </span>
+                            <button
+                                onClick={() => handleQuantityChange(quantity + 1)}
+                                style={{
+                                    width: '40px',
+                                    height: '40px',
+                                    border: '1.5px solid #e0e0e0',
+                                    borderRadius: '50%',
+                                    backgroundColor: 'white',
+                                    cursor: 'pointer',
+                                    fontSize: '20px',
+                                    color: '#666',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+    
+                    <div style={{
+                        backgroundColor: '#f0f7f1',
+                        borderRadius: '12px',
+                        padding: '16px',
+                        marginBottom: '24px'
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                        }}>
+                            <span style={{
+                                color: '#2d2d2d',
+                                fontWeight: '600',
+                                fontSize: '15px'
+                            }}>
+                                총 결제금액
+                            </span>
+                            <span style={{
+                                color: '#4CAF50',
+                                fontWeight: '700',
+                                fontSize: '18px'
+                            }}>
+                                {(product.price * quantity).toLocaleString()}원
+                            </span>
+                        </div>
+                    </div>
+    
+                    <div style={{
+                        display: 'flex',
+                        gap: '10px',
+                    }}>
+                        <button
+                            onClick={() => setShowQuantityModal(false)}
+                            style={{
+                                flex: '1',
+                                padding: '15px',
+                                border: '1.5px solid #e0e0e0',
+                                borderRadius: '12px',
+                                backgroundColor: 'white',
+                                cursor: 'pointer',
+                                fontSize: '15px',
+                                fontWeight: '600',
+                                color: '#666',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            취소
+                        </button>
+                        <button
+                            onClick={handlePurchaseConfirm}
+                            style={{
+                                flex: '1',
+                                padding: '15px',
+                                border: 'none',
+                                borderRadius: '12px',
+                                backgroundColor: '#4CAF50',
+                                color: 'white',
+                                cursor: 'pointer',
+                                fontSize: '15px',
+                                fontWeight: '600',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            구매하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className='productDetail-main-container'>
             <Header />
@@ -278,7 +511,7 @@ const ProductDetailPage = () => {
 
             <div className='productDetail-buttons-container'>
                 <button className='productDetail-cart-button' onClick={handleAddToCart}>장바구니</button>
-                <button className='productDetail-buy-button'>즉시구매</button>
+                <button className='productDetail-buy-button' onClick={handleDirectPurchase}>즉시구매</button>
             </div>
 
             <div className="productDetail-divider" />
@@ -288,6 +521,10 @@ const ProductDetailPage = () => {
                 <div className='productDetail-info-item'>
                     <span className='productDetail-info-label'>품명</span>
                     <span className='productDetail-info-value'>{product.name}</span>
+                </div>
+                <div className='productDetail-info-item'>
+                    <span className='productDetail-info-label'>카테고리</span>
+                    <span className='productDetail-info-value'>{product.categoryIndex.value}</span>
                 </div>
                 <div className='productDetail-info-item'>
                     <span className='productDetail-info-label'>디자이너</span>
@@ -326,10 +563,11 @@ const ProductDetailPage = () => {
 
             <div className='productDetail-fixed-bottom-buttons'>
                 <button className='productDetail-fixed-cart-button' onClick={handleAddToCart}>장바구니</button>
-                <button className='productDetail-fixed-buy-button'>즉시구매</button>
+                <button className='productDetail-fixed-buy-button' onClick={handleDirectPurchase}>즉시구매</button>
             </div>
 
             <CartModal />
+            <QuantityModal />
         </div>
     );
 };

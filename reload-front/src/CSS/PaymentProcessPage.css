@@ -1,0 +1,29 @@
+.payment-process-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.payment-process-content {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.payment-process-content h2 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.payment-process-content p {
+    color: #666;
+    margin: 10px 0;
+}

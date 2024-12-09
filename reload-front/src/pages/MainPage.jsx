@@ -230,7 +230,7 @@ const MainPage = () => {
                 <div className="search-box">
                     <input
                         type="text"
-                        placeholder="지구를 세로 고칠 때까지, 새로고침"
+                        placeholder="지구를 새로 고칠 때까지, 새로고침"
                         className="search-input"
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}

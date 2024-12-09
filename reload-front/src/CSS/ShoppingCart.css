@@ -18,7 +18,7 @@
     padding: 40px;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px white;
 }
 
 .cart-items {
@@ -133,7 +133,7 @@
 .continue-shopping-button {
     flex: 1;
     padding: 15px;
-    border: 1px solid #4CAF50;
+    border: none;
     background: white;
     color: #4CAF50;
     border-radius: 10px;
@@ -189,7 +189,7 @@
     padding: 60px 20px;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 15px white;
     margin: 20px auto;
     max-width: 400px;
     display: flex;

@@ -48,7 +48,6 @@ const SignupPage = () => {
       alignItems: "center",
     },
     content: {
-      left: "0",
       margin: "auto",
       width: "100%",
       height: "80%",
@@ -126,7 +125,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="social-login-container" style={{ height: '100vh' }}>
+    <div className="social-login-container">
       <Header />
       <div className="signup-inner">
         <div className="signuplogo-con">
@@ -147,7 +146,7 @@ const SignupPage = () => {
             }}
           />
           <button  className="email-check-btn"  onClick={checkEmailExists}>
-            중복<br/>확인하기
+            중복 확인
           </button>
         </div>
 
@@ -218,9 +217,9 @@ const SignupPage = () => {
             placeholder="연락처를 입력해주세요"
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
-          <button className="signup-verification-btn">
+          {/* <button className="signup-verification-btn">
             인증번호<br/>발송
-          </button>
+          </button> */}
         </div>
 
         <div className="form-group">
