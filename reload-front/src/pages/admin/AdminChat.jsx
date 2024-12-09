@@ -19,10 +19,27 @@ const AdminChat = () => {
   useEffect(() => {
     if (stompClient) return;
 
-    const socket = new SockJS('https://refresh-f5-server.o-r.kr/ws/chat');
+    // SockJS 옵션 설정
+    const sockOptions = {
+        transports: ['websocket', 'xhr-streaming', 'xhr-polling'],
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept'
+        }
+    };
+
+    const socket = new SockJS('https://refresh-f5-server.o-r.kr/ws/chat', null, sockOptions);
     const client = Stomp.over(socket);
 
-    client.connect({}, () => {
+    // STOMP 클라이언트 연결 헤더 설정
+    const connectHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept'
+    };
+
+    client.connect(connectHeaders, () => {
       setStompClient(client);
 
       client.subscribe('/topic/admin/new-room', (message) => {
