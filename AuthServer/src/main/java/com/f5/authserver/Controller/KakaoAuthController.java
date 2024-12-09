@@ -8,6 +8,7 @@ import com.f5.authserver.DTO.Kakao.KakaoLoginDTO;
 import com.f5.authserver.DTO.User.UserDTO;
 import com.f5.authserver.Entity.UserEntity;
 import com.f5.authserver.JWT.JwtTokenUtil;
+import com.f5.authserver.Repository.UserRepository;
 import com.f5.authserver.Service.Kakao.KakaoAuthService;
 import com.f5.authserver.Service.User.CustomUserDetailsService;
 import com.f5.authserver.Service.User.UserService;
@@ -37,28 +38,24 @@ public class KakaoAuthController {
     private static final Logger logger = LoggerFactory.getLogger(KakaoAuthController.class);
 
     private final KakaoAuthService kakaoAuthService;
+    private final UserRepository userRepository;
 
-    public KakaoAuthController(UserService userService, JwtTokenUtil jwtTokenUtil, CustomUserDetailsService customUserDetailsService, UserDAO userDAO, KakaoAuthService kakaoAuthService) {
+    public KakaoAuthController(UserService userService, JwtTokenUtil jwtTokenUtil, CustomUserDetailsService customUserDetailsService, UserDAO userDAO, KakaoAuthService kakaoAuthService, UserRepository userRepository) {
         this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.customUserDetailsService = customUserDetailsService;
         this.userDAO = userDAO;
         this.kakaoAuthService = kakaoAuthService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> kakaoLogin(@RequestBody KakaoAuthRequestDTO request) throws AuthenticationException {
         try {
             logger.info("Received Kakao auth code: {}", request.getCode());
-
-            KakaoLoginDTO status = kakaoAuthService.loginKakao(request.getCode());
+            KakaoLoginDTO status;
+            status = kakaoAuthService.loginKakao(request.getCode());
             String email = status.getEmail();
-            if(!userDAO.existsByEmail(email)) {
-                return ResponseEntity.status(404).body(StatusCodeDTO.builder()
-                                .Code(404L)
-                                .Msg("카카오 회원가입을 진행해주세요.")
-                                .build());
-            }
 
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(email);
             final String token = jwtTokenUtil.generateToken(userDetails.getUsername());
@@ -72,14 +69,25 @@ public class KakaoAuthController {
             return ok(response);
 
         } catch (Exception e) {
-            logger.error("Internal server error occurred during token processing");
-            return status(405).body(StatusCodeDTO.builder()
-                            .Code(405L)
-                            .Msg("토큰 처리 중 서버 오류")
-                            .build());
+            logger.error(e.getMessage());
+            if (e.getMessage().equals("Need register")) {
+                return ResponseEntity.status(404).body(StatusCodeDTO.builder()
+                        .Code(404L)
+                        .Msg("카카오 회원가입을 진행해주세요.")
+                        .build());
+            } else if (e.getMessage().equals("Need integration")) {
+                return ResponseEntity.status(405).body(StatusCodeDTO.builder()
+                        .Code(405L)
+                        .Msg("통합을 진행해주세요.")
+                        .build());
+            } else {
+                return status(406).body(StatusCodeDTO.builder()
+                        .Code(406L)
+                        .Msg("토큰 처리 중 서버 오류")
+                        .build());
+            }
         }
     }
-
 
     @PatchMapping("/integration")
     public ResponseEntity<?> integrationAccount(@RequestBody KakaoAuthRequestDTO request) {
