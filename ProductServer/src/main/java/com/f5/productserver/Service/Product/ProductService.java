@@ -8,9 +8,17 @@ import java.util.List;
 
 public interface ProductService {
     ProductDTO insertProduct(ProductDTO products);
-    void insertProductCategory(ProductCategoryDTO productCategoryDTO);
     List<ProductDTO> getAllProducts(String value);
     List<ProductDTO> getLatestProducts();
     List<ProductDTO> getProductDetails(int pId);
     void deleteProduct(Long id);
+
+    // 상품 카테고리 관련
+    void insertProductCategory(ProductCategoryDTO productCategoryDTO);
+    List<ProductCategoryDTO> getProductCategory();
+    void updateProductCategory(ProductCategoryDTO productCategoryDTO);
+    void deleteProductCategory(int id);
+
+
+
 }

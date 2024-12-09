@@ -1,9 +1,9 @@
 package com.f5.productserver.Controller.Product;
 
 import com.f5.productserver.DTO.Product.ProductDTO;
+import com.f5.productserver.DTO.ProductCategory.ProductCategoryDTO;
 import com.f5.productserver.Service.Communication.CommunicationService;
 import com.f5.productserver.Service.Product.ProductService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,8 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.DataInput;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +28,9 @@ public class ProductController {
     }
 
     /*
-    * 전체 productlist에서 category별 전체 목록 불러옴
-    * value = category의 value(ex. 가구, 전체 등)
-    * */
+     * 전체 productlist에서 category별 전체 목록 불러옴
+     * value = category의 value(ex. 가구, 전체 등)
+     * */
     @GetMapping("/product-list/{value}")
     public ResponseEntity<?> getAllProducts(@PathVariable String value) {
         try {
@@ -89,7 +87,7 @@ public class ProductController {
             List<String> imageURI = communicationService.uploadImagesToImageServer(images);
             productDTO.setImageUrls(imageURI);
             logger.info("Received imageURI: {}", imageURI);
-                // 4. 제품 정보 저장
+            // 4. 제품 정보 저장
             ProductDTO createdProduct = productService.insertProduct(productDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
         } catch (IllegalArgumentException e) {
@@ -110,15 +108,50 @@ public class ProductController {
         }
     }
 
+    // 상품 카테고리 등록
+    @PostMapping("/add-product-category")
+    public ResponseEntity<?> addProductCategory(@RequestBody ProductCategoryDTO productCategoryDTO) {
+        try{
+            productService.insertProductCategory(productCategoryDTO);
+            return ResponseEntity.ok("카테고리 등록 성공");
+        } catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
 
-//    @PostMapping("/add-product-category")
-//    public ResponseEntity<?> addProductCategory(@RequestBody ProductCategoryDTO productCategoryDTO) {
-//        try{
-//            productService.insertProductCategory(productCategoryDTO);
-//            return ResponseEntity.ok("카테고리 등록 성공");
-//        } catch (IllegalArgumentException e){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
+    //상품 카테고리 수정
+    @PatchMapping("/update-category")
+    public ResponseEntity<?> updateCategory(@RequestBody ProductCategoryDTO productCategoryDTO) {
+        try {
+            productService.updateProductCategory(productCategoryDTO);  // 서비스 레이어에서 업데이트 처리
+            return ResponseEntity.ok("상품 카테고리 정보가 성공적으로 업데이트되었습니다.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("상품 카테고리 정보 업데이트에 실패했습니다.");
+        }
+    }
+
+    // 상품 카테고리 불러오기
+    @GetMapping("/category-list")
+    public ResponseEntity<?> getCategoryList() {
+        try {
+            List<ProductCategoryDTO> category = productService.getProductCategory();
+            return ResponseEntity.ok(category);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류: " + e.getMessage());
+        }
+    }
+
+    // 상품 카테고리 삭제
+    @DeleteMapping("/delete-category/{pcId}")
+    public ResponseEntity<?> deleteProductCategory(@PathVariable("pcId") int pcId) {
+        try {
+            productService.deleteProductCategory(pcId);
+            return ResponseEntity.ok("상품 카테고리 삭제 성공");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
