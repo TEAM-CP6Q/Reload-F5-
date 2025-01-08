@@ -2,17 +2,17 @@ package com.f5.chatserver.Service;
 
 import com.f5.chatserver.DAO.ChatDAO;
 import com.f5.chatserver.DTO.ChatDTO;
+import com.f5.chatserver.DTO.MessageDTO;
 import com.f5.chatserver.Entity.ChatEntity;
+import com.f5.chatserver.Entity.MessageEntity;
 import com.f5.chatserver.Repository.ChatRepository;
+import com.f5.chatserver.Repository.MessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
 import java.util.*;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -23,6 +23,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 public class ChatServiceImpl implements ChatService {
     private final ObjectMapper objectMapper;
     private final ChatDAO chatDAO;
+    private final MessageRepository messageRepository;
     private LinkedHashMap<Long, ChatDTO> chatRooms = new LinkedHashMap<>();
     private final ChatRepository chatRepository;
     private final SimpMessagingTemplate messagingTemplate; // STOMP 메시지 전송 템플릿

@@ -1,6 +1,8 @@
 package com.f5.chatserver.Service;
 
 import com.f5.chatserver.DTO.ChatDTO;
+import com.f5.chatserver.DTO.MessageDTO;
+import com.f5.chatserver.Entity.MessageEntity;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.LinkedHashMap;
