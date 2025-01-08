@@ -29,7 +29,7 @@ public class StompChatController {
         log.info("Received message: {}", messageDTO);
 
         // 메시지 저장
-        //messageService.saveMessage(messageDTO);
+        messageService.saveMessage(messageDTO);
 
         // 채팅방 ID를 통해 채팅 정보를 가져옴
         ChatDTO chatDTO = chatService.findChatId(messageDTO.getChatId());

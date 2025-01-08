@@ -1,31 +1,49 @@
 package com.f5.chatserver.Config;
 
+import com.f5.chatserver.Service.ChatManageService;
+import com.f5.chatserver.WebSocket.CustomChannelInterceptor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
-@EnableWebSocketMessageBroker // STOMP 메시징 활성화
+@EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final ChatManageService chatManageService;
+
+    public WebSocketConfig(@Lazy ChatManageService chatManageService) {
+        this.chatManageService = chatManageService;
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        // 클라이언트에서 구독하는 메시지 브로커 경로 설정
-        config.enableSimpleBroker("/topic", "/queue"); // 메시지 브로커가 처리하는 경로
-        config.setApplicationDestinationPrefixes("/app"); // 클라이언트가 메시지를 보낼 때 경로
+        config.enableSimpleBroker("/topic", "/queue");
+        config.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // STOMP 엔드포인트 설정
-        registry.addEndpoint("/ws/chat") // 엔드포인트 URL
+        registry.addEndpoint("/ws/chat")
                 .setAllowedOrigins("http://127.0.0.1:3000",
-                        "http://3.37.122.192:8000",
-                        "http://15.165.174.146:3000",
-                        "http://localhost:8000",
+                        "https:refresh-f5-server.o-r.kr",
                         "https://refresh-f5.store")
-                .withSockJS();           // SockJS 지원 활성화 (웹소켓 미지원 브라우저를 위한 대체 옵션)
+                .withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(customChannelInterceptor());
+    }
+
+    @Bean
+    @Lazy
+    public CustomChannelInterceptor customChannelInterceptor() {
+        return new CustomChannelInterceptor(chatManageService);
     }
 }
